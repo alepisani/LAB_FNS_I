@@ -35,6 +35,7 @@ void doppie_diagonali(){
     ax->SetBinLabel(8, "12345");
 
     pu->Draw();
+    pu->SaveAs("../plots/pattern_unit_tetto.pdf");
 
 
 

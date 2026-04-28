@@ -1,0 +1,33 @@
+{
+//========= Macro generated from object: pu/pattern unit tetto
+//========= by ROOT version6.36.04
+   
+   TH1I *pu__1 = new TH1I("pu__1", "pattern unit tetto", 8, 0.5, 8.5);
+   pu__1->SetBinContent(1,738);
+   pu__1->SetBinContent(2,197);
+   pu__1->SetBinContent(3,188);
+   pu__1->SetBinContent(4,213);
+   pu__1->SetBinContent(5,216);
+   pu__1->SetBinContent(6,217);
+   pu__1->SetBinContent(7,214);
+   pu__1->SetBinContent(8,1167);
+   pu__1->SetEntries(3150);
+   pu__1->SetLineColor(TColor::GetColor("#000099"));
+   pu__1->GetXaxis()->SetBinLabel(1, "24");
+   pu__1->GetXaxis()->SetBinLabel(2, "124");
+   pu__1->GetXaxis()->SetBinLabel(3, "234");
+   pu__1->GetXaxis()->SetBinLabel(4, "245");
+   pu__1->GetXaxis()->SetBinLabel(5, "1234");
+   pu__1->GetXaxis()->SetBinLabel(6, "1245");
+   pu__1->GetXaxis()->SetBinLabel(7, "2354");
+   pu__1->GetXaxis()->SetBinLabel(8, "12345");
+   pu__1->GetXaxis()->SetLabelFont(42);
+   pu__1->GetXaxis()->SetTitleOffset(1);
+   pu__1->GetXaxis()->SetTitleFont(42);
+   pu__1->GetYaxis()->SetLabelFont(42);
+   pu__1->GetYaxis()->SetTitleFont(42);
+   pu__1->GetZaxis()->SetLabelFont(42);
+   pu__1->GetZaxis()->SetTitleOffset(1);
+   pu__1->GetZaxis()->SetTitleFont(42);
+   pu__1->Draw();
+}

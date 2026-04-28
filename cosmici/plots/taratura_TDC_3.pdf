@@ -1,0 +1,54 @@
+{
+//========= Macro generated from object: Graph/Ritardi vs Canali 3
+//========= by ROOT version6.36.04
+   
+   std::vector<Double_t> gre_fx_vect0{ -61, -45.75, -30.5, -15.25, 0, 15.25, 30.5, 45.75, 61 };
+   std::vector<Double_t> gre_fy_vect1{ 142.5, 205.3000030517578, 267.1000061035156, 327.7999877929688, 387.2000122070312, 452.2000122070312, 517.9000244140625, 585.4000244140625, 655 };
+   std::vector<Double_t> gre_fex_vect2{ 2, 1.710000038146973, 1.409999966621399, 1, 1, 1, 1.409999966621399, 1.710000038146973, 2 };
+   std::vector<Double_t> gre_fey_vect3{ 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+   TGraphErrors *gre = new TGraphErrors(9, gre_fx_vect0.data(), gre_fy_vect1.data(), gre_fex_vect2.data(), gre_fey_vect3.data());
+   gre->SetName("Graph");
+   gre->SetTitle("Ritardi vs Canali 3");
+   gre->SetFillStyle(1000);
+   gre->SetMarkerColor(TColor::GetColor("#0000ff"));
+   gre->SetMarkerStyle(20);
+   
+   TH1F *Graph_histogram1 = new TH1F("Graph_histogram1", "Ritardi vs Canali 3", 100, -75.59999999999999, 75.59999999999999);
+   Graph_histogram1->SetMinimum(90.05);
+   Graph_histogram1->SetMaximum(707.45);
+   Graph_histogram1->SetDirectory(nullptr);
+   Graph_histogram1->SetStats(0);
+   Graph_histogram1->SetLineColor(TColor::GetColor("#000099"));
+   Graph_histogram1->GetXaxis()->SetTitle("Ritardi [ps]");
+   Graph_histogram1->GetXaxis()->SetLabelFont(42);
+   Graph_histogram1->GetXaxis()->SetTitleOffset(1);
+   Graph_histogram1->GetXaxis()->SetTitleFont(42);
+   Graph_histogram1->GetYaxis()->SetTitle("Canali");
+   Graph_histogram1->GetYaxis()->SetLabelFont(42);
+   Graph_histogram1->GetYaxis()->SetTitleFont(42);
+   Graph_histogram1->GetZaxis()->SetLabelFont(42);
+   Graph_histogram1->GetZaxis()->SetTitleOffset(1);
+   Graph_histogram1->GetZaxis()->SetTitleFont(42);
+   gre->SetHistogram(Graph_histogram1);
+   
+   
+   TF1 *fit_lineare1 = new TF1("fit_lineare", "pol1", -70,70, TF1::EAddToList::kNo);
+   fit_lineare1->SetFillColor(19);
+   fit_lineare1->SetMarkerColor(1);
+   fit_lineare1->SetMarkerStyle(1);
+   fit_lineare1->SetMarkerSize(1);
+   fit_lineare1->SetLineColor(2);
+   fit_lineare1->SetLineStyle(1);
+   fit_lineare1->SetLineWidth(2);
+   fit_lineare1->SetChisquare(3.85434);
+   fit_lineare1->SetNDF(7);
+   fit_lineare1->SetParameter(0, 391.55);
+   fit_lineare1->SetParError(0, 1.86487);
+   fit_lineare1->SetParLimits(0, 0, 0);
+   fit_lineare1->SetParameter(1, 4.16051);
+   fit_lineare1->SetParError(1, 0.061444);
+   fit_lineare1->SetParLimits(1, 0, 0);
+   fit_lineare1->SetParent(gre);
+   gre->GetListOfFunctions()->Add(fit_lineare1,"");
+   gre->Draw();
+}

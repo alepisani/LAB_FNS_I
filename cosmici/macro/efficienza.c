@@ -38,6 +38,7 @@ void efficienza(){
 
 
   eff_vs_thr->Draw("AP");
+  eff_vs_thr->SaveAs("../plots/eff7_vs_thr.pdf");
 
 
 }
