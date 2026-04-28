@@ -15,9 +15,9 @@ using namespace std;
 // macro to read .dat files to 2d vectors of int
 
  
-vector<vector<double>> datReader(string filename, int header = 0) {
+vector<vector<int>> datReader(string filename, int header = 0) {
 
-   vector<vector<double>> output;
+   vector<vector<int>> output;
    ifstream input_file(filename);
    
    // Controlla apertura file
@@ -36,9 +36,9 @@ vector<vector<double>> datReader(string filename, int header = 0) {
      
      stringstream line_stream(line);
      double value;
-     vector<double> row_values;
+     vector<int> row_values;
      
-     // Leggi direttamente doubles (gestisce spazi multipli/tab automaticamente)
+     // Leggi direttamente int (gestisce spazi multipli/tab automaticamente)
      while (line_stream >> value) {
        row_values.push_back(value);
       }
@@ -48,7 +48,7 @@ vector<vector<double>> datReader(string filename, int header = 0) {
       if (firstLine) {
         column_counter = row_values.size();
         for (int i = 0; i < column_counter; i++)
-        output.push_back(vector<double>());
+        output.push_back(vector<int>());
         firstLine = false;
       }
       
@@ -66,7 +66,7 @@ vector<vector<double>> datReader(string filename, int header = 0) {
   
 void letturaFile(){
 
-  vector<vector<double>> dati = datReader("../data/TDC3_singola_HV1980_THR38_1000.dat", 0);
+  vector<vector<int>> dati = datReader("../data/TDC3_singola_HV1980_THR38_1000.dat", 0);
 
   for(int row = 0; row < 20; row++){
     
