@@ -12,64 +12,11 @@
 
 using namespace std;
 
-/**
- * Read a dat and save data to vector of vectors of doubles.
- *
- * @param filename The name of the file to load.
- * @param header The number of header lines to skip.
- * @return a vector of vectors of doubles. Each internal vector represents a
- * column.
- *
- * @throw If in a line the number of columns is different from the first line.
- */
+// macro to read .dat files to 2d vectors of int
 
-/*
-vector<vector<double>> datReaderToDouble(string filename, int header = 0) {
-  vector<vector<double>> output;
-  // Open the file
-  ifstream input_file(filename);
-  string line;
-
-  // Skip the header lines
-  for (int i = 0; i < header; i++)
-    getline(input_file, line);
-
-  bool firstLine = true;
-  int column_counter = 0;
-  while (getline(input_file, line)) {
-    stringstream line_stream(line);
-    string cell;
-
-    // Initialize the vector with the columns
-    if (firstLine) {
-      while (getline(line_stream, cell, ' ')) {
-        output.push_back(vector<double>());
-        output[column_counter].push_back(stod(cell));
-        column_counter++;
-      }
-      firstLine = false;
-      continue;
-    }
-
-    int columnIndex = 0;
-    while (getline(line_stream, cell, ' ')) {
-      // Check column overflow
-      if (columnIndex >= column_counter)
-        throw invalid_argument("not_equal_columns");
-      output[columnIndex].push_back(stod(cell));
-      columnIndex++;
-    }
-    // Check column underflow
-    if (columnIndex != column_counter)
-      throw invalid_argument("not_equal_columns");
-  }
-
-  
-  return output;
-  }
-  */
  
- vector<vector<double>> datReaderToDouble(string filename, int header = 0) {
+vector<vector<double>> datReader(string filename, int header = 0) {
+
    vector<vector<double>> output;
    ifstream input_file(filename);
    
@@ -119,7 +66,7 @@ vector<vector<double>> datReaderToDouble(string filename, int header = 0) {
   
 void letturaFile(){
 
-  vector<vector<double>> dati = datReaderToDouble("../data/TDC3_singola_HV1980_THR38_1000.dat", 0);
+  vector<vector<double>> dati = datReader("../data/TDC3_singola_HV1980_THR38_1000.dat", 0);
 
   for(int row = 0; row < 20; row++){
     
