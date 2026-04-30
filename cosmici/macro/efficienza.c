@@ -35,10 +35,32 @@ void efficienza(){
   eff_vs_thr->GetXaxis()->SetTitle("soglia [mV]");
   eff_vs_thr->GetYaxis()->SetTitle("efficienza");
 
-
-
   eff_vs_thr->Draw("AP");
   eff_vs_thr->SaveAs("../plots/eff7_vs_thr.pdf");
+
+  //efficienza 8
+  
+  const int nmisure = 11;
+  double threshold[] = {30, 40.3, 43.7, 46.7, 50.7, 55.1, 58.5, 63.3, 68.3, 72.5, 75};
+  double ev_fondoscala[] = {705, 683, 724, 682, 723, 726, 706, 742, 760, 748, 762};
+  double frazione_eventi_visti[nmisure];
+  
+  for(int i = 0; i < nmisure; i++){
+    frazione_eventi_visti[i] = 1 - ev_fondoscala[i]/1000.;
+    //cout << frazione_eventi_visti[i] << endl;
+  }
+
+
+  TCanvas *eff8 = new TCanvas("eff8", "eff8", 200, 10, 600, 400);
+  TGraphErrors *eff8_vs_thr = new TGraphErrors(nmisure, threshold, frazione_eventi_visti, 0, 0);
+
+  eff8_vs_thr->GetXaxis()->SetTitle("threshold [mV]");
+  eff8_vs_thr->GetYaxis()->SetTitle("frazione eventi visti");
+  eff8_vs_thr->SetMarkerSize(3.);
+  eff8_vs_thr->Draw();
+  eff8_vs_thr->SaveAs("../plots/eff8_vs_thr.png");
+
+
 
 
 }
