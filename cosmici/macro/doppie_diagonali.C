@@ -3,7 +3,7 @@
 #include "TAxis.h"
 
 void doppie_diagonali(){
-    vector<vector<int>> data = datReader("../data/TDC_diagonale42_3150.dat");
+    vector<vector<int>> data = datReader("../data/diagonale/TDC_diagonale42_3150.dat");
 
     int lim = 3000;
 

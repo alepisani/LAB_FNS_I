@@ -5,8 +5,8 @@
 
 void landau_gauss(){
 
-    //TFile *input_file = TFile::Open("../data/ADC3_singola_HV1980_THR40_100000.root");
-    TFile *input_file = TFile::Open("../data/ADC4_singola_HV2070_THR106_5000.root");
+    //TFile *input_file = TFile::Open("../data/singole/ADC3_singola_HV1980_THR40_100000.root");
+    TFile *input_file = TFile::Open("../data/singole/ADC4_singola_HV2070_THR106_5000.root");
 
     TH1D* hist = (TH1D*)input_file->Get("adc3");
     //TH1D* hist = (TH1D*)input_file->Get("adc4");
