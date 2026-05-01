@@ -40,7 +40,8 @@ void taraTDC(){
 
 
   ritardi_vs_canali->Draw("AP");
-  ritardi_vs_canali->SaveAs("../plots/taratura_TDC_3.pdf");
+  TDC->Update();
+  TDC->SaveAs("../plots/taratura_TDC_3.pdf");
 
 
   //------------------- TDC canale 4 --------------------------
@@ -76,5 +77,6 @@ void taraTDC(){
 
 
   ritardi_vs_canali2->Draw("AP");
-  ritardi_vs_canali2->SaveAs("../plots/taratura_TDC_4.pdf");
+  TDC4->Update();
+  TDC4->SaveAs("../plots/taratura_TDC_4.pdf");
 }
