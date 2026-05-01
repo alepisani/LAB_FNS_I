@@ -2,6 +2,7 @@
 #include "TH1.h"
 #include "TF1.h"
 #include "TCanvas.h"
+#include <cmath>
 
 /**
  * analisi dati al fine di trovare il picco di energia rilasciata dal muone all'interno dello scintillatore.
@@ -368,18 +369,147 @@ void landau_gauss(){
 
   //----misura_piedistalli---------------------------------------------------------------------------------
    
+  /**
+  * si sceglie di usare il file con più statistica che risulta ADC3 per il piedistallo di 1-2-4-5-6
+  * per misurare il piedistallo di ADC3 si sceglie ADC2
+  */
 
+  //Piedistallo1----------------------------------
 
+  TH1D* histP1_before_rebinning = (TH1D*)input_file3->Get("adc1");
+  TH1D* histP1 = (TH1D*)histP1_before_rebinning->Rebin(1, "histP1");
+
+  int xminP1 = 10;
+  int xmaxP1 = 60;
+
+  TF1* gausP1 = new TF1("gausP1", "gaus(0)", xminP1, xmaxP1);
+
+  TCanvas *canP1 = new TCanvas("cP1", "GaussP1", 800, 600);
+  histP1->GetXaxis()->SetTitle("Canali");
+  histP1->GetYaxis()->SetTitle("Conteggi");
+  histP1->SetTitle("Piedistallo 1");
+  histP1->GetXaxis()->SetRangeUser(xminP1, xmaxP1);
+  histP1->Draw();
+  histP1->Fit(gausP1, "RQ"); 
+  gStyle->SetOptFit(1111);   
+
+  canP1->Update();
+  canP1->SaveAs("../plots/landgauss/Piedistallo1.pdf");
+  
+  //Piedistallo2----------------------------------
+
+  TH1D* histP2_before_rebinning = (TH1D*)input_file3->Get("adc2");
+  TH1D* histP2 = (TH1D*)histP2_before_rebinning->Rebin(1, "histP2");
+
+  int xminP2 = 0;
+  int xmaxP2 = 70;
+
+  TF1* gausP2 = new TF1("gausP2", "gaus(0)", xminP2, xmaxP2);
+
+  TCanvas *canP2 = new TCanvas("cP2", "GaussP2", 800, 600);
+  histP2->GetXaxis()->SetTitle("Canali");
+  histP2->GetYaxis()->SetTitle("Conteggi");
+  histP2->SetTitle("Piedistallo 2");
+  histP2->GetXaxis()->SetRangeUser(xminP2, xmaxP2);
+  histP2->Draw();
+  histP2->Fit(gausP2, "RQ"); 
+  gStyle->SetOptFit(1111);   
+
+  canP2->Update();
+  canP2->SaveAs("../plots/landgauss/Piedistallo2.pdf");
+
+  //Piedistallo3----------------------------------
+
+  TH1D* histP3_before_rebinning = (TH1D*)input_file2->Get("adc3");
+  TH1D* histP3 = (TH1D*)histP3_before_rebinning->Rebin(1, "histP3");
+
+  int xminP3 = 0;
+  int xmaxP3 = 60;
+
+  TF1* gausP3 = new TF1("gausP3", "gaus(0)", xminP3, xmaxP3);
+
+  TCanvas *canP3 = new TCanvas("cP3", "GaussP3", 800, 600);
+  histP3->GetXaxis()->SetTitle("Canali");
+  histP3->GetYaxis()->SetTitle("Conteggi");
+  histP3->SetTitle("Piedistallo 3");
+  histP3->GetXaxis()->SetRangeUser(xminP3, xmaxP3);
+  histP3->Draw();
+  histP3->Fit(gausP3, "RQ"); 
+  gStyle->SetOptFit(1111);   
+
+  canP3->Update();
+  canP3->SaveAs("../plots/landgauss/Piedistallo3.pdf");
+
+  //Piedistallo4----------------------------------
+
+  TH1D* histP4_before_rebinning = (TH1D*)input_file3->Get("adc4");
+  TH1D* histP4 = (TH1D*)histP4_before_rebinning->Rebin(1, "histP4");
+
+  int xminP4 = 0;
+  int xmaxP4 = 60;
+
+  TF1* gausP4 = new TF1("gausP4", "gaus(0)", xminP4, xmaxP4);
+
+  TCanvas *canP4 = new TCanvas("cP4", "GaussP4", 800, 600);
+  histP4->GetXaxis()->SetTitle("Canali");
+  histP4->GetYaxis()->SetTitle("Conteggi");
+  histP4->SetTitle("Piedistallo 4");
+  histP4->GetXaxis()->SetRangeUser(xminP4, xmaxP4);
+  histP4->Draw();
+  histP4->Fit(gausP4, "RQ"); 
+  gStyle->SetOptFit(1111);   
+
+  canP4->Update();
+  canP4->SaveAs("../plots/landgauss/Piedistallo4.pdf");
+
+  //Piedistallo5----------------------------------
+
+  TH1D* histP5_before_rebinning = (TH1D*)input_file3->Get("adc5");
+  TH1D* histP5 = (TH1D*)histP5_before_rebinning->Rebin(1, "histP5");
+
+  int xminP5 = 0;
+  int xmaxP5 = 200;
+
+  TF1* gausP5 = new TF1("gausP5", "gaus(0)", xminP5, xmaxP5);
+
+  TCanvas *canP5 = new TCanvas("cP5", "GaussP5", 800, 600);
+  histP5->GetXaxis()->SetTitle("Canali");
+  histP5->GetYaxis()->SetTitle("Conteggi");
+  histP5->SetTitle("Piedistallo 5");
+  histP5->GetXaxis()->SetRangeUser(xminP5, xmaxP5);
+  histP5->Draw();
+  histP5->Fit(gausP5, "RQ"); 
+  gStyle->SetOptFit(1111);   
+
+  canP5->Update();
+  canP5->SaveAs("../plots/landgauss/Piedistallo5.pdf");
+
+  //Piedistallo6----------------------------------
+
+  TH1D* histP6_before_rebinning = (TH1D*)input_file3->Get("adc6");
+  TH1D* histP6 = (TH1D*)histP6_before_rebinning->Rebin(1, "histP6");
+
+  int xminP6 = 10; 
+  int xmaxP6 = 40;
+
+  TF1* gausP6 = new TF1("gausP6", "gaus(0)", xminP6, xmaxP6);
+
+  TCanvas *canP6 = new TCanvas("cP6", "GaussP6", 800, 600);
+  histP6->GetXaxis()->SetTitle("Canali");
+  histP6->GetYaxis()->SetTitle("Conteggi");
+  histP6->SetTitle("Piedistallo 6");
+  histP6->GetXaxis()->SetRangeUser(xminP6, xmaxP6);
+  histP6->Draw();
+  histP6->Fit(gausP6, "RQ"); 
+  gStyle->SetOptFit(1111);   
+
+  canP6->Update(); 
+  canP6->SaveAs("../plots/landgauss/Piedistallo6.pdf");
 
   //-------------------------------------------------------------------------------------final_output
 
   
   double mu[6], sigma_mu[6], piedistallo[6], sigma_pied[6];
-
-  for(int i = 0; i < 6; i++){
-    piedistallo[i] = 0.0;
-    sigma_pied[i]  = 0.0;
-  }
 
   mu[0] = langauss1->GetParameter(1); sigma_mu[0] = langauss1->GetParError(1);
   mu[1] = langauss2->GetParameter(1); sigma_mu[1] = langauss2->GetParError(1);
@@ -387,17 +517,24 @@ void landau_gauss(){
   mu[3] = langauss4->GetParameter(1); sigma_mu[3] = langauss4->GetParError(1);
   mu[4] = langauss5->GetParameter(1); sigma_mu[4] = langauss5->GetParError(1);
   mu[5] = langauss6->GetParameter(1); sigma_mu[5] = langauss6->GetParError(1);
+  piedistallo[0] = gausP1->GetParameter(1); sigma_pied[0] = gausP1->GetParError(1);
+  piedistallo[1] = gausP2->GetParameter(1); sigma_pied[1] = gausP2->GetParError(1);
+  piedistallo[2] = gausP3->GetParameter(1); sigma_pied[2] = gausP3->GetParError(1);
+  piedistallo[3] = gausP4->GetParameter(1); sigma_pied[3] = gausP4->GetParError(1);
+  piedistallo[4] = gausP5->GetParameter(1); sigma_pied[4] = gausP5->GetParError(1);
+  piedistallo[5] = gausP6->GetParameter(1); sigma_pied[5] = gausP6->GetParError(1);
 
   // print table
-  printf("+----------------+---------------------+----------------------+----------------------+\n");
-  printf("| Scintillatore  |       mu +/- s      |  Piedistallo +/- s   |   mu - Piedistallo   |\n");
-  printf("+----------------+---------------------+----------------------+----------------------+\n");
+  printf("+----------------+---------------------+----------------------+------------------------------+\n");
+  printf("| Scintillatore  |       mu +/- s      |  Piedistallo +/- s   |   mu - Piedistallo +/- s     |\n");
+  printf("+----------------+---------------------+----------------------+------------------------------+\n");
 
   for(int i = 0; i < 6; i++){
       double diff = mu[i] - piedistallo[i];
-      printf("|       %d        | %8.2f +/- %6.2f  |  %8.2f +/- %6.2f  |       %8.2f         |\n",
-            i+1, mu[i], sigma_mu[i], piedistallo[i], sigma_pied[i], diff);
-      printf("+----------------+---------------------+----------------------+----------------------+\n");
+      double sigma_diff = sqrt(sigma_mu[i]*sigma_mu[i] + sigma_pied[i]*sigma_pied[i]);
+      printf("|       %d        | %8.2f +/- %6.2f |  %8.2f +/- %6.2f |    %8.2f +/- %6.2f       |\n",
+            i+1, mu[i], sigma_mu[i], piedistallo[i], sigma_pied[i], diff, sigma_diff);
+      printf("+----------------+---------------------+----------------------+------------------------------+\n");
   }
 
 
