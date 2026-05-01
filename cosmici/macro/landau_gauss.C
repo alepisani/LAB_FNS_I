@@ -42,6 +42,7 @@ void landau_gauss(){
      */
     
     //-----------ADC-1-------------------------------------------------------------------------------------------------//
+  
     
     //open file
     TFile *input_file1 = TFile::Open("../data/singole/ADC1_singola_HV2080_THR60_20000.root");
@@ -51,18 +52,20 @@ void landau_gauss(){
     TH1D* hist1 = (TH1D*)hist1_before_rebinning->Rebin(1, "hist1");
 
     //landau+gauss fit 
-    int xmin1 = 0;
-    int xmax1 = 500;
+    int xmin1 = 40;
+    int xmax1 = 300;
     TF1* langauss1 = new TF1("langauss1", "landau(0) + gaus(3)", xmin1, xmax1);
     langauss1->SetLineWidth(2);
     langauss1->SetLineColor(kRed);
     
-    langauss1->SetParameter(0, hist1->GetMaximum());
-    langauss1->SetParameter(1, hist1->GetMean());
-    langauss1->SetParameter(2, hist1->GetRMS()*0.3);
-    langauss1->SetParameter(3, hist1->GetMaximum());
-    langauss1->SetParameter(4, hist1->GetMean());
-    langauss1->SetParameter(5, hist1->GetRMS()*0.3);
+    langauss1->SetParameter(0, 200);
+    langauss1->SetParameter(1, 105);
+    langauss1->SetParameter(2, 30);
+    langauss1->SetParameter(3, 250);
+    langauss1->SetParameter(4, 68);
+    langauss1->SetParameter(5, 10);
+
+    
     
     
     TCanvas *can1_langauss = new TCanvas("c1_langauss", "Landau + Gauss", 800, 600);
@@ -94,7 +97,6 @@ void landau_gauss(){
     can1_langauss->Update();
     can1_langauss->SaveAs("../plots/ADC1_singola.pdf");    
 
-    
     //-----------ADC-2-------------------------------------------------------------------------------------------------//
     
     
@@ -103,19 +105,19 @@ void landau_gauss(){
     
     //take the right ADC histos
     TH1D* hist2_before_rebinning = (TH1D*)input_file2->Get("adc2");
-    TH1D* hist2 = (TH1D*)hist2_before_rebinning->Rebin(1, "hist2");
-
+    TH1D* hist2 = (TH1D*)hist2_before_rebinning->Rebin(2, "hist2");
+    
     //landau+gauss fit 
-    int xmin2 = 0;
+    int xmin2 = 70;
     int xmax2 = 500;
     TF1* langauss2 = new TF1("langauss", "landau(0) + gaus(3)", xmin2, xmax2);
     
-    langauss2->SetParameter(0, hist2->GetMaximum());
-    langauss2->SetParameter(1, hist2->GetMean());
-    langauss2->SetParameter(2, hist2->GetRMS()*0.3);
-    langauss2->SetParameter(3, hist2->GetMaximum());
-    langauss2->SetParameter(4, hist2->GetMean());
-    langauss2->SetParameter(5, hist2->GetRMS()*0.3);
+    langauss2->SetParameter(0, 220);
+    langauss2->SetParameter(1, 180);
+    langauss2->SetParameter(2, 30);
+    langauss2->SetParameter(3, 120);
+    langauss2->SetParameter(4, 100);
+    langauss2->SetParameter(5, 10);
     
     
     TCanvas *can2_langauss = new TCanvas("c2_langauss", "Landau + Gauss", 800, 600);
@@ -135,7 +137,7 @@ void landau_gauss(){
     landau2->SetParameter(2, langauss2->GetParameter(2));
     landau2->SetLineColor(kBlue);
     landau2->Draw("same");
-
+    
     //gaussian
     TF1* gaus2 = new TF1("gaus2", "gaus(0)", xmin2, xmax2);
     gaus2->SetParameter(0, langauss2->GetParameter(3));
@@ -143,30 +145,31 @@ void landau_gauss(){
     gaus2->SetParameter(2, langauss2->GetParameter(5));
     gaus2->SetLineColor(kGreen);
     gaus2->Draw("same");
-
+    
     can2_langauss->Update();
     can2_langauss->SaveAs("../plots/ADC2_singola.pdf");    
     
     //-----------ADC-3-------------------------------------------------------------------------------------------------//
+    
     
     //open file
     TFile *input_file3 = TFile::Open("../data/singole/ADC3_singola_HV1980_THR40_100000.root");  
     
     //take the right ADC histos
     TH1D* hist3_before_rebinning = (TH1D*)input_file3->Get("adc3");
-    TH1D* hist3 = (TH1D*)hist3_before_rebinning->Rebin(1, "hist3");
-
+    TH1D* hist3 = (TH1D*)hist3_before_rebinning->Rebin(2, "hist3");
+    
     //landau+gauss fit 
-    int xmin3 = 0;
-    int xmax3 = 500;
+    int xmin3 = 25;
+    int xmax3 = 300;
     TF1* langauss3 = new TF1("langauss", "landau(0) + gaus(3)", xmin3, xmax3);
     
-    langauss3->SetParameter(0, hist3->GetMaximum());
-    langauss3->SetParameter(1, hist3->GetMean());
-    langauss3->SetParameter(2, hist3->GetRMS()*0.3);
-    langauss3->SetParameter(3, hist3->GetMaximum());
-    langauss3->SetParameter(4, hist3->GetMean());
-    langauss3->SetParameter(5, hist3->GetRMS()*0.3);
+    langauss3->SetParameter(0, 1400);
+    langauss3->SetParameter(1, 115);
+    langauss3->SetParameter(2, 20);
+    langauss3->SetParameter(3, 1800);
+    langauss3->SetParameter(4, 75);
+    langauss3->SetParameter(5, 10);
     
     
     TCanvas *can3_langauss = new TCanvas("c3_langauss", "Landau + Gauss", 800, 600);
@@ -186,7 +189,7 @@ void landau_gauss(){
     landau3->SetParameter(2, langauss3->GetParameter(2));
     landau3->SetLineColor(kBlue);
     landau3->Draw("same");
-
+    
     //gaussian
     TF1* gaus3 = new TF1("gaus3", "gaus(0)", xmin3, xmax3);
     gaus3->SetParameter(0, langauss3->GetParameter(3));
@@ -194,7 +197,7 @@ void landau_gauss(){
     gaus3->SetParameter(2, langauss3->GetParameter(5));
     gaus3->SetLineColor(kGreen);
     gaus3->Draw("same");
-
+    
     can3_langauss->Update();
     can3_langauss->SaveAs("../plots/ADC3_singola.pdf");    
     
@@ -205,19 +208,19 @@ void landau_gauss(){
     
     //take the right ADC histos
     TH1D* hist4_before_rebinning = (TH1D*)input_file4->Get("adc4");
-    TH1D* hist4 = (TH1D*)hist4_before_rebinning->Rebin(1, "hist4");
-
+    TH1D* hist4 = (TH1D*)hist4_before_rebinning->Rebin(2, "hist4");
+    
     //landau+gauss fit 
-    int xmin4 = 0;
-    int xmax4 = 500;
+    int xmin4 = 25;
+    int xmax4 = 300;
     TF1* langauss4 = new TF1("langauss", "landau(0) + gaus(3)", xmin4, xmax4);
     
     langauss4->SetParameter(0, hist4->GetMaximum());
-    langauss4->SetParameter(1, hist4->GetMean());
-    langauss4->SetParameter(2, hist4->GetRMS()*0.3);
-    langauss4->SetParameter(3, hist4->GetMaximum());
-    langauss4->SetParameter(4, hist4->GetMean());
-    langauss4->SetParameter(5, hist4->GetRMS()*0.3);
+    langauss4->SetParameter(1, 80);
+    langauss4->SetParameter(2, 30);
+    langauss4->SetParameter(3, 100);
+    langauss4->SetParameter(4, 55);
+    langauss4->SetParameter(5, 5);
     
     
     TCanvas *can4_langauss = new TCanvas("c4_langauss", "Landau + Gauss", 800, 600);
@@ -237,7 +240,7 @@ void landau_gauss(){
     landau4->SetParameter(2, langauss4->GetParameter(2));
     landau4->SetLineColor(kBlue);
     landau4->Draw("same");
-
+    
     //gaussian
     TF1* gaus4 = new TF1("gaus4", "gaus(0)", xmin4, xmax4);
     gaus4->SetParameter(0, langauss4->GetParameter(3));
@@ -245,7 +248,7 @@ void landau_gauss(){
     gaus4->SetParameter(2, langauss4->GetParameter(5));
     gaus4->SetLineColor(kGreen);
     gaus4->Draw("same");
-
+    
     can4_langauss->Update();
     can4_langauss->SaveAs("../plots/ADC4_singola.pdf");    
     
@@ -257,7 +260,7 @@ void landau_gauss(){
     //take the right ADC histos
     TH1D* hist5_before_rebinning = (TH1D*)input_file5->Get("adc5");
     TH1D* hist5 = (TH1D*)hist5_before_rebinning->Rebin(1, "hist5");
-
+    
     //landau+gauss fit 
     int xmin5 = 0;
     int xmax5 = 500;
@@ -288,7 +291,7 @@ void landau_gauss(){
     landau5->SetParameter(2, langauss5->GetParameter(2));
     landau5->SetLineColor(kBlue);
     landau5->Draw("same");
-
+    
     //gaussian
     TF1* gaus5 = new TF1("gaus5", "gaus(0)", xmin5, xmax5);
     gaus5->SetParameter(0, langauss5->GetParameter(3));
@@ -296,60 +299,73 @@ void landau_gauss(){
     gaus5->SetParameter(2, langauss5->GetParameter(5));
     gaus5->SetLineColor(kGreen);
     gaus5->Draw("same");
-
+    
     can5_langauss->Update();
     can5_langauss->SaveAs("../plots/ADC5_singola.pdf");
     
-    
-    //-----------ADC-6-------------------------------------------------------------------------------------------------//
-    
-    //open file
-    TFile *input_file6 = TFile::Open("../data/singole/ADC6_singola_HV1810_THR40_10000.root");
-    
-    //take the right ADC histos
-    TH1D* hist6_before_rebinning = (TH1D*)input_file6->Get("adc6");
-    TH1D* hist6 = (TH1D*)hist6_before_rebinning->Rebin(1, "hist6");
+   
+   //-----------ADC-6-------------------------------------------------------------------------------------------------//
+   
+   //open file
+   TFile *input_file6 = TFile::Open("../data/singole/ADC6_singola_HV1810_THR40_10000.root");
+   
+   //take the right ADC histos
+   TH1D* hist6_before_rebinning = (TH1D*)input_file6->Get("adc6");
+   TH1D* hist6 = (TH1D*)hist6_before_rebinning->Rebin(4, "hist6");
+   
+   //landau+gauss fit 
+   int xmin6 = 70;
+   int xmax6 = 700;
+   TF1* langauss6 = new TF1("langauss", "landau(0) + gaus(3) + gaus(6)", xmin6, xmax6);
+   
+   langauss6->SetParameter(0, 200);
+   langauss6->SetParameter(1, 250);
+   langauss6->SetParameter(2, 40);
+   langauss6->SetParameter(3, 100);
+   langauss6->SetParameter(4, 120);
+   langauss6->SetParameter(5, 20);
+   langauss6->SetParameter(6, 100);
+   langauss6->SetParameter(7, 90);
+   langauss6->SetParameter(8, 10);
+   
+   
+   TCanvas *can6_langauss = new TCanvas("c6_langauss", "Landau + Gauss", 800, 600);
+   hist6->GetXaxis()->SetTitle("Canali");
+   hist6->GetYaxis()->SetTitle("Conteggi");
+   hist6->SetTitle("ADC6_singola_HV1810_THR40_EV10000");
+   hist6->GetXaxis()->SetRangeUser(xmin6, xmax6);
+   hist6->Draw();
+   hist6->Fit(langauss6, "R"); 
+   gStyle->SetOptFit(1111);    
+   
+   //with the parameter obtained from the fit we can draw the landau and gaussian separately
+   //landau
+   TF1* landau6 = new TF1("landau6", "landau(0)", xmin6, xmax6);
+   landau6->SetParameter(0, langauss6->GetParameter(0));
+   landau6->SetParameter(1, langauss6->GetParameter(1));
+   landau6->SetParameter(2, langauss6->GetParameter(2));
+   landau6->SetLineColor(kBlue);
+   landau6->Draw("same");
+   
+   //gaussian
+   TF1* gaus61 = new TF1("gaus61", "gaus(0)", xmin6, xmax6);
+   gaus61->SetParameter(0, langauss6->GetParameter(3));
+   gaus61->SetParameter(1, langauss6->GetParameter(4));
+   gaus61->SetParameter(2, langauss6->GetParameter(5));
+   gaus61->SetLineColor(kGreen);
+   gaus61->Draw("same");
 
-    //landau+gauss fit 
-    int xmin6 = 0;
-    int xmax6 = 500;
-    TF1* langauss6 = new TF1("langauss", "landau(0) + gaus(3)", xmin6, xmax6);
-    
-    langauss6->SetParameter(0, hist6->GetMaximum());
-    langauss6->SetParameter(1, hist6->GetMean());
-    langauss6->SetParameter(2, hist6->GetRMS()*0.3);
-    langauss6->SetParameter(3, hist6->GetMaximum());
-    langauss6->SetParameter(4, hist6->GetMean());
-    langauss6->SetParameter(5, hist6->GetRMS()*0.3);
-    
-    
-    TCanvas *can6_langauss = new TCanvas("c6_langauss", "Landau + Gauss", 800, 600);
-    hist6->GetXaxis()->SetTitle("Canali");
-    hist6->GetYaxis()->SetTitle("Conteggi");
-    hist6->SetTitle("ADC6_singola_HV1810_THR40_EV10000");
-    hist6->GetXaxis()->SetRangeUser(xmin6, xmax6);
-    hist6->Draw();
-    hist6->Fit(langauss6, "R"); 
-    gStyle->SetOptFit(1111);    
-    
-    //with the parameter obtained from the fit we can draw the landau and gaussian separately
-    //landau
-    TF1* landau6 = new TF1("landau6", "landau(0)", xmin6, xmax6);
-    landau6->SetParameter(0, langauss6->GetParameter(0));
-    landau6->SetParameter(1, langauss6->GetParameter(1));
-    landau6->SetParameter(2, langauss6->GetParameter(2));
-    landau6->SetLineColor(kBlue);
-    landau6->Draw("same");
+   TF1* gaus62 = new TF1("gaus62", "gaus(0)", xmin6, xmax6);
+   gaus62->SetParameter(0, langauss6->GetParameter(6));
+   gaus62->SetParameter(1, langauss6->GetParameter(7));
+   gaus62->SetParameter(2, langauss6->GetParameter(8));
+   gaus62->SetLineColor(kGreen);
+   gaus62->Draw("same");
+   
+   can6_langauss->Update();
+   can6_langauss->SaveAs("../plots/ADC6_singola.pdf");
+   
+   /*
+     */
 
-    //gaussian
-    TF1* gaus6 = new TF1("gaus6", "gaus(0)", xmin6, xmax6);
-    gaus6->SetParameter(0, langauss6->GetParameter(3));
-    gaus6->SetParameter(1, langauss6->GetParameter(4));
-    gaus6->SetParameter(2, langauss6->GetParameter(5));
-    gaus6->SetLineColor(kGreen);
-    gaus6->Draw("same");
-
-    can6_langauss->Update();
-    can6_langauss->SaveAs("../plots/ADC6_singola.pdf");
-    
 }
