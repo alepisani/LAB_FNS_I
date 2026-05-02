@@ -51,7 +51,7 @@ void AnalisiQuintupla(){
     //solo_gauss->SetParameter(2, 15);
     solo_gauss->SetLineColor(kBlue);
     
-    TCanvas* c1 = new TCanvas("c1", "offset_19", 800, 600);
+    /*TCanvas* c1 = new TCanvas("c1", "offset_19", 800, 600);
     //deltaT19->Draw();
     deltaT19->Fit(solo_gauss, "R");
     gStyle->SetOptFit(1111);
@@ -74,7 +74,7 @@ void AnalisiQuintupla(){
     TCanvas* c5 = new TCanvas("c5", "offset_59", 800, 600);
     //deltaT59->Draw();
     deltaT59->Fit(solo_gauss, "R");
-    gStyle->SetOptFit(1111);
+    gStyle->SetOptFit(1111);*/
 
 
     //--------------------- direzioni d'arrivo --------------------------------
@@ -83,18 +83,28 @@ void AnalisiQuintupla(){
     vector<int> t24; 
     vector<int> t35;
 
+    ///------------vediamo i dati delle quintuple------------------------
+  
+
     for (int i=0; i<1000; i++){
-        t24.push_back(data[2][i]-data[4][i]-T21+T41);
-        t35.push_back(data[3][i]-data[5][i]-T31+T51);
+        t24.push_back((data[2][i]-data[4][i]-T21+T41)*0.24-92);
+        t35.push_back((data[3][i]-data[5][i]-T31+T51)*0.24-92);
+        
+
     }
+
+
+    cout<<"VALORI DI T24 E T35"<<t24[10]<<"\n"<<t24[20]<<"\n"<<t35[10]<<endl;
 
     vector<double> A;
     vector<double> B;
 
     for(int i=0; i<1000; i++){
-        A.push_back((3*pow(10,8)/20)*(t24[i]+t35[i]));
-        B.push_back((3*pow(10,8)/20)*(t24[i]-t35[i]));
+        A.push_back((3./20)*((t24[i]+t35[i])/5));  //offset della taratura del TDC non ci va perchè sono differenze
+        B.push_back((3./20)*((t24[i]-t35[i])/5));
     }
+
+    cout<<"AAAAAAAAAAAAAAAAA"<<A[10]*A[10]+B[10]*B[10]<<endl;
     
     vector<double> theta; 
     vector<double> phi;
@@ -103,11 +113,17 @@ void AnalisiQuintupla(){
     TH1D* hphi = new TH1D("phi", "distribuzione azimutale", 100, 0., 6.5);
 
     for(int i=0; i<1000; i++){
-        theta.push_back(asin(sqrt(A[i]*A[i]+B[i]*B[i])));
+        theta.push_back((asin(sqrt(A[i]*A[i]+B[i]*B[i])))*180/M_PI);
         phi.push_back(atan(B[i]/A[i]));
-        htheta->Fill(asin(sqrt(A[i]*A[i]+B[i]*B[i])));
-        hphi->Fill(atan(B[i]/A[i]));
+        if(A[i]*A[i]+B[i]*B[i]<1){   //controllo per evitare il rumore, se c'è qualcosa
+            htheta->Fill(asin(sqrt(A[i]*A[i]+B[i]*B[i]))*180/M_PI);
+            hphi->Fill(atan(B[i]/A[i]));
+        }
+
     }
+
+    cout<<"EEEEEEEEEEEE"<<theta[10]<<endl;
+    
 
     TCanvas* ctheta = new TCanvas ("ctheta", "theta", 600, 800);
     htheta->Draw();

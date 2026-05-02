@@ -2,9 +2,26 @@
 #include "TH1.h"
 #include "TF1.h"
 #include "TCanvas.h"
+#include "letturaFile.cpp"
 
-void efficienza(){
+void efficienza7(){
         
+//-----------Spettro TDC-----------------------------------------------------
+vector<vector<int>> data = datReader("../data/doppie_68/TDC_doppia68_5000.dat", 0);
+TH1D* TDC7 = new TH1D("TDC7", "Spettro TDC rivelatore 7", 200, 0., 4000);
+
+for (int i=0; i<5000; i++) {
+        TDC7->Fill(data[7][i]);
+
+    }
+
+TCanvas* c1 = new TCanvas("c1", "Spettro TDC rivelatore 7", 800, 600);
+    TDC7->Draw();
+    gStyle->SetOptFit(1111);
+    TDC7->GetXaxis()->SetTitle("Canali TDC");
+    TDC7->GetYaxis()->SetTitle("Conteggi");
+    TDC7->SaveAs("../plots/TDC7.pdf");
+
 // numero misure prese
     const int nmisure_a = 6;
 
@@ -13,8 +30,8 @@ void efficienza(){
     float soglia[] = {16, 21, 26, 31, 36, 40};
     float efficienza[] = {0.969, 0.975, 0.964, 0.96, 0.93, 0.913};
     // errori
-    float s_soglia[] = {};
-    float s_efficienza[] = {};
+    float s_soglia[] = {1,1,1,1,1,1};
+    float s_efficienza[] = {0.006197, 0.005891,0.008068,0.008912,0.004937,0.005481};
     // ----------------------------------------------------------------- //
 
     //grafico diel guadagno in funzione di f
@@ -23,17 +40,17 @@ void efficienza(){
     // Mi assicuro che la tela sia bianca (0 corrisponde al bianco, per altri colori vedi https://root.cern.ch/doc/master/classTColor.html)
     eff->SetFillColor(0);
     eff->cd();
-    TGraphErrors *eff_vs_thr = new TGraphErrors(nmisure_a,soglia,efficienza,0,0);
+    TGraphErrors *eff_vs_thr = new TGraphErrors(nmisure_a,soglia,efficienza,s_soglia,s_efficienza);
 
   eff_vs_thr->SetMarkerSize(1.5);
-  eff_vs_thr->SetMarkerStyle(29);
+  eff_vs_thr->SetMarkerStyle(20);
   eff_vs_thr->SetMarkerColor(kBlue);
 
   // Titolo del grafico
-  eff_vs_thr->SetTitle("Efficienza del 7");
+  eff_vs_thr->SetTitle("Efficienza rivelatore 7");
   // Titoli degli assi
-  eff_vs_thr->GetXaxis()->SetTitle("soglia [mV]");
-  eff_vs_thr->GetYaxis()->SetTitle("efficienza");
+  eff_vs_thr->GetXaxis()->SetTitle("Soglia [mV]");
+  eff_vs_thr->GetYaxis()->SetTitle("Efficienza");
 
   eff_vs_thr->Draw("AP");
   eff_vs_thr->SaveAs("../plots/eff7_vs_thr.pdf");
