@@ -32,6 +32,11 @@
 
 void landau_gauss(){
 
+    // Sopprime la visualizzazione a schermo
+  gROOT->SetBatch(kTRUE);
+
+  // File ROOT di output con tutti i fit
+  TFile *output_file = new TFile("../plots/landgauss/all_fits.root", "RECREATE");
         
   /**
    * che valori prende la landau+gauss?
@@ -97,7 +102,8 @@ void landau_gauss(){
   gaus1->Draw("same");
 
   can1_langauss->Update();
-  can1_langauss->SaveAs("../plots/landgauss/ADC1_singola.pdf");    
+  can1_langauss->SaveAs("../plots/landgauss/ADC1_singola.pdf");   
+    
 
   //-----------ADC-2-------------------------------------------------------------------------------------------------//
   
@@ -508,7 +514,22 @@ void landau_gauss(){
 
   //-------------------------------------------------------------------------------------final_output
 
-  
+  output_file->cd();
+  hist1->Write("ADC1_singola");
+  hist2->Write("ADC2_singola");
+  hist3->Write("ADC3_singola");
+  hist4->Write("ADC4_singola");
+  hist5->Write("ADC5_singola");
+  hist6->Write("ADC6_singola");
+  histP1->Write("Piedistallo1");
+  histP2->Write("Piedistallo2");
+  histP3->Write("Piedistallo3");
+  histP4->Write("Piedistallo4");
+  histP5->Write("Piedistallo5");
+  histP6->Write("Piedistallo6");
+  output_file->Close();  
+
+
   double mu[6], sigma_mu[6], piedistallo[6], sigma_pied[6];
 
   mu[0] = langauss1->GetParameter(1); sigma_mu[0] = langauss1->GetParError(1);
