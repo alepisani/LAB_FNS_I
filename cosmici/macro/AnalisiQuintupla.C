@@ -149,8 +149,8 @@ void AnalisiQuintupla(){
     vector<double> B;
 
     for(int i=0; i<1000; i++){
-        A.push_back((3./20)*((t24[i]+t35[i])/10));  // diviso 10 perchè c in s e tempo in ns
-        B.push_back((3./20)*((t24[i]-t35[i])/10));
+        A.push_back((3./21.6)*((t24[i]+t35[i])/10));  // diviso 10 perchè c in s e tempo in ns
+        B.push_back((3./20.4)*((t24[i]-t35[i])/10));
         if(i%20){
             cout<<"valori di A e B"<<A[i]<<" - "<<B[i]<<endl;
         }
