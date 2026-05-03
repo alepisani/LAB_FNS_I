@@ -26,8 +26,8 @@ vector<vector<int>> data;
 
 //inizializziamo le variabili di conteggio del loop
 //sono double perché dovremo calcolare il rapporto
-double triple=0.;
-double doppie=0.;
+double triple;
+double doppie;
 double doppie_403 = 0.;
 double triple_403 = 0.;
 
@@ -40,7 +40,9 @@ double cl = 0.6827; //1 sigma
 //loop sui valori di soglia
 for(int i=0; i<npoints; i++){
     data = datReader(std::string(TString::Format("../data/doppie_67/TDC_doppia67_thr%.0f_1000.dat", soglie[i]*10).Data()), 0);
-    for(int ev=0; ev<data.size(); ev++){
+    doppie=0;
+    triple=0;
+    for(int ev=0; ev<data[0].size(); ev++){
         doppie++;
         if(data[8][ev] < 3000) triple++;
     }
@@ -49,18 +51,30 @@ for(int i=0; i<npoints; i++){
         doppie_403 = doppie;
         triple_403 = triple;
     }
-
+    
     //riempiamo TGraphAsymmErrors con errori binomiali (Clopper-Pearson)
     double eff = triple/doppie;
     double el = eff - TEfficiency::ClopperPearson(doppie, triple, cl, false); //errore inferiore
     double eh = TEfficiency::ClopperPearson(doppie, triple, cl, true) - eff; //errore inferiore
 
+    //output di controllo
+    printf("soglia: %.1f mV, triple: %.f, doppie: %.f, percentuale: %.1f\n", soglie[i], triple, doppie, eff*100);
+
     gEff8->SetPoint(i, soglie[i], eff);
     gEff8->SetPointError(i, -0.1, 0.1, el, eh);
+
+    data.clear();
 
 }
 
 gEff8->Draw();
+
+//_____LETTURA DATI MONTECARLO__________
+vector<vector<double>> dataMC = doubleReader("original_macros/montecarlosim.txt");
+
+
+
+TGraphAsymmErrors* gMC = new TGraphAsymmErrors(nMC);
 
 
 
