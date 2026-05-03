@@ -36,7 +36,8 @@ void efficienza(){
   eff_vs_thr->GetYaxis()->SetTitle("efficienza");
 
   eff_vs_thr->Draw("AP");
-  eff_vs_thr->SaveAs("../plots/eff7_vs_thr.pdf");
+  eff->Update();
+  eff->SaveAs("../plots/eff7_vs_thr.pdf");
 
   //efficienza 8
   /*
@@ -58,8 +59,9 @@ void efficienza(){
   eff8_vs_thr->GetYaxis()->SetTitle("frazione eventi visti");
   eff8_vs_thr->SetMarkerSize(3.);
   eff8_vs_thr->Draw();
-  eff8_vs_thr->SaveAs("../plots/eff8_vs_thr.png");
-*/
+  eff8->Update();
+  eff8->SaveAs("../plots/eff8_vs_thr.pdf");
+
 
 
 
