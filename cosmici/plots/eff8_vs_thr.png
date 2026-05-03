@@ -1,0 +1,80 @@
+{
+//========= Macro generated from object: Graph/Graph
+//========= by ROOT version6.26/06
+   
+   Double_t Graph_fx1002[11] = {
+   30,
+   40.3,
+   43.7,
+   46.7,
+   50.7,
+   55.1,
+   58.5,
+   63.3,
+   68.3,
+   72.5,
+   75};
+   Double_t Graph_fy1002[11] = {
+   0.295,
+   0.317,
+   0.276,
+   0.318,
+   0.277,
+   0.274,
+   0.294,
+   0.258,
+   0.24,
+   0.252,
+   0.238};
+   Double_t Graph_fex1002[11] = {
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0};
+   Double_t Graph_fey1002[11] = {
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0};
+   gre = new TGraphErrors(11,Graph_fx1002,Graph_fy1002,Graph_fex1002,Graph_fey1002);
+   gre->SetName("Graph");
+   gre->SetTitle("Graph");
+   gre->SetFillStyle(1000);
+   gre->SetMarkerSize(3);
+   
+   TH1F *Graph_Graph1002 = new TH1F("Graph_Graph1002","Graph",100,25.5,79.5);
+   Graph_Graph1002->SetMinimum(0.23);
+   Graph_Graph1002->SetMaximum(0.326);
+   Graph_Graph1002->SetDirectory(0);
+   Graph_Graph1002->SetStats(0);
+
+   ci = TColor::GetColor("#000099");
+   Graph_Graph1002->SetLineColor(ci);
+   Graph_Graph1002->GetXaxis()->SetTitle("threshold [mV]");
+   Graph_Graph1002->GetXaxis()->SetLabelFont(42);
+   Graph_Graph1002->GetXaxis()->SetTitleOffset(1);
+   Graph_Graph1002->GetXaxis()->SetTitleFont(42);
+   Graph_Graph1002->GetYaxis()->SetTitle("frazione eventi visti");
+   Graph_Graph1002->GetYaxis()->SetLabelFont(42);
+   Graph_Graph1002->GetYaxis()->SetTitleFont(42);
+   Graph_Graph1002->GetZaxis()->SetLabelFont(42);
+   Graph_Graph1002->GetZaxis()->SetTitleOffset(1);
+   Graph_Graph1002->GetZaxis()->SetTitleFont(42);
+   gre->SetHistogram(Graph_Graph1002);
+   
+   gre->Draw("");
+}
