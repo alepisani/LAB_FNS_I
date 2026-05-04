@@ -22,7 +22,7 @@ void AnalisiQuintupla(){
     vector<vector<int>> dati5 = datReader("../data/doppie/TDC_doppia59_1000.dat", 0);
   
     
-    for (int i=0; i<5000; i++) {
+    for (int i=0; i<1000; i++) {
         deltaT19->Fill(dati1[1][i]-dati1[9][i]);
         deltaT29->Fill(dati2[2][i]-dati2[9][i]);
         deltaT39->Fill(dati3[3][i]-dati3[9][i]);
@@ -152,18 +152,17 @@ void AnalisiQuintupla(){
         A.push_back((3./21.6)*((t24[i]+t35[i])/10));  // diviso 10 perchè c in s e tempo in ns
         B.push_back((3./20.4)*((t24[i]-t35[i])/10));
         if(i%20){
-            cout<<"valori di A e B"<<A[i]<<" - "<<B[i]<<endl;
+            //cout<<"valori di A e B"<<A[i]<<" - "<<B[i]<<endl;
         }
     }
 
-    cout<<"AAAAAAAAAAAAAAAAA"<<A[10]*A[10]+B[10]*B[10]<<endl;
     
     
     vector<double> theta; 
     vector<double> phi;
     TH1D* htheta = new TH1D("theta", "distribuzione zenitale",80, -10, 91);
     //htheta->GetYaxis()->SetRangeUser(0, 250);
-    TH1D* hphi = new TH1D("phi", "distribuzione azimutale", 80, -3.2, 6.5);
+    TH1D* hphi = new TH1D("phi", "distribuzione azimutale", 50, 0, 6.4);
     //hphi->GetYaxis()->SetRangeUser(0,70);
 
     for(int i=0; i<5000; i++){
@@ -179,7 +178,6 @@ void AnalisiQuintupla(){
 
     }
 
-    cout<<"EEEEEEEEEEEE"<<theta[10]<<endl;
     
 
     /*TCanvas* ctheta = new TCanvas ("ctheta", "theta", 600, 800);
@@ -210,12 +208,15 @@ void AnalisiQuintupla(){
     hphi->Draw();
     hphi->Fit("pol1");
     TF1 *fit = hphi->GetFunction("pol1");
+    fit->SetParameter(0,100);
+    fit->SetParameter(1,0);
     double q = fit->GetParameter(0);
     double m = fit->GetParameter(1);
     hphi->GetXaxis()->SetTitle("Angolo azimutale [rad] ");
     hphi->GetYaxis()->SetTitle("Conteggi");
     fit->SetParName(0, "q");
     fit->SetParName(1, "m");
+    cout<<"p-value "<<fit->GetProb()<<endl;
     gStyle->SetOptFit(1111);
 
     //------------------------ spessore dello sciame ---------------------------------------
