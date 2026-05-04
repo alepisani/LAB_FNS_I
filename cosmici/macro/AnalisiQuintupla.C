@@ -22,7 +22,7 @@ void AnalisiQuintupla(){
     vector<vector<int>> dati5 = datReader("../data/doppie/TDC_doppia59_1000.dat", 0);
   
     
-    for (int i=0; i<1000; i++) {
+    for (int i=0; i<5000; i++) {
         deltaT19->Fill(dati1[1][i]-dati1[9][i]);
         deltaT29->Fill(dati2[2][i]-dati2[9][i]);
         deltaT39->Fill(dati3[3][i]-dati3[9][i]);
@@ -89,9 +89,9 @@ void AnalisiQuintupla(){
 
     //--------------------- direzioni d'arrivo --------------------------------
 
-    vector<vector<int>> data = datReader("../data/quintupla/TDC_quintupla_1000.dat", 0);
-    vector<int> t24; 
-    vector<int> t35;
+    vector<vector<double>> data = doubleReader("../data/quintupla_lunga/TDC_quintupla_5000.dat", 0);
+    vector<double> t24; 
+    vector<double> t35;
 
     ///------------vediamo i dati delle quintuple-----------------------
     TH1D* TDC1 = new TH1D("TDC1", "Spettro di TDC di coincidenze quintuple (CH1)", 200, 0., 500);
@@ -100,7 +100,7 @@ void AnalisiQuintupla(){
     TH1D* TDC4 = new TH1D("TDC4", "Spettro di TDC di coincidenze quintuple (CH4)", 200, 0., 500);
     TH1D* TDC5 = new TH1D("TDC5", "Spettro di TDC di coincidenze quintuple (CH5)", 200, 0., 500);
 
-    for (int i=0; i<1000; i++){
+    for (int i=0; i<data[0].size(); i++){
         t24.push_back((data[2][i]-data[4][i]-T21+T41)/4.14); //da ch a ns
         t35.push_back((data[3][i]-data[5][i]-T31+T51)/4.14);
         TDC1->Fill(data[1][i]);
@@ -148,7 +148,7 @@ void AnalisiQuintupla(){
     vector<double> A;
     vector<double> B;
 
-    for(int i=0; i<1000; i++){
+    for(int i=0; i<5000; i++){
         A.push_back((3./21.6)*((t24[i]+t35[i])/10));  // diviso 10 perchè c in s e tempo in ns
         B.push_back((3./20.4)*((t24[i]-t35[i])/10));
         if(i%20){
@@ -166,7 +166,7 @@ void AnalisiQuintupla(){
     TH1D* hphi = new TH1D("phi", "distribuzione azimutale", 80, -3.2, 6.5);
     //hphi->GetYaxis()->SetRangeUser(0,70);
 
-    for(int i=0; i<1000; i++){
+    for(int i=0; i<5000; i++){
         theta.push_back((asin(sqrt(A[i]*A[i]+B[i]*B[i])))*180/M_PI);
         //phi.push_back(atan(B[i]/A[i]));
         if(A[i]*A[i]+B[i]*B[i]<1){   //controllo per evitare il rumore, se c'è qualcosa
@@ -189,7 +189,7 @@ void AnalisiQuintupla(){
     hphi->Draw();*/
 
     // --------------------- fit per lambda ---------------------
-    double x_0 = 1200.; //cambiare con quella che viene con la pressione quel giorno
+    double x_0 = 1012.990; //cambiare con quella che viene con la pressione quel giorno
 
     TF1 *f_theta = new TF1( "f_theta", Form("[0]*sin(x*TMath::Pi()/180.)*cos(x*TMath::Pi()/180.)*exp(-%f/([1]*cos(x*TMath::Pi()/180.)))", x_0), 0, 90);
     f_theta->SetParameter(0, 100);  // N iniziale, costante di normalizzazione
@@ -221,7 +221,7 @@ void AnalisiQuintupla(){
     //------------------------ spessore dello sciame ---------------------------------------
     TH1D* Tsciame = new TH1D("Tsciame", "T=t2-t3+t4-t5", 100, -100, 100);
 
-    for (int i=0; i<1000; i++){
+    for (int i=0; i<5000; i++){
         double T_i = data[2][i]-data[3][i]+data[4][i]-data[5][i]-T21+T31-T41+T51;
         Tsciame->Fill(T_i);
     }
