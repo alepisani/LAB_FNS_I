@@ -89,9 +89,9 @@ void AnalisiQuintupla(){
 
     //--------------------- direzioni d'arrivo --------------------------------
 
-    vector<vector<int>> data = datReader("../data/quintupla_lunga/TDC_quintupla_5000.dat", 0);
-    vector<int> t24; 
-    vector<int> t35;
+    vector<vector<double>> data = doubleReader("../data/quintupla_lunga/TDC_quintupla_5000.dat", 0);
+    vector<double> t24; 
+    vector<double> t35;
 
     ///------------vediamo i dati delle quintuple-----------------------
     TH1D* TDC1 = new TH1D("TDC1", "Spettro di TDC di coincidenze quintuple (CH1)", 200, 0., 500);
@@ -100,7 +100,7 @@ void AnalisiQuintupla(){
     TH1D* TDC4 = new TH1D("TDC4", "Spettro di TDC di coincidenze quintuple (CH4)", 200, 0., 500);
     TH1D* TDC5 = new TH1D("TDC5", "Spettro di TDC di coincidenze quintuple (CH5)", 200, 0., 500);
 
-    for (int i=0; i<5000; i++){
+    for (int i=0; i<data[0].size(); i++){
         t24.push_back((data[2][i]-data[4][i]-T21+T41)/4.14); //da ch a ns
         t35.push_back((data[3][i]-data[5][i]-T31+T51)/4.14);
         TDC1->Fill(data[1][i]);
@@ -189,7 +189,7 @@ void AnalisiQuintupla(){
     hphi->Draw();*/
 
     // --------------------- fit per lambda ---------------------
-    double x_0 = 1012.996; //cambiare con quella che viene con la pressione quel giorno
+    double x_0 = 1012.990; //cambiare con quella che viene con la pressione quel giorno
 
     TF1 *f_theta = new TF1( "f_theta", Form("[0]*sin(x*TMath::Pi()/180.)*cos(x*TMath::Pi()/180.)*exp(-%f/([1]*cos(x*TMath::Pi()/180.)))", x_0), 0, 90);
     f_theta->SetParameter(0, 100);  // N iniziale, costante di normalizzazione
