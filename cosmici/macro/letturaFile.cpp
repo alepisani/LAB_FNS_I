@@ -62,6 +62,54 @@ vector<vector<int>> datReader(string filename, int header = 0) {
     output.erase(output.begin());
     return output;
   }
+
+  vector<vector<double>> doubleReader(string filename, int header = 0) {
+
+   vector<vector<double>> output;
+   ifstream input_file(filename);
+   
+   // Controlla apertura file
+   if (!input_file.is_open())
+   throw runtime_error("Impossibile aprire il file: " + filename);
+   
+   string line;
+   for (int i = 0; i < header; i++)
+   getline(input_file, line);
+   
+   bool firstLine = true;
+   int column_counter = 0;
+   
+   while (getline(input_file, line)) {
+     if (line.empty()) continue; // Salta righe vuote
+     
+     stringstream line_stream(line);
+     double value;
+     vector<double> row_values;
+     
+     // Leggi direttamente int (gestisce spazi multipli/tab automaticamente)
+     while (line_stream >> value) {
+       row_values.push_back(value);
+      }
+      
+      if (row_values.empty()) continue;
+      
+      if (firstLine) {
+        column_counter = row_values.size();
+        for (int i = 0; i < column_counter; i++)
+        output.push_back(vector<double>());
+        firstLine = false;
+      }
+      
+      if ((int)row_values.size() != column_counter)
+      throw invalid_argument("not_equal_columns");
+      
+      for (int i = 0; i < column_counter; i++)
+      output[i].push_back(row_values[i]);
+    }
+    
+    output.erase(output.begin());
+    return output;
+  }
   
   
 void letturaFile(){

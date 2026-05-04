@@ -1,8 +1,8 @@
 {
 //========= Macro generated from object: pu/pattern unit tetto
-//========= by ROOT version6.36.04
+//========= by ROOT version6.38.04
    
-   TH1I *pu__1 = new TH1I("pu__1", "pattern unit tetto", 8, 0.5, 8.5);
+   TH1I *pu__1 = new TH1I("pu", "pattern unit tetto", 8, 0.5, 8.5);
    pu__1->SetBinContent(1,738);
    pu__1->SetBinContent(2,197);
    pu__1->SetBinContent(3,188);
