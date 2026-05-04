@@ -31,13 +31,16 @@ void taraTDC(){
   // Titolo del grafico
   ritardi_vs_canali->SetTitle("Ritardi vs Canali 3");
   // Titoli degli assi
-  ritardi_vs_canali->GetXaxis()->SetTitle("Ritardi [ps]");
+  ritardi_vs_canali->GetXaxis()->SetTitle("Ritardi [ns]");
   ritardi_vs_canali->GetYaxis()->SetTitle("Canali");
 
   TF1 *fit_lineare = new TF1("fit_lineare", "pol1", -70, 70);
   ritardi_vs_canali->Fit(fit_lineare, "R");
   cout << "Chi^2:" << fit_lineare->GetChisquare() << ", number of DoF: " << fit_lineare->GetNDF() << " (Probability: " << fit_lineare->GetProb() << ")." << endl;
 
+  //salviamo i valori del coeff angolare per il 3
+  double pend3 = fit_lineare->GetParameter(1);
+  double epend3 = fit_lineare->GetParError(1);
 
   ritardi_vs_canali->Draw("AP");
   TDC->Update();
@@ -68,15 +71,26 @@ void taraTDC(){
   // Titolo del grafico
   ritardi_vs_canali2->SetTitle("Ritardi vs Canali 4");
   // Titoli degli assi
-  ritardi_vs_canali2->GetXaxis()->SetTitle("Ritardi [ps]");
+  ritardi_vs_canali2->GetXaxis()->SetTitle("Ritardi [ns]");
   ritardi_vs_canali2->GetYaxis()->SetTitle("Canali");
 
 
   ritardi_vs_canali2->Fit(fit_lineare, "R");
   cout << "Chi^2:" << fit_lineare->GetChisquare() << ", number of DoF: " << fit_lineare->GetNDF() << " (Probability: " << fit_lineare->GetProb() << ")." << endl;
 
+  //salviamo i valori del coeff angolare per il 4
+  double pend4 = fit_lineare->GetParameter(1);
+  double epend4 = fit_lineare->GetParError(1);
 
   ritardi_vs_canali2->Draw("AP");
   TDC4->Update();
   TDC4->SaveAs("../plots/taratura_TDC_4.pdf");
+
+  //calcoliamo la pendenza come media pesata tra quelle ottenute per 3 e 4
+  double pend_media = ( pend3/(epend3*epend3) + pend4/(epend4*epend4) ) / ( 1/(epend3*epend3) + 1/(epend4*epend4) );
+  double err_pend = sqrt( 1 / ( 1/(epend3*epend3) + 1/(epend4*epend4) ));
+
+  cout << "pendenza: " << setprecision(3) << pend_media << " +- " << setprecision(1) << err_pend << " ch/ns\n"; 
+
+
 }
