@@ -71,6 +71,7 @@ gEff8->Draw();
 
 //_____LETTURA DATI MONTECARLO__________
 vector<vector<double>> dataMC = doubleReader("original_macros/montecarlosim.txt");
+int nMC = dataMC[0].size();
 
 
 
