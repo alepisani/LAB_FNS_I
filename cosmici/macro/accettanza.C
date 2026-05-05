@@ -22,6 +22,8 @@ e valutare la potenza di cos(theta) della direziione di provenienza dei RC
 - valutare n considerando l'efficienza dell'8
 */
 
+double eff7 = 0.96; // da integrare con il valore misurato
+
 bool errori_CP = false;  //errore calcolato con Clopper-Pearson, se false calcolato manualmente con la binomiale
 
 vector<double> soglie = {30.0, 40.3, 43.7, 46.7, 50.7, 55.1, 58.5, 63.3, 68.2, 72.5, 75.0};
@@ -39,8 +41,12 @@ double triple_403 = 0.;
 //livello di confidenza per la statistica
 double cl = 0.6827; //1 sigma
 
+gStyle->SetOptFit(1111);
+gStyle->SetMarkerSize(1);
+gStyle->SetMarkerStyle(20);
+
 //_____LETTURA DATI MONTECARLO__________
-vector<vector<double>> dataMC = doubleReader("original_macros/montecarlosim.txt");
+vector<vector<double>> dataMC = doubleReader("original_macros/montecarlosim.txt", 0, false);
 int nMC = dataMC[1].size();
 
 // dichiarazione grafico per i punti (errori non ottenibili dal MC non avendo il numero assoluto di entries)
@@ -50,17 +56,21 @@ for(int i=0; i<nMC; i++){
     double n_i = dataMC[0][i];        
     if(dataMC[1][i]!=0){        
         double frac = dataMC[2][i]/dataMC[1][i]; //
+        //cout << dataMC[0][i] << " " << dataMC[1][i] << " " << dataMC[2][i] << endl;
         gMC->SetPoint(i, n_i, frac);
     }
     //double e_frac = sqrt(eps*(1-eps)/dataMC[1][i]);
 
 }
 
-//TF1* MC_fit = new TF1("MC_fit", "[0]+[1]*x+[2]*sqrt(x)", 0, 10);
-//gMC->Fit(MC_fit);
+TF1* MC_fit = new TF1("MC_fit", "[0]+[1]*x+[2]*sqrt(x)", 0, 10);
+gMC->Fit(MC_fit);
 
-TCanvas* cMC = new TCanvas("cMC", "MC", 600, 800);
-//gMC->Draw();
+TCanvas* cMC = new TCanvas("cMC", "MC", 1200, 800);
+gMC->SetTitle("Frazione di eventi persi in funzione di n (da simulazione MC)");
+gMC->GetXaxis()->SetTitle("n");
+gMC->GetYaxis()->SetTitle("G_{3}/G_{2}");
+gMC->Draw("AP");
 
 
 
@@ -100,11 +110,11 @@ for(int i=0; i<npoints; i++){
         doppie_403 = doppie;
         triple_403 = triple;
         // calcolo di n per la soglia preimpostata
-        //n = MC_fit->GetX(eff);
-        //n_inf = MC_fit->GetX(eff-el);
-        //n_sup = MC_fit->GetX(eff+eh);
+        n = MC_fit->GetX(eff/eff7);
+        n_inf = MC_fit->GetX((eff-el)/eff7);
+        n_sup = MC_fit->GetX((eff+eh)/eff7);
 
-        //cout << "n = " << n << " - " << n-n_inf << " + " << n_sup - n << endl;
+        cout << "n = " << n << " - " << n-n_inf << " + " << n_sup - n << endl;
         }
 
     //output di controllo
@@ -117,12 +127,12 @@ for(int i=0; i<npoints; i++){
 
 }
 
-TCanvas* c2 = new TCanvas("c2", "frazione eventi persi", 600, 800);
+TCanvas* c2 = new TCanvas("c2", "frazione eventi persi", 1200, 800);
 gEff8->SetTitle("Frazione di eventi persi dal rivelatore 8");
 gEff8->GetXaxis()->SetTitle("soglia [mV]");
 gEff8->GetYaxis()->SetTitle("G_{3}/G_{2}");
 
-gEff8->Draw();
+gEff8->Draw("AP");
 
 
 
