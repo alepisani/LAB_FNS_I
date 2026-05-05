@@ -39,7 +39,7 @@ void AnalisiQuintupla(){
     solo_gauss->SetParameter(2, 15);
     solo_gauss->SetLineColor(kBlue);
     
-    TCanvas* c1 = new TCanvas("c1", "offset_19", 800, 600);
+    /*TCanvas* c1 = new TCanvas("c1", "offset_19", 800, 600);
     deltaT19->Draw();
     deltaT19->Fit(solo_gauss, "R");
     gStyle->SetOptFit(1111);
@@ -82,24 +82,63 @@ void AnalisiQuintupla(){
     deltaT59->GetXaxis()->SetTitle("Canali TDC");
     deltaT59->GetYaxis()->SetTitle("Conteggi");
     double T59 = solo_gauss->GetParameter(1);
-    //deltaT59->SaveAs("../plots/offset_59.png");
+    //deltaT59->SaveAs("../plots/offset_59.png");*/
 
-    cout << "offset rispetto al 9" << "\n" << T19 << "\n" << T29 << "\n" << T39 << "\n" << T49 << "\n"<< T59 << endl; 
+    //cout << "offset rispetto al 9" << "\n" << T19 << "\n" << T29 << "\n" << T39 << "\n" << T49 << "\n"<< T59 << endl; 
 
     
     
     //----------- ritardi catene elettroniche ------------------
-    double T21 = T29-T19; 
-    double T31 = T39-T19;
-    double T41 = T49-T19;
-    double T51 = T59-T19;
-    cout << "ritardi delle catene elettroniche" << "\n" << T21 << "\n" << T31 << "\n" << T41 << "\n" << T51 << endl; 
+    //double T21 = T29-T19; 
+    //double T31 = T39-T19;
+    //double T41 = T49-T19;
+    //double T51 = T59-T19;
+    //cout << "ritardi delle catene elettroniche" << "\n" << T21 << "\n" << T31 << "\n" << T41 << "\n" << T51 << endl; 
 
     //--------------------- direzioni d'arrivo --------------------------------
 
     vector<vector<double>> data = doubleReader("../data/quintupla_lunga/TDC_quintupla_5000.dat", 0);
     vector<double> t24; 
     vector<double> t35;
+    vector<double> t21;
+    vector<double> t31;
+    vector<double> t41; 
+    vector<double> t51; 
+
+ //------------------------- offset solo rispetto all'1 ------------------
+
+ TH1D* TDC21 = new TH1D("TDC21", "TDC2-TDC1", 150, -300, 300);
+ TH1D* TDC31 = new TH1D("TDC31", "TDC3-TDC1", 150, -300, 300);
+ TH1D* TDC41 = new TH1D("TDC41", "TDC4-TDC1", 150, -300, 300);
+ TH1D* TDC51 = new TH1D("TDC51", "TDC5-TDC1", 150, -300, 300);
+
+for (int i=0; i<data[0].size(); i++) {
+    TDC21->Fill(data[2][i]-data[1][i]);
+    TDC31->Fill(data[3][i]-data[1][i]);
+    TDC41->Fill(data[4][i]-data[1][i]);
+    TDC51->Fill(data[5][i]-data[1][i]);
+}
+
+    TF1* gaussiano = new TF1("gaussiano", "gaus", -100, 100);
+    gaussiano->SetLineColor(kBlue);
+    gaussiano->SetParameter(0,0);
+    gaussiano->SetParameter(1,0);
+    gaussiano->SetParameter(2,20);
+
+    TDC21->Fit(gaussiano);
+    double T2_T1 = gaussiano->GetParameter(1);
+
+    TDC31->Fit(gaussiano);
+    double T3_T1 = gaussiano->GetParameter(1);
+
+    TDC41->Fit(gaussiano);
+    double T4_T1 = gaussiano->GetParameter(1);
+
+    TDC51->Fit(gaussiano);
+    double T5_T1 = gaussiano->GetParameter(1);
+   
+    cout<<"offset rispetto all'1 \n" << T2_T1 << "\n" << T3_T1 << "\n" << T4_T1 << "\n" << T5_T1 << endl;
+
 
     ///------------vediamo i dati delle quintuple-----------------------
     TH1D* TDC1 = new TH1D("TDC1", "Spettro di TDC di coincidenze quintuple (CH1)", 150, 0., 500);
@@ -109,8 +148,10 @@ void AnalisiQuintupla(){
     TH1D* TDC5 = new TH1D("TDC5", "Spettro di TDC di coincidenze quintuple (CH5)", 150, 0., 500);
 
     for (int i=0; i<data[0].size(); i++){
-        t24.push_back((data[2][i]-data[4][i]-T21+T41)/4.14); //da ch a ns
-        t35.push_back((data[3][i]-data[5][i]-T31+T51)/4.14);
+        //t24.push_back((data[2][i]-data[4][i]-T21+T41)/4.15); //da ch a ns
+        //t35.push_back((data[3][i]-data[5][i]-T31+T51)/4.15);
+        t24.push_back((data[2][i]-data[4][i]-T2_T1+T4_T1)/4.15);
+        t35.push_back((data[3][i]-data[5][i]-T3_T1+T5_T1)/4.15);
         TDC1->Fill(data[1][i]);
         TDC2->Fill(data[2][i]);
         TDC3->Fill(data[3][i]);
@@ -231,15 +272,11 @@ void AnalisiQuintupla(){
     TH1D* Tsciame = new TH1D("Tsciame", "T=t2-t3+t4-t5", 100, -100, 100);
 
     for (int i=0; i<5000; i++){
-        double T_i = data[2][i]-data[3][i]+data[4][i]-data[5][i]-T21+T31-T41+T51;
+        //double T_i = data[2][i]-data[3][i]+data[4][i]-data[5][i]-T21+T31-T41+T51;
+        double T_i = data[2][i]-data[3][i]+data[4][i]-data[5][i]-T2_T1+T3_T1-T4_T1+T5_T1;
         Tsciame->Fill(T_i);
     }
 
-    TF1* gaussiano = new TF1("gaussiano", "gaus", -100, 100);
-    gaussiano->SetLineColor(kBlue);
-    gaussiano->SetParameter(0,0);
-    gaussiano->SetParameter(1,0);
-    gaussiano->SetParameter(2,20);
 
     TCanvas* cTsciame = new TCanvas("cTsciame", "T=t2-t3+t4-t5", 800, 600);
     Tsciame->Draw();
