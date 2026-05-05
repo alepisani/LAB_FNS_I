@@ -1,0 +1,114 @@
+{
+//========= Macro generated from object: delta19/offset_19
+//========= by ROOT version6.26/06
+   
+   TH1D *delta19__1 = new TH1D("delta19__1","offset_19",100,0,200);
+   delta19__1->SetBinContent(11,1);
+   delta19__1->SetBinContent(23,1);
+   delta19__1->SetBinContent(26,1);
+   delta19__1->SetBinContent(27,4);
+   delta19__1->SetBinContent(28,3);
+   delta19__1->SetBinContent(29,3);
+   delta19__1->SetBinContent(30,8);
+   delta19__1->SetBinContent(31,8);
+   delta19__1->SetBinContent(32,7);
+   delta19__1->SetBinContent(33,6);
+   delta19__1->SetBinContent(34,11);
+   delta19__1->SetBinContent(35,20);
+   delta19__1->SetBinContent(36,29);
+   delta19__1->SetBinContent(37,30);
+   delta19__1->SetBinContent(38,37);
+   delta19__1->SetBinContent(39,43);
+   delta19__1->SetBinContent(40,49);
+   delta19__1->SetBinContent(41,58);
+   delta19__1->SetBinContent(42,56);
+   delta19__1->SetBinContent(43,63);
+   delta19__1->SetBinContent(44,50);
+   delta19__1->SetBinContent(45,61);
+   delta19__1->SetBinContent(46,55);
+   delta19__1->SetBinContent(47,63);
+   delta19__1->SetBinContent(48,55);
+   delta19__1->SetBinContent(49,42);
+   delta19__1->SetBinContent(50,42);
+   delta19__1->SetBinContent(51,41);
+   delta19__1->SetBinContent(52,29);
+   delta19__1->SetBinContent(53,31);
+   delta19__1->SetBinContent(54,23);
+   delta19__1->SetBinContent(55,23);
+   delta19__1->SetBinContent(56,8);
+   delta19__1->SetBinContent(57,7);
+   delta19__1->SetBinContent(58,10);
+   delta19__1->SetBinContent(59,6);
+   delta19__1->SetBinContent(60,4);
+   delta19__1->SetBinContent(61,4);
+   delta19__1->SetBinContent(63,3);
+   delta19__1->SetBinContent(65,1);
+   delta19__1->SetBinContent(66,1);
+   delta19__1->SetBinContent(67,2);
+   delta19__1->SetBinContent(68,1);
+   delta19__1->SetEntries(1000);
+   
+   TF1 *solo_gauss1 = new TF1("solo_gauss","gaus",0,200, TF1::EAddToList::kNo);
+   solo_gauss1->SetFillColor(19);
+   solo_gauss1->SetFillStyle(0);
+
+   Int_t ci;      // for color index setting
+   TColor *color; // for color definition with alpha
+   ci = TColor::GetColor("#0000ff");
+   solo_gauss1->SetLineColor(ci);
+   solo_gauss1->SetLineWidth(2);
+   solo_gauss1->SetChisquare(32.4861);
+   solo_gauss1->SetNDF(40);
+   solo_gauss1->GetXaxis()->SetLabelFont(42);
+   solo_gauss1->GetXaxis()->SetTitleOffset(1);
+   solo_gauss1->GetXaxis()->SetTitleFont(42);
+   solo_gauss1->GetYaxis()->SetLabelFont(42);
+   solo_gauss1->GetYaxis()->SetTitleFont(42);
+   solo_gauss1->SetParameter(0,60.0177);
+   solo_gauss1->SetParError(0,2.49221);
+   solo_gauss1->SetParLimits(0,0,0);
+   solo_gauss1->SetParameter(1,88.5123);
+   solo_gauss1->SetParError(1,0.422863);
+   solo_gauss1->SetParLimits(1,0,0);
+   solo_gauss1->SetParameter(2,12.9112);
+   solo_gauss1->SetParError(2,0.349798);
+   solo_gauss1->SetParLimits(2,0,135.407);
+   solo_gauss1->SetParent(delta19__1);
+   delta19__1->GetListOfFunctions()->Add(solo_gauss1);
+   
+   TPaveStats *ptstats = new TPaveStats(0.62,0.535,0.98,0.935,"brNDC");
+   ptstats->SetName("stats");
+   ptstats->SetBorderSize(1);
+   ptstats->SetFillColor(0);
+   ptstats->SetTextAlign(12);
+   ptstats->SetTextFont(42);
+   TText *ptstats_LaTex = ptstats->AddText("delta19");
+   ptstats_LaTex->SetTextSize(0.0408889);
+   ptstats_LaTex = ptstats->AddText("Entries = 1000   ");
+   ptstats_LaTex = ptstats->AddText("Mean  =  87.96");
+   ptstats_LaTex = ptstats->AddText("Std Dev   =  13.52");
+   ptstats_LaTex = ptstats->AddText("#chi^{2} / ndf = 32.49 / 40");
+   ptstats_LaTex = ptstats->AddText("Prob  = 0.7949");
+   ptstats_LaTex = ptstats->AddText("Constant = 60.02 #pm 2.49 ");
+   ptstats_LaTex = ptstats->AddText("Mean     = 88.51 #pm 0.42 ");
+   ptstats_LaTex = ptstats->AddText("Sigma    = 12.91 #pm 0.35 ");
+   ptstats->SetOptStat(1111);
+   ptstats->SetOptFit(1111);
+   ptstats->Draw();
+   delta19__1->GetListOfFunctions()->Add(ptstats);
+   ptstats->SetParent(delta19__1);
+
+   ci = TColor::GetColor("#000099");
+   delta19__1->SetLineColor(ci);
+   delta19__1->GetXaxis()->SetTitle("Canali TDC");
+   delta19__1->GetXaxis()->SetLabelFont(42);
+   delta19__1->GetXaxis()->SetTitleOffset(1);
+   delta19__1->GetXaxis()->SetTitleFont(42);
+   delta19__1->GetYaxis()->SetTitle("Conteggi");
+   delta19__1->GetYaxis()->SetLabelFont(42);
+   delta19__1->GetYaxis()->SetTitleFont(42);
+   delta19__1->GetZaxis()->SetLabelFont(42);
+   delta19__1->GetZaxis()->SetTitleOffset(1);
+   delta19__1->GetZaxis()->SetTitleFont(42);
+   delta19__1->Draw("");
+}

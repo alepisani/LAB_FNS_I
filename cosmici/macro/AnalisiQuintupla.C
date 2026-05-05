@@ -32,45 +32,39 @@ void AnalisiQuintupla(){
     }
 
     //------------------ offset rispetto al 9 -----------------
-    double T19 = deltaT19->GetMean();
-    double T29 = deltaT29->GetMean();
-    double T39 = deltaT39->GetMean();
-    double T49 = deltaT49->GetMean();
-    double T59 = deltaT59->GetMean();
-
-    //----------- ritardi catene elettroniche ------------------
-    double T21 = T29-T19; 
-    double T31 = T39-T19;
-    double T41 = T49-T19;
-    double T51 = T59-T19;
-    cout << "ritardi delle catene elettroniche" << "\n" << T21 << "\n" << T31 << "\n" << T41 << "\n" << T51 << endl; 
 
     TF1* solo_gauss = new TF1("solo_gauss", "gaus", 0, 200);
-    //solo_gauss->SetParameter(0, 20);
-    //solo_gauss->SetParameter(1, 90);
-    //solo_gauss->SetParameter(2, 15);
+    solo_gauss->SetParameter(0, 20);
+    solo_gauss->SetParameter(1, 90);
+    solo_gauss->SetParameter(2, 15);
     solo_gauss->SetLineColor(kBlue);
     
-    /*TCanvas* c1 = new TCanvas("c1", "offset_19", 800, 600);
-    //deltaT19->Draw();
+    TCanvas* c1 = new TCanvas("c1", "offset_19", 800, 600);
+    deltaT19->Draw();
     deltaT19->Fit(solo_gauss, "R");
     gStyle->SetOptFit(1111);
     deltaT19->GetXaxis()->SetTitle("Canali TDC");
     deltaT19->GetYaxis()->SetTitle("Conteggi");
+    double T19 = solo_gauss->GetParameter(1);
+    //deltaT19->SaveAs("../plots/offset_19.png");
     
     TCanvas* c2 = new TCanvas("c2", "offset_29", 800, 600);
-    //deltaT29->Draw();
+    deltaT29->Draw();
     deltaT29->Fit(solo_gauss, "R");
     gStyle->SetOptFit(1111);
     deltaT29->GetXaxis()->SetTitle("Canali TDC");
     deltaT29->GetYaxis()->SetTitle("Conteggi");
+    double T29 = solo_gauss->GetParameter(1);
+    //deltaT29->SaveAs("../plots/offset_29.png");
 
     TCanvas* c3 = new TCanvas("c3", "offset_39", 800, 600);
-    //deltaT39->Draw();
+    deltaT39->Draw();
     deltaT39->Fit(solo_gauss, "R");
     gStyle->SetOptFit(1111);
     deltaT39->GetXaxis()->SetTitle("Canali TDC");
     deltaT39->GetYaxis()->SetTitle("Conteggi");
+    double T39 = solo_gauss->GetParameter(1);
+    //deltaT39->SaveAs("../plots/offset_39.png");
 
     TCanvas* c4 = new TCanvas("c4", "offset_49", 800, 600);
     //deltaT49->Draw();
@@ -78,14 +72,28 @@ void AnalisiQuintupla(){
     gStyle->SetOptFit(1111);
     deltaT49->GetXaxis()->SetTitle("Canali TDC");
     deltaT49->GetYaxis()->SetTitle("Conteggi");
+    double T49 = solo_gauss->GetParameter(1);
+    //deltaT49->SaveAs("../plots/offset_49.png");
 
     TCanvas* c5 = new TCanvas("c5", "offset_59", 800, 600);
-    //deltaT59->Draw();
+    deltaT59->Draw();
     deltaT59->Fit(solo_gauss, "R");
     gStyle->SetOptFit(1111);
     deltaT59->GetXaxis()->SetTitle("Canali TDC");
-    deltaT59->GetYaxis()->SetTitle("Conteggi");*/
+    deltaT59->GetYaxis()->SetTitle("Conteggi");
+    double T59 = solo_gauss->GetParameter(1);
+    //deltaT59->SaveAs("../plots/offset_59.png");
 
+    cout << "offset rispetto al 9" << "\n" << T19 << "\n" << T29 << "\n" << T39 << "\n" << T49 << "\n"<< T59 << endl; 
+
+    
+    
+    //----------- ritardi catene elettroniche ------------------
+    double T21 = T29-T19; 
+    double T31 = T39-T19;
+    double T41 = T49-T19;
+    double T51 = T59-T19;
+    cout << "ritardi delle catene elettroniche" << "\n" << T21 << "\n" << T31 << "\n" << T41 << "\n" << T51 << endl; 
 
     //--------------------- direzioni d'arrivo --------------------------------
 
@@ -94,11 +102,11 @@ void AnalisiQuintupla(){
     vector<double> t35;
 
     ///------------vediamo i dati delle quintuple-----------------------
-    TH1D* TDC1 = new TH1D("TDC1", "Spettro di TDC di coincidenze quintuple (CH1)", 200, 0., 500);
-    TH1D* TDC2 = new TH1D("TDC2", "Spettro di TDC di coincidenze quintuple (CH2)", 200, 0., 500);
-    TH1D* TDC3 = new TH1D("TDC3", "Spettro di TDC di coincidenze quintuple (CH3)", 200, 0., 500);
-    TH1D* TDC4 = new TH1D("TDC4", "Spettro di TDC di coincidenze quintuple (CH4)", 200, 0., 500);
-    TH1D* TDC5 = new TH1D("TDC5", "Spettro di TDC di coincidenze quintuple (CH5)", 200, 0., 500);
+    TH1D* TDC1 = new TH1D("TDC1", "Spettro di TDC di coincidenze quintuple (CH1)", 150, 0., 500);
+    TH1D* TDC2 = new TH1D("TDC2", "Spettro di TDC di coincidenze quintuple (CH2)", 150, 0., 500);
+    TH1D* TDC3 = new TH1D("TDC3", "Spettro di TDC di coincidenze quintuple (CH3)", 150, 0., 500);
+    TH1D* TDC4 = new TH1D("TDC4", "Spettro di TDC di coincidenze quintuple (CH4)", 150, 0., 500);
+    TH1D* TDC5 = new TH1D("TDC5", "Spettro di TDC di coincidenze quintuple (CH5)", 150, 0., 500);
 
     for (int i=0; i<data[0].size(); i++){
         t24.push_back((data[2][i]-data[4][i]-T21+T41)/4.14); //da ch a ns
@@ -109,8 +117,8 @@ void AnalisiQuintupla(){
         TDC4->Fill(data[4][i]);
         TDC5->Fill(data[5][i]);
     }
-
-    /*TCanvas* tdc1 = new TCanvas("tdc1", "TDC1-quintuple", 800, 600);
+/*
+    TCanvas* tdc1 = new TCanvas("tdc1", "TDC1-quintuple", 800, 600);
     TDC1->Draw();
     gStyle->SetOptFit(1111);
     TDC1->GetXaxis()->SetTitle("Canali TDC");
@@ -139,8 +147,8 @@ void AnalisiQuintupla(){
     TDC5->Draw();
     gStyle->SetOptFit(1111);
     TDC5->GetXaxis()->SetTitle("Canali TDC");
-    TDC5->GetYaxis()->SetTitle("Conteggi");*/
-
+    TDC5->GetYaxis()->SetTitle("Conteggi");
+*/
     //----------- calcolo A, B, theta e phi -----------------
 
     cout<<"VALORI DI T24 E T35"<<t24[10]<<"\n"<<t24[20]<<"\n"<<t35[10]<<endl;
@@ -149,8 +157,8 @@ void AnalisiQuintupla(){
     vector<double> B;
 
     for(int i=0; i<5000; i++){
-        A.push_back((3./21.6)*((t24[i]+t35[i])/10));  // diviso 10 perchè c in s e tempo in ns
-        B.push_back((3./20.4)*((t24[i]-t35[i])/10));
+        A.push_back((3./20.41)*((t24[i]+t35[i])/10));  // diviso 10 perchè c in s e tempo in ns
+        B.push_back((3./21.62)*((t24[i]-t35[i])/10));
         if(i%20){
             //cout<<"valori di A e B"<<A[i]<<" - "<<B[i]<<endl;
         }
@@ -162,8 +170,8 @@ void AnalisiQuintupla(){
     vector<double> phi;
     TH1D* htheta = new TH1D("theta", "distribuzione zenitale",80, -10, 91);
     //htheta->GetYaxis()->SetRangeUser(0, 250);
-    TH1D* hphi = new TH1D("phi", "distribuzione azimutale", 50, 0, 6.4);
-    //hphi->GetYaxis()->SetRangeUser(0,70);
+    TH1D* hphi = new TH1D("phi", "distribuzione azimutale", 50, 0, 6.3);
+    hphi->GetYaxis()->SetRangeUser(55,180);
 
     for(int i=0; i<5000; i++){
         theta.push_back((asin(sqrt(A[i]*A[i]+B[i]*B[i])))*180/M_PI);
@@ -171,7 +179,7 @@ void AnalisiQuintupla(){
         if(A[i]*A[i]+B[i]*B[i]<1){   //controllo per evitare il rumore, se c'è qualcosa
             htheta->Fill(asin(sqrt(A[i]*A[i]+B[i]*B[i]))*180/M_PI);
             //hphi->Fill(atan(B[i]/A[i]));
-            double phi_i = atan2(B[i], A[i]);
+            double phi_i = (atan2(B[i], A[i]));
             if(phi_i < 0) phi_i += 2*M_PI;
             hphi->Fill(phi_i);
         }
@@ -208,7 +216,7 @@ void AnalisiQuintupla(){
     hphi->Draw();
     hphi->Fit("pol1");
     TF1 *fit = hphi->GetFunction("pol1");
-    fit->SetParameter(0,100);
+    //fit->SetParameter(0,40);
     fit->SetParameter(1,0);
     double q = fit->GetParameter(0);
     double m = fit->GetParameter(1);
@@ -229,6 +237,9 @@ void AnalisiQuintupla(){
 
     TF1* gaussiano = new TF1("gaussiano", "gaus", -100, 100);
     gaussiano->SetLineColor(kBlue);
+    gaussiano->SetParameter(0,0);
+    gaussiano->SetParameter(1,0);
+    gaussiano->SetParameter(2,20);
 
     TCanvas* cTsciame = new TCanvas("cTsciame", "T=t2-t3+t4-t5", 800, 600);
     Tsciame->Draw();
