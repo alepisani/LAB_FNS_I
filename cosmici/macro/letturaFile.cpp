@@ -15,7 +15,7 @@ using namespace std;
 // macro to read .dat files to 2d vectors of int
 
  
-vector<vector<int>> datReader(string filename, int header = 0) {
+vector<vector<int>> datReader(string filename, int header = 0, bool erase1col=true) {
 
    vector<vector<int>> output;
    ifstream input_file(filename);
@@ -63,7 +63,7 @@ vector<vector<int>> datReader(string filename, int header = 0) {
     return output;
   }
 
-  vector<vector<double>> doubleReader(string filename, int header = 0) {
+  vector<vector<double>> doubleReader(string filename, int header = 0, bool erase1col = true) {
 
    vector<vector<double>> output;
    ifstream input_file(filename);
@@ -107,7 +107,7 @@ vector<vector<int>> datReader(string filename, int header = 0) {
       output[i].push_back(row_values[i]);
     }
     
-    output.erase(output.begin());
+    if(erase1col) output.erase(output.begin());
     return output;
   }
   
