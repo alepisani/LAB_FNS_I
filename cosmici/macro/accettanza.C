@@ -8,6 +8,7 @@
 #include "TCanvas.h"
 #include <string>
 #include <vector>
+#include <numeric>
 
 void accettanza(){
     
@@ -26,17 +27,20 @@ double eff7 = 0.96; // da integrare con il valore misurato
 
 bool errori_CP = false;  //errore calcolato con Clopper-Pearson, se false calcolato manualmente con la binomiale
 
+// ------------- DA CAMBIARE -----------------------
+bool calcolo_mediato = true;   //per calcolare n dalla media delle efficienze nel plateau
+int evento_di_interesse=2;
+
 vector<double> soglie = {30.0, 40.3, 43.7, 46.7, 50.7, 55.1, 58.5, 63.3, 68.2, 72.5, 75.0};
 int npoints = soglie.size();
 
-vector<vector<int>> data;
+vector<vector<int>> data;   //vettore per lettura file .dat del TDC
 
 //inizializziamo le variabili di conteggio del loop
 //sono double perché dovremo calcolare il rapporto
 double triple;
 double doppie;
-double doppie_403 = 0.;
-double triple_403 = 0.;
+double points_counter=0.; //per contare i punti su cui calcoliamo l'eff media
 
 //livello di confidenza per la statistica
 double cl = 0.6827; //1 sigma
@@ -71,12 +75,15 @@ gMC->SetTitle("Frazione di eventi persi in funzione di n (da simulazione MC)");
 gMC->GetXaxis()->SetTitle("n");
 gMC->GetYaxis()->SetTitle("G_{3}/G_{2}");
 gMC->Draw("AP");
+cMC->Print("../plots/MC_accettanza.pdf");
 
 
 
 //inizializziamo un TGraphAsymmErrors per graficare triple/doppie vs soglia
 TGraphAsymmErrors* gEff8 = new TGraphAsymmErrors(npoints);
-double n, n_inf, n_sup;
+double eff_media, e_eff, n, n_inf, n_sup;
+double somma_sq_err=0;
+vector<double> efficienze;
 
 //loop sui valori di soglia
 for(int i=0; i<npoints; i++){
@@ -106,19 +113,20 @@ for(int i=0; i<npoints; i++){
         else eh = el;                       // se lontano da 1, errori simmetrici
     }
 
-    if(i==1){
-        doppie_403 = doppie;
-        triple_403 = triple;
+    if(i==evento_di_interesse && !calcolo_mediato){       //calcolo standard
         // calcolo di n per la soglia preimpostata
         n = MC_fit->GetX(eff/eff7);
         n_inf = MC_fit->GetX((eff-el)/eff7);
         n_sup = MC_fit->GetX((eff+eh)/eff7);
 
         cout << "n = " << n << " - " << n-n_inf << " + " << n_sup - n << endl;
-        }
+
+    } else if (i<7 && calcolo_mediato){
+        efficienze.push_back(triple/doppie);
+    }
 
     //output di controllo
-    printf("soglia: %.1f mV, triple: %.f, doppie: %.f, percentuale: %.1f\n", soglie[i], triple, doppie, eff*100);
+    //printf("soglia: %.1f mV, triple: %.f, doppie: %.f, percentuale: %.1f\n", soglie[i], triple, doppie, eff*100);
 
     gEff8->SetPoint(i, soglie[i], eff);
     gEff8->SetPointError(i, 0.1, 0.1, el, eh);
@@ -127,16 +135,37 @@ for(int i=0; i<npoints; i++){
 
 }
 
+//calcolo di n con l'eff media
+if (calcolo_mediato){
+    eff_media = std::accumulate(efficienze.begin(), efficienze.end(), 0.0)/efficienze.size(); 
+    n = MC_fit->GetX(eff_media/eff7);
+
+    //calcolo errore
+    for (auto elem : efficienze) somma_sq_err += (elem-eff_media)*(elem-eff_media);
+    e_eff = sqrt(somma_sq_err)/efficienze.size();
+
+    n_inf = MC_fit->GetX((eff_media-e_eff)/eff7);
+    n_sup = MC_fit->GetX((eff_media+e_eff)/eff7);
+
+
+
+    cout << "efficienza = " << eff_media << ", n = " << n << " - " << n-n_inf << " + " << n_sup - n << endl;
+}
+
+
 TCanvas* c2 = new TCanvas("c2", "frazione eventi persi", 1200, 800);
 gEff8->SetTitle("Frazione di eventi persi dal rivelatore 8");
 gEff8->GetXaxis()->SetTitle("soglia [mV]");
 gEff8->GetYaxis()->SetTitle("G_{3}/G_{2}");
 
 gEff8->Draw("AP");
+c2->Print("../plots/fraz8_vs_thr.pdf");
 
 
 
-
+/*dubbi
+- fit del MC senza errori?
+- ok calcolare n con la media delle efficienze nel plateau?
 
 
 
