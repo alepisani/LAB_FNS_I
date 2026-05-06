@@ -33,7 +33,7 @@
 void landau_gauss(){
 
     // Sopprime la visualizzazione a schermo
-  gROOT->SetBatch(kTRUE);
+  //gROOT->SetBatch(kTRUE);
 
   // File ROOT di output con tutti i fit
   TFile *output_file = new TFile("../plots/landgauss/all_fits.root", "RECREATE");
@@ -98,7 +98,7 @@ void landau_gauss(){
   gaus1->SetParameter(0, langauss1->GetParameter(3));
   gaus1->SetParameter(1, langauss1->GetParameter(4));
   gaus1->SetParameter(2, langauss1->GetParameter(5));
-  gaus1->SetLineColor(kGreen);
+  gaus1->SetLineColor(kGreen+2);
   gaus1->Draw("same");
 
   can1_langauss->Update();
@@ -119,6 +119,8 @@ void landau_gauss(){
   int xmin2 = 70;
   int xmax2 = 500;
   TF1* langauss2 = new TF1("langauss", "landau(0) + gaus(3)", xmin2, xmax2);
+  langauss2->SetLineWidth(2);
+  langauss2->SetLineColor(kRed);
   
   langauss2->SetParameter(0, 220);
   langauss2->SetParameter(1, 180);
@@ -151,7 +153,7 @@ void landau_gauss(){
   gaus2->SetParameter(0, langauss2->GetParameter(3));
   gaus2->SetParameter(1, langauss2->GetParameter(4));
   gaus2->SetParameter(2, langauss2->GetParameter(5));
-  gaus2->SetLineColor(kGreen);
+  gaus2->SetLineColor(kGreen+2);
   gaus2->Draw("same");
   
   can2_langauss->Update();
@@ -165,12 +167,14 @@ void landau_gauss(){
   
   //take the right ADC histos
   TH1D* hist3_before_rebinning = (TH1D*)input_file3->Get("adc3");
-  TH1D* hist3 = (TH1D*)hist3_before_rebinning->Rebin(2, "hist3");
+  TH1D* hist3 = (TH1D*)hist3_before_rebinning->Rebin(1, "hist3");
   
   //landau+gauss fit 
   int xmin3 = 25;
   int xmax3 = 300;
   TF1* langauss3 = new TF1("langauss", "landau(0) + gaus(3)", xmin3, xmax3);
+  langauss3->SetLineWidth(2);
+  langauss3->SetLineColor(kRed);
   
   langauss3->SetParameter(0, 1400);
   langauss3->SetParameter(1, 115);
@@ -203,7 +207,7 @@ void landau_gauss(){
   gaus3->SetParameter(0, langauss3->GetParameter(3));
   gaus3->SetParameter(1, langauss3->GetParameter(4));
   gaus3->SetParameter(2, langauss3->GetParameter(5));
-  gaus3->SetLineColor(kGreen);
+  gaus3->SetLineColor(kGreen+2);
   gaus3->Draw("same");
   
   can3_langauss->Update();
@@ -220,8 +224,10 @@ void landau_gauss(){
   
   //landau+gauss fit 
   int xmin4 = 25;
-  int xmax4 = 300;
+  int xmax4 = 230;
   TF1* langauss4 = new TF1("langauss", "landau(0) + gaus(3)", xmin4, xmax4);
+  langauss4->SetLineWidth(2);
+  langauss4->SetLineColor(kRed);
   
   langauss4->SetParameter(0, hist4->GetMaximum());
   langauss4->SetParameter(1, 80);
@@ -254,7 +260,7 @@ void landau_gauss(){
   gaus4->SetParameter(0, langauss4->GetParameter(3));
   gaus4->SetParameter(1, langauss4->GetParameter(4));
   gaus4->SetParameter(2, langauss4->GetParameter(5));
-  gaus4->SetLineColor(kGreen);
+  gaus4->SetLineColor(kGreen+2);
   gaus4->Draw("same");
   
   can4_langauss->Update();
@@ -273,6 +279,8 @@ void landau_gauss(){
   int xmin5 = 0;
   int xmax5 = 500;
   TF1* langauss5 = new TF1("langauss", "landau(0) + gaus(3)", xmin5, xmax5);
+  langauss5->SetLineWidth(2);
+  langauss5->SetLineColor(kRed);
   
   langauss5->SetParameter(0, hist5->GetMaximum());
   langauss5->SetParameter(1, hist5->GetMean());
@@ -305,7 +313,7 @@ void landau_gauss(){
   gaus5->SetParameter(0, langauss5->GetParameter(3));
   gaus5->SetParameter(1, langauss5->GetParameter(4));
   gaus5->SetParameter(2, langauss5->GetParameter(5));
-  gaus5->SetLineColor(kGreen);
+  gaus5->SetLineColor(kGreen+2);
   gaus5->Draw("same");
   
   can5_langauss->Update();
@@ -325,9 +333,11 @@ void landau_gauss(){
   int xmin6 = 70;
   int xmax6 = 700;
   TF1* langauss6 = new TF1("langauss", "landau(0) + gaus(3) + gaus(6)", xmin6, xmax6);
+  langauss6->SetLineWidth(2);
+  langauss6->SetLineColor(kRed);
   
   langauss6->SetParameter(0, 200);
-  langauss6->SetParameter(1, 250);
+  langauss6->SetParameter(1, 260);
   langauss6->SetParameter(2, 40);
   langauss6->SetParameter(3, 100);
   langauss6->SetParameter(4, 120);
@@ -360,14 +370,14 @@ void landau_gauss(){
   gaus61->SetParameter(0, langauss6->GetParameter(3));
   gaus61->SetParameter(1, langauss6->GetParameter(4));
   gaus61->SetParameter(2, langauss6->GetParameter(5));
-  gaus61->SetLineColor(kGreen);
+  gaus61->SetLineColor(kGreen+2);
   gaus61->Draw("same");
 
   TF1* gaus62 = new TF1("gaus62", "gaus(0)", xmin6, xmax6);
   gaus62->SetParameter(0, langauss6->GetParameter(6));
   gaus62->SetParameter(1, langauss6->GetParameter(7));
   gaus62->SetParameter(2, langauss6->GetParameter(8));
-  gaus62->SetLineColor(kGreen);
+  gaus62->SetLineColor(kGreen+2);
   gaus62->Draw("same");
   
   can6_langauss->Update();
@@ -427,7 +437,7 @@ void landau_gauss(){
   //Piedistallo3----------------------------------
 
   TH1D* histP3_before_rebinning = (TH1D*)input_file2->Get("adc3");
-  TH1D* histP3 = (TH1D*)histP3_before_rebinning->Rebin(1, "histP3");
+  TH1D* histP3 = (TH1D*)histP3_before_rebinning->Rebin(2, "histP3");
 
   int xminP3 = 0;
   int xmaxP3 = 60;
