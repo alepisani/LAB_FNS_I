@@ -24,7 +24,7 @@ void taraTDC(){
   ritardi_vs_canali->SetTitle("Taratura TDC - Canale 3");
 
   // Titolo del grafico
-  ritardi_vs_canali->SetTitle("Ritardi vs Canali 3");
+  ritardi_vs_canali->SetTitle("Taratura TDC - Canale 3");
   // Titoli degli assi
   ritardi_vs_canali->GetXaxis()->SetTitle("Ritardi [ns]");
   ritardi_vs_canali->GetYaxis()->SetTitle("Canali");
