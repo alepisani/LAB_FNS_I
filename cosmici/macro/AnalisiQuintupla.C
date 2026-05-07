@@ -116,10 +116,10 @@ void AnalisiQuintupla(){
 
  //------------------------- offset solo rispetto all'1 ------------------
 
- TH1D* TDC21 = new TH1D("TDC21", "TDC2-TDC1", 150, -300, 300);
- TH1D* TDC31 = new TH1D("TDC31", "TDC3-TDC1", 150, -300, 300);
- TH1D* TDC41 = new TH1D("TDC41", "TDC4-TDC1", 150, -300, 300);
- TH1D* TDC51 = new TH1D("TDC51", "TDC5-TDC1", 150, -300, 300);
+ TH1D* TDC21 = new TH1D("TDC2-TDC1", "TDC2-TDC1", 150, -300, 300);
+ TH1D* TDC31 = new TH1D("TDC3-TDC1", "TDC3-TDC1", 150, -300, 300);
+ TH1D* TDC41 = new TH1D("TDC4-TDC1", "TDC4-TDC1", 150, -300, 300);
+ TH1D* TDC51 = new TH1D("TDC5-TDC1", "TDC5-TDC1", 150, -300, 300);
 
 for (int i=0; i<data[0].size(); i++) {
     TDC21->Fill(data[2][i]-data[1][i]);
@@ -134,16 +134,38 @@ for (int i=0; i<data[0].size(); i++) {
     gaussiano->SetParameter(1,0);
     gaussiano->SetParameter(2,20);
 
-    TDC21->Fit(gaussiano);
+
+    
+    TCanvas* t2t1 = new TCanvas("t2t1", "t2-t1", 800, 600);
+    TDC21->Draw();
+    TDC21->Fit(gaussiano, "R");
+    gStyle->SetOptFit(1111);
+    TDC21->GetXaxis()->SetTitle("Canali TDC");
+    TDC21->GetYaxis()->SetTitle("Conteggi");
     double T2_T1 = gaussiano->GetParameter(1);
 
-    TDC31->Fit(gaussiano);
+    TCanvas* t3t1 = new TCanvas("t3t1", "t3-t1", 800, 600);
+    TDC31->Draw();
+    TDC31->Fit(gaussiano, "R");
+    gStyle->SetOptFit(1111);
+    TDC31->GetXaxis()->SetTitle("Canali TDC");
+    TDC31->GetYaxis()->SetTitle("Conteggi");
     double T3_T1 = gaussiano->GetParameter(1);
 
-    TDC41->Fit(gaussiano);
+    TCanvas* t4t1 = new TCanvas("t4t1", "t4-t1", 800, 600);
+    TDC41->Draw();
+    TDC41->Fit(gaussiano, "R");
+    gStyle->SetOptFit(1111);
+    TDC41->GetXaxis()->SetTitle("Canali TDC");
+    TDC41->GetYaxis()->SetTitle("Conteggi");
     double T4_T1 = gaussiano->GetParameter(1);
 
-    TDC51->Fit(gaussiano);
+    TCanvas* t5t1 = new TCanvas("t5t1", "t5-t1", 800, 600);
+    TDC51->Draw();
+    TDC51->Fit(gaussiano, "R");
+    gStyle->SetOptFit(1111);
+    TDC51->GetXaxis()->SetTitle("Canali TDC");
+    TDC51->GetYaxis()->SetTitle("Conteggi");
     double T5_T1 = gaussiano->GetParameter(1);
    
     cout<<"offset rispetto all'1 \n" << T2_T1 << "\n" << T3_T1 << "\n" << T4_T1 << "\n" << T5_T1 << endl;
