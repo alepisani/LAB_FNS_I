@@ -46,36 +46,45 @@ double points_counter=0.; //per contare i punti su cui calcoliamo l'eff media
 double cl = 0.6827; //1 sigma
 
 gStyle->SetOptFit(1111);
-gStyle->SetMarkerSize(1);
-gStyle->SetMarkerStyle(20);
+//gStyle->SetMarkerSize(1);
+//gStyle->SetMarkerStyle(20);
 
 //_____LETTURA DATI MONTECARLO__________
 vector<vector<double>> dataMC = doubleReader("original_macros/montecarlosim.txt", 0, false);
 int nMC = dataMC[1].size();
+double nevents = 50000; // del MC
 
 // dichiarazione grafico per i punti (errori non ottenibili dal MC non avendo il numero assoluto di entries)
-TGraph* gMC = new TGraph(nMC);
+TGraphErrors* gMC = new TGraphErrors(nMC);
 // riempimento grafico
 for(int i=0; i<nMC; i++){
     double n_i = dataMC[0][i];        
     if(dataMC[1][i]!=0){        
-        double frac = dataMC[2][i]/dataMC[1][i]; //
+        double G2 = dataMC[1][i]/100;
+        double G3 = dataMC[2][i]/100;
+        double frac = G3/G2; //
+        double e_frac = frac*sqrt((1-frac)/nevents);   //spiegazione errore in relazione
         //cout << dataMC[0][i] << " " << dataMC[1][i] << " " << dataMC[2][i] << endl;
         gMC->SetPoint(i, n_i, frac);
+        gMC->SetPointError(i, 0, e_frac);   
     }
-    //double e_frac = sqrt(eps*(1-eps)/dataMC[1][i]);
+    
 
 }
 
-TF1* MC_fit = new TF1("MC_fit", "[0]+[1]*x+[2]*sqrt(x)", 0, 10);
+TF1* MC_fit = new TF1("MC_fit", "[0]+[1]*x+[2]*x*x", -0.1, 10); //fit quadratico
+//TF1* MC_fit = new TF1("MC_fit", "[0]+[1]*x", 0, 10);
 gMC->Fit(MC_fit);
 
 TCanvas* cMC = new TCanvas("cMC", "MC", 1200, 800);
-gMC->SetTitle("Frazione di eventi persi in funzione di n (da simulazione MC)");
+gMC->SetMarkerStyle(33);
+gMC->SetMarkerColor(8);
+gMC->SetMarkerSize(1.2);
+gMC->SetTitle("Accettanza relativa in funzione di n (da simulazione MC)");
 gMC->GetXaxis()->SetTitle("n");
 gMC->GetYaxis()->SetTitle("G_{3}/G_{2}");
 gMC->Draw("AP");
-cMC->Print("../plots/MC_accettanza.pdf");
+cMC->Print("../plots/accettanza/MC_accettanza.pdf");
 
 
 
@@ -154,12 +163,16 @@ if (calcolo_mediato){
 
 
 TCanvas* c2 = new TCanvas("c2", "frazione eventi persi", 1200, 800);
-gEff8->SetTitle("Frazione di eventi persi dal rivelatore 8");
+gEff8->SetTitle("Frazione di eventi rivelati dallo scintillatore 8");
 gEff8->GetXaxis()->SetTitle("soglia [mV]");
 gEff8->GetYaxis()->SetTitle("G_{3}/G_{2}");
+gEff8->SetMarkerStyle(20);
+gEff8->SetMarkerSize(2);
+gEff8->SetMarkerColor(8);
+gEff8->SetLineColor(8);
 
 gEff8->Draw("AP");
-c2->Print("../plots/fraz8_vs_thr.pdf");
+c2->Print("../plots/accettanza/fraz8_vs_thr.pdf");
 
 
 
