@@ -59,7 +59,7 @@ vector<vector<int>> datReader(string filename, int header = 0, bool erase1col=tr
       output[i].push_back(row_values[i]);
     }
     
-    output.erase(output.begin());
+    if(erase1col) output.erase(output.begin());
     return output;
   }
 
