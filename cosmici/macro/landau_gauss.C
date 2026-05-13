@@ -276,7 +276,7 @@ void landau_gauss(){
   TH1D* hist5 = (TH1D*)hist5_before_rebinning->Rebin(1, "hist5");
   
   //landau+gauss fit 
-  int xmin5 = 0;
+  int xmin5 = 5;
   int xmax5 = 500;
   TF1* langauss5 = new TF1("langauss", "landau(0) + gaus(3)", xmin5, xmax5);
   langauss5->SetLineWidth(2);
@@ -483,7 +483,7 @@ void landau_gauss(){
   TH1D* histP5_before_rebinning = (TH1D*)input_file3->Get("adc5");
   TH1D* histP5 = (TH1D*)histP5_before_rebinning->Rebin(1, "histP5");
 
-  int xminP5 = 0;
+  int xminP5 = 5;
   int xmaxP5 = 200;
 
   TF1* gausP5 = new TF1("gausP5", "gaus(0)", xminP5, xmaxP5);
