@@ -28,7 +28,7 @@ double eff7 = 0.96; // da integrare con il valore misurato
 bool errori_CP = false;  //errore calcolato con Clopper-Pearson, se false calcolato manualmente con la binomiale
 
 // ------------- DA CAMBIARE -----------------------
-bool calcolo_mediato = true;   //per calcolare n dalla media delle efficienze nel plateau
+bool calcolo_mediato = true;   //true per calcolare n dalla media delle efficienze nel plateau
 int evento_di_interesse=2;
 
 vector<double> soglie = {30.0, 40.3, 43.7, 46.7, 50.7, 55.1, 58.5, 63.3, 68.2, 72.5, 75.0};
@@ -169,8 +169,9 @@ gEff8->GetYaxis()->SetTitle("G_{3}/G_{2}");
 gEff8->SetMarkerStyle(20);
 gEff8->SetMarkerSize(2);
 gEff8->SetMarkerColor(8);
-gEff8->SetLineColor(8);
-
+gEff8->SetLineWidth(2);
+gEff8->SetMinimum(0.15);
+gEff8->SetMaximum(0.4);
 gEff8->Draw("AP");
 c2->Print("../plots/accettanza/fraz8_vs_thr.pdf");
 
