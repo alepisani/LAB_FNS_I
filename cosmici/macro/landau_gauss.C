@@ -560,6 +560,14 @@ void landau_gauss(){
   printf("| Scintillatore  |       mu +/- s      |  Piedistallo +/- s   |   mu - Piedistallo +/- s     |\n");
   printf("+----------------+---------------------+----------------------+------------------------------+\n");
 
+  double mu1, mu2, mu3, mu4, mu5, mu6;
+  mu1 = mu[0] - piedistallo[0];
+  mu2 = mu[1] - piedistallo[1];
+  mu3 = mu[2] - piedistallo[2];
+  mu4 = mu[3] - piedistallo[3];
+  mu5 = mu[4] - piedistallo[4];
+  mu6 = mu[5] - piedistallo[5];
+
   for(int i = 0; i < 6; i++){
       double diff = mu[i] - piedistallo[i];
       double sigma_diff = sqrt(sigma_mu[i]*sigma_mu[i] + sigma_pied[i]*sigma_pied[i]);
@@ -567,6 +575,10 @@ void landau_gauss(){
             i+1, mu[i], sigma_mu[i], piedistallo[i], sigma_pied[i], diff, sigma_diff);
       printf("+----------------+---------------------+----------------------+------------------------------+\n");
   }
+
+  ofstream params_file("../data/landau_params.txt");
+  params_file << mu1 << " " << mu2 << " " << mu3 << " " << mu4 << " " << mu5 << " " << mu6 << endl;
+  params_file.close();
 
 
 }
