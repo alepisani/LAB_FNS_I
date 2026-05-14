@@ -72,6 +72,10 @@ vector<vector<double>> data_ADC_quintupla = doubleReader("../data/quintupla_lung
 
 //creiamo histos per capire quante particelle incidono
 TH1D* Npart_ADC1_quintupla = new TH1D("hadc1", "Npart_ADC1_quintipla", 10, -0.5, 9.5);
+TH1D* Npart_ADC2_quintupla = new TH1D("hadc2", "Npart_ADC2_quintipla", 10, -0.5, 9.5);
+TH1D* Npart_ADC3_quintupla = new TH1D("hadc3", "Npart_ADC3_quintipla", 10, -0.5, 9.5);
+TH1D* Npart_ADC4_quintupla = new TH1D("hadc4", "Npart_ADC4_quintipla", 10, -0.5, 9.5);
+TH1D* Npart_ADC5_quintupla = new TH1D("hadc5", "Npart_ADC5_quintipla", 10, -0.5, 9.5);
 TH1D* Npart_ADC6_quintupla = new TH1D("hadc6", "Npart_ADC6_quintipla", 10, -0.5, 9.5);
 
 
@@ -96,30 +100,81 @@ for (int i = 0; i < data_ADC_quintupla[0].size(); i++){
     adc7.push_back(data_ADC_quintupla[7][i]);
     adc8.push_back(data_ADC_quintupla[8][i]);
 
-    //fill histo ADC1, ADC6
+    //fill histo ADC1, ADC2, ADC3, ADC4, ADC5, ADC6
     if(!pattern[i]){
+    //if(pattern[i] == 7){
 
         double Npart_ADC1 = data_ADC_quintupla[1][i] / mu1; 
-        if(Npart_ADC1 > 0.5 && Npart_ADC1 <= 1.5) Npart_ADC1_quintupla->Fill(Npart_ADC1-1);
-        if(Npart_ADC1 > 1.5 && Npart_ADC1 <= 2.5) Npart_ADC1_quintupla->Fill(Npart_ADC1-1);
-        if(Npart_ADC1 > 2.5 && Npart_ADC1 <= 3.5) Npart_ADC1_quintupla->Fill(Npart_ADC1-1);
-        if(Npart_ADC1 > 3.5 && Npart_ADC1 <= 4.5) Npart_ADC1_quintupla->Fill(Npart_ADC1-1);
-        if(Npart_ADC1 > 4.5 && Npart_ADC1 <= 5.5) Npart_ADC1_quintupla->Fill(Npart_ADC1-1);
-        if(Npart_ADC1 > 5.5 && Npart_ADC1 <= 6.5) Npart_ADC1_quintupla->Fill(Npart_ADC1-1);
-        if(Npart_ADC1 > 6.5 && Npart_ADC1 <= 7.5) Npart_ADC1_quintupla->Fill(Npart_ADC1-1);
-        if(Npart_ADC1 > 7.5 && Npart_ADC1 <= 8.5) Npart_ADC1_quintupla->Fill(Npart_ADC1-1);
-        if(Npart_ADC1 > 8.5) Npart_ADC1_quintupla->Fill(Npart_ADC1-1);
+        if(Npart_ADC1 <= 0.5) Npart_ADC1_quintupla->Fill(Npart_ADC1);
+        if(Npart_ADC1 > 0.5 && Npart_ADC1 <= 1.5) Npart_ADC1_quintupla->Fill(Npart_ADC1);
+        if(Npart_ADC1 > 1.5 && Npart_ADC1 <= 2.5) Npart_ADC1_quintupla->Fill(Npart_ADC1);
+        if(Npart_ADC1 > 2.5 && Npart_ADC1 <= 3.5) Npart_ADC1_quintupla->Fill(Npart_ADC1);
+        if(Npart_ADC1 > 3.5 && Npart_ADC1 <= 4.5) Npart_ADC1_quintupla->Fill(Npart_ADC1);
+        if(Npart_ADC1 > 4.5 && Npart_ADC1 <= 5.5) Npart_ADC1_quintupla->Fill(Npart_ADC1);
+        if(Npart_ADC1 > 5.5 && Npart_ADC1 <= 6.5) Npart_ADC1_quintupla->Fill(Npart_ADC1);
+        if(Npart_ADC1 > 6.5 && Npart_ADC1 <= 7.5) Npart_ADC1_quintupla->Fill(Npart_ADC1);
+        if(Npart_ADC1 > 7.5 && Npart_ADC1 <= 8.5) Npart_ADC1_quintupla->Fill(Npart_ADC1);
+        if(Npart_ADC1 > 8.5) Npart_ADC1_quintupla->Fill(Npart_ADC1);
 
-        double Npart_ADC6 = data_ADC_quintupla[6][i] / mu1; 
-        if(Npart_ADC6 > 0.5 && Npart_ADC6 <= 1.5) Npart_ADC6_quintupla->Fill(Npart_ADC6-1);
-        if(Npart_ADC6 > 1.5 && Npart_ADC6 <= 2.5) Npart_ADC6_quintupla->Fill(Npart_ADC6-1);
-        if(Npart_ADC6 > 2.5 && Npart_ADC6 <= 3.5) Npart_ADC6_quintupla->Fill(Npart_ADC6-1);
-        if(Npart_ADC6 > 3.5 && Npart_ADC6 <= 4.5) Npart_ADC6_quintupla->Fill(Npart_ADC6-1);
-        if(Npart_ADC6 > 4.5 && Npart_ADC6 <= 5.5) Npart_ADC6_quintupla->Fill(Npart_ADC6-1);
-        if(Npart_ADC6 > 5.5 && Npart_ADC6 <= 6.5) Npart_ADC6_quintupla->Fill(Npart_ADC6-1);
-        if(Npart_ADC6 > 6.5 && Npart_ADC6 <= 7.5) Npart_ADC6_quintupla->Fill(Npart_ADC6-1);
-        if(Npart_ADC6 > 7.5 && Npart_ADC6 <= 8.5) Npart_ADC6_quintupla->Fill(Npart_ADC6-1);
-        if(Npart_ADC6 > 8.5) Npart_ADC6_quintupla->Fill(Npart_ADC6-1);
+        double Npart_ADC2 = data_ADC_quintupla[2][i] / mu2; 
+        if(Npart_ADC2 <= 0.5) Npart_ADC2_quintupla->Fill(Npart_ADC2);
+        if(Npart_ADC2 > 0.5 && Npart_ADC2 <= 1.5) Npart_ADC2_quintupla->Fill(Npart_ADC2);
+        if(Npart_ADC2 > 1.5 && Npart_ADC2 <= 2.5) Npart_ADC2_quintupla->Fill(Npart_ADC2);
+        if(Npart_ADC2 > 2.5 && Npart_ADC2 <= 3.5) Npart_ADC2_quintupla->Fill(Npart_ADC2);
+        if(Npart_ADC2 > 3.5 && Npart_ADC2 <= 4.5) Npart_ADC2_quintupla->Fill(Npart_ADC2);
+        if(Npart_ADC2 > 4.5 && Npart_ADC2 <= 5.5) Npart_ADC2_quintupla->Fill(Npart_ADC2);
+        if(Npart_ADC2 > 5.5 && Npart_ADC2 <= 6.5) Npart_ADC2_quintupla->Fill(Npart_ADC2);
+        if(Npart_ADC2 > 6.5 && Npart_ADC2 <= 7.5) Npart_ADC2_quintupla->Fill(Npart_ADC2);
+        if(Npart_ADC2 > 7.5 && Npart_ADC2 <= 8.5) Npart_ADC2_quintupla->Fill(Npart_ADC2);
+        if(Npart_ADC2 > 8.5) Npart_ADC2_quintupla->Fill(Npart_ADC2);
+
+        double Npart_ADC3 = data_ADC_quintupla[3][i] / mu3; 
+        if(Npart_ADC3 <= 0.5) Npart_ADC3_quintupla->Fill(Npart_ADC3);
+        if(Npart_ADC3 > 0.5 && Npart_ADC3 <= 1.5) Npart_ADC3_quintupla->Fill(Npart_ADC3);
+        if(Npart_ADC3 > 1.5 && Npart_ADC3 <= 2.5) Npart_ADC3_quintupla->Fill(Npart_ADC3);
+        if(Npart_ADC3 > 2.5 && Npart_ADC3 <= 3.5) Npart_ADC3_quintupla->Fill(Npart_ADC3);
+        if(Npart_ADC3 > 3.5 && Npart_ADC3 <= 4.5) Npart_ADC3_quintupla->Fill(Npart_ADC3);
+        if(Npart_ADC3 > 4.5 && Npart_ADC3 <= 5.5) Npart_ADC3_quintupla->Fill(Npart_ADC3);
+        if(Npart_ADC3 > 5.5 && Npart_ADC3 <= 6.5) Npart_ADC3_quintupla->Fill(Npart_ADC3);
+        if(Npart_ADC3 > 6.5 && Npart_ADC3 <= 7.5) Npart_ADC3_quintupla->Fill(Npart_ADC3);
+        if(Npart_ADC3 > 7.5 && Npart_ADC3 <= 8.5) Npart_ADC3_quintupla->Fill(Npart_ADC3);
+        if(Npart_ADC3 > 8.5) Npart_ADC3_quintupla->Fill(Npart_ADC3);
+
+        double Npart_ADC4 = data_ADC_quintupla[4][i] / mu4; 
+        if(Npart_ADC4 <= 0.5) Npart_ADC4_quintupla->Fill(Npart_ADC4);
+        if(Npart_ADC4 > 0.5 && Npart_ADC4 <= 1.5) Npart_ADC4_quintupla->Fill(Npart_ADC4);
+        if(Npart_ADC4 > 1.5 && Npart_ADC4 <= 2.5) Npart_ADC4_quintupla->Fill(Npart_ADC4);
+        if(Npart_ADC4 > 2.5 && Npart_ADC4 <= 3.5) Npart_ADC4_quintupla->Fill(Npart_ADC4);
+        if(Npart_ADC4 > 3.5 && Npart_ADC4 <= 4.5) Npart_ADC4_quintupla->Fill(Npart_ADC4);
+        if(Npart_ADC4 > 4.5 && Npart_ADC4 <= 5.5) Npart_ADC4_quintupla->Fill(Npart_ADC4);
+        if(Npart_ADC4 > 5.5 && Npart_ADC4 <= 6.5) Npart_ADC4_quintupla->Fill(Npart_ADC4);
+        if(Npart_ADC4 > 6.5 && Npart_ADC4 <= 7.5) Npart_ADC4_quintupla->Fill(Npart_ADC4);
+        if(Npart_ADC4 > 7.5 && Npart_ADC4 <= 8.5) Npart_ADC4_quintupla->Fill(Npart_ADC4);
+        if(Npart_ADC4 > 8.5) Npart_ADC4_quintupla->Fill(Npart_ADC4);
+
+        double Npart_ADC5 = data_ADC_quintupla[5][i] / mu5; 
+        if(Npart_ADC5 <= 0.5) Npart_ADC5_quintupla->Fill(Npart_ADC5);
+        if(Npart_ADC5 > 0.5 && Npart_ADC5 <= 1.5) Npart_ADC5_quintupla->Fill(Npart_ADC5);
+        if(Npart_ADC5 > 1.5 && Npart_ADC5 <= 2.5) Npart_ADC5_quintupla->Fill(Npart_ADC5);
+        if(Npart_ADC5 > 2.5 && Npart_ADC5 <= 3.5) Npart_ADC5_quintupla->Fill(Npart_ADC5);
+        if(Npart_ADC5 > 3.5 && Npart_ADC5 <= 4.5) Npart_ADC5_quintupla->Fill(Npart_ADC5);
+        if(Npart_ADC5 > 4.5 && Npart_ADC5 <= 5.5) Npart_ADC5_quintupla->Fill(Npart_ADC5);
+        if(Npart_ADC5 > 5.5 && Npart_ADC5 <= 6.5) Npart_ADC5_quintupla->Fill(Npart_ADC5);
+        if(Npart_ADC5 > 6.5 && Npart_ADC5 <= 7.5) Npart_ADC5_quintupla->Fill(Npart_ADC5);
+        if(Npart_ADC5 > 7.5 && Npart_ADC5 <= 8.5) Npart_ADC5_quintupla->Fill(Npart_ADC5);
+        if(Npart_ADC5 > 8.5) Npart_ADC5_quintupla->Fill(Npart_ADC5);
+
+        double Npart_ADC6 = data_ADC_quintupla[6][i] / mu6; 
+        if(Npart_ADC6 <= 0.5) Npart_ADC6_quintupla->Fill(Npart_ADC6);
+        if(Npart_ADC6 > 0.5 && Npart_ADC6 <= 1.5) Npart_ADC6_quintupla->Fill(Npart_ADC6);
+        if(Npart_ADC6 > 1.5 && Npart_ADC6 <= 2.5) Npart_ADC6_quintupla->Fill(Npart_ADC6);
+        if(Npart_ADC6 > 2.5 && Npart_ADC6 <= 3.5) Npart_ADC6_quintupla->Fill(Npart_ADC6);
+        if(Npart_ADC6 > 3.5 && Npart_ADC6 <= 4.5) Npart_ADC6_quintupla->Fill(Npart_ADC6);
+        if(Npart_ADC6 > 4.5 && Npart_ADC6 <= 5.5) Npart_ADC6_quintupla->Fill(Npart_ADC6);
+        if(Npart_ADC6 > 5.5 && Npart_ADC6 <= 6.5) Npart_ADC6_quintupla->Fill(Npart_ADC6);
+        if(Npart_ADC6 > 6.5 && Npart_ADC6 <= 7.5) Npart_ADC6_quintupla->Fill(Npart_ADC6);
+        if(Npart_ADC6 > 7.5 && Npart_ADC6 <= 8.5) Npart_ADC6_quintupla->Fill(Npart_ADC6);
+        if(Npart_ADC6 > 8.5) Npart_ADC6_quintupla->Fill(Npart_ADC6);
     }
 
 }
@@ -131,6 +186,26 @@ TCanvas* cADC1 = new TCanvas("cADC1", "partADC1", 800, 600);
 Npart_ADC1_quintupla->Draw();
 cADC1->Update();
 cADC1->SaveAs("../plots/patternunit/Npart_ADC1.pdf");   
+
+TCanvas* cADC2 = new TCanvas("cADC2", "partADC2", 800, 600);
+Npart_ADC2_quintupla->Draw();
+cADC2->Update();
+cADC2->SaveAs("../plots/patternunit/Npart_ADC2.pdf");   
+
+TCanvas* cADC3 = new TCanvas("cADC3", "partADC3", 800, 600);
+Npart_ADC3_quintupla->Draw();
+cADC3->Update();
+cADC3->SaveAs("../plots/patternunit/Npart_ADC3.pdf");   
+
+TCanvas* cADC4 = new TCanvas("cADC4", "partADC4", 800, 600);
+Npart_ADC4_quintupla->Draw();
+cADC4->Update();
+cADC4->SaveAs("../plots/patternunit/Npart_ADC4.pdf");   
+
+TCanvas* cADC5 = new TCanvas("cADC5", "partADC5", 800, 600);
+Npart_ADC5_quintupla->Draw();
+cADC5->Update();
+cADC5->SaveAs("../plots/patternunit/Npart_ADC5.pdf");   
 
 TCanvas* cADC6 = new TCanvas("cADC6", "partADC6", 800, 600);
 Npart_ADC6_quintupla->Draw();
