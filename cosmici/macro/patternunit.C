@@ -101,8 +101,8 @@ for (int i = 0; i < data_ADC_quintupla[0].size(); i++){
     adc8.push_back(data_ADC_quintupla[8][i]);
 
     //fill histo ADC1, ADC2, ADC3, ADC4, ADC5, ADC6
-    if(!pattern[i]){
-    //if(pattern[i] == 7){
+    //if(!pattern[i]){
+    if(pattern[i] == 7){
 
         double Npart_ADC1 = data_ADC_quintupla[1][i] / mu1; 
         if(Npart_ADC1 <= 0.5) Npart_ADC1_quintupla->Fill(Npart_ADC1);
@@ -183,31 +183,49 @@ for (int i = 0; i < data_ADC_quintupla[0].size(); i++){
 //cout << mu1 << " " << mu2 << " " << mu3 << " " << mu4 << " " << mu5 << " " << mu6 << " " << endl;
 
 TCanvas* cADC1 = new TCanvas("cADC1", "partADC1", 800, 600);
+Npart_ADC1_quintupla->SetTitle("# particelle ADC1, 111_{2} = 7_{10}");
+Npart_ADC1_quintupla->GetXaxis()->SetTitle("N_{particelle}");
+Npart_ADC1_quintupla->GetYaxis()->SetTitle("Conteggi");
 Npart_ADC1_quintupla->Draw();
 cADC1->Update();
-cADC1->SaveAs("../plots/patternunit/Npart_ADC1.pdf");   
+cADC1->SaveAs("../plots/patternunit/Npart_ADC1.pdf");
 
 TCanvas* cADC2 = new TCanvas("cADC2", "partADC2", 800, 600);
+Npart_ADC2_quintupla->SetTitle("# particelle ADC2, 111_{2} = 7_{10}");
+Npart_ADC2_quintupla->GetXaxis()->SetTitle("N_{particelle}");
+Npart_ADC2_quintupla->GetYaxis()->SetTitle("Conteggi");
 Npart_ADC2_quintupla->Draw();
 cADC2->Update();
-cADC2->SaveAs("../plots/patternunit/Npart_ADC2.pdf");   
+cADC2->SaveAs("../plots/patternunit/Npart_ADC2.pdf");
 
 TCanvas* cADC3 = new TCanvas("cADC3", "partADC3", 800, 600);
+Npart_ADC3_quintupla->SetTitle("# particelle ADC3, 111_{2} = 7_{10}");
+Npart_ADC3_quintupla->GetXaxis()->SetTitle("N_{particelle}");
+Npart_ADC3_quintupla->GetYaxis()->SetTitle("Conteggi");
 Npart_ADC3_quintupla->Draw();
 cADC3->Update();
-cADC3->SaveAs("../plots/patternunit/Npart_ADC3.pdf");   
+cADC3->SaveAs("../plots/patternunit/Npart_ADC3.pdf");
 
 TCanvas* cADC4 = new TCanvas("cADC4", "partADC4", 800, 600);
+Npart_ADC4_quintupla->SetTitle("# particelle ADC4, 111_{2} = 7_{10}");
+Npart_ADC4_quintupla->GetXaxis()->SetTitle("N_{particelle}");
+Npart_ADC4_quintupla->GetYaxis()->SetTitle("Conteggi");
 Npart_ADC4_quintupla->Draw();
 cADC4->Update();
-cADC4->SaveAs("../plots/patternunit/Npart_ADC4.pdf");   
+cADC4->SaveAs("../plots/patternunit/Npart_ADC4.pdf");
 
 TCanvas* cADC5 = new TCanvas("cADC5", "partADC5", 800, 600);
+Npart_ADC5_quintupla->SetTitle("# particelle ADC5, 111_{2} = 7_{10}");
+Npart_ADC5_quintupla->GetXaxis()->SetTitle("N_{particelle}");
+Npart_ADC5_quintupla->GetYaxis()->SetTitle("Conteggi");
 Npart_ADC5_quintupla->Draw();
 cADC5->Update();
-cADC5->SaveAs("../plots/patternunit/Npart_ADC5.pdf");   
+cADC5->SaveAs("../plots/patternunit/Npart_ADC5.pdf");
 
 TCanvas* cADC6 = new TCanvas("cADC6", "partADC6", 800, 600);
+Npart_ADC6_quintupla->SetTitle("# particelle ADC6, 111_{2} = 7_{10}");
+Npart_ADC6_quintupla->GetXaxis()->SetTitle("N_{particelle}");
+Npart_ADC6_quintupla->GetYaxis()->SetTitle("Conteggi");
 Npart_ADC6_quintupla->Draw();
 cADC6->Update();
 cADC6->SaveAs("../plots/patternunit/Npart_ADC6.pdf");
