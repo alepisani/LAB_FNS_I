@@ -84,7 +84,7 @@ gMC->SetTitle("Accettanza relativa in funzione di n (da simulazione MC)");
 gMC->GetXaxis()->SetTitle("n");
 gMC->GetYaxis()->SetTitle("G_{3}/G_{2}");
 gMC->Draw("AP");
-cMC->Print("../plots/accettanza/MC_accettanza.pdf");
+//cMC->Print("../plots/accettanza/MC_accettanza.pdf");
 
 
 
@@ -138,7 +138,7 @@ for(int i=0; i<npoints; i++){
     //printf("soglia: %.1f mV, triple: %.f, doppie: %.f, percentuale: %.1f\n", soglie[i], triple, doppie, eff*100);
 
     gEff8->SetPoint(i, soglie[i], eff);
-    gEff8->SetPointError(i, 0.1, 0.1, el, eh);
+    gEff8->SetPointError(i, 0.2, 0.2, el, eh);
 
     data.clear();
 
@@ -158,7 +158,7 @@ if (calcolo_mediato){
 
 
 
-    cout << "efficienza = " << eff_media << ", n = " << n << " - " << n-n_inf << " + " << n_sup - n << endl;
+    cout << "efficienza = " << eff_media/eff7  << " +- " << e_eff << ", n = " << n << " - " << n-n_inf << " + " << n_sup - n << endl;
 }
 
 
@@ -173,7 +173,7 @@ gEff8->SetLineWidth(2);
 gEff8->SetMinimum(0.15);
 gEff8->SetMaximum(0.4);
 gEff8->Draw("AP");
-c2->Print("../plots/accettanza/fraz8_vs_thr.pdf");
+//c2->Print("../plots/accettanza/fraz8_vs_thr.pdf");
 
 
 
