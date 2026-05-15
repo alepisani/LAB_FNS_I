@@ -37,7 +37,7 @@ ADC_part = abs(ADC_part.round(decimals=0))
 
 mask_ADC = TDC[Acols]<lim
 
-ADC_part["tot_particelle"] = ADC_part.where(mask_ADC, 0).sum(axis=1)
+ADC_part["tot_particelle"] = ADC_part.where(mask_ADC, 0).sum(axis=1)/mask_ADC.sum(axis=1)
 
 # maschera per il TDC
 #condizioni
@@ -79,7 +79,7 @@ ax.SetBinLabel(7, "2345")
 ax.SetBinLabel(8, "12345")
 ax.SetBinLabel(9, "12345+678")
 
-prof.GetYaxis().SetTitle("# medio di particelle rivelate")
+prof.GetYaxis().SetTitle("# medio di particelle per rivelatore")
     
 C1 = TCanvas("C1", "c1", 800, 600)
 gStyle.SetOptStat(0)
