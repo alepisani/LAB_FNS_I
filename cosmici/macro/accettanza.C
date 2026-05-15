@@ -74,12 +74,14 @@ for(int i=0; i<nMC; i++){
 
 TF1* MC_fit = new TF1("MC_fit", "[0]+[1]*x+[2]*x*x", -0.1, 10); //fit quadratico
 //TF1* MC_fit = new TF1("MC_fit", "[0]+[1]*x", 0, 10);
+MC_fit->SetLineWidth(3);
 gMC->Fit(MC_fit);
+
 
 TCanvas* cMC = new TCanvas("cMC", "MC", 1200, 800);
 gMC->SetMarkerStyle(33);
-gMC->SetMarkerColor(8);
-gMC->SetMarkerSize(1.2);
+gMC->SetMarkerColor(4);
+gMC->SetMarkerSize(1.4);
 gMC->SetTitle("Accettanza relativa in funzione di n (da simulazione MC)");
 gMC->GetXaxis()->SetTitle("n");
 gMC->GetYaxis()->SetTitle("G_{3}/G_{2}");
@@ -167,13 +169,13 @@ gEff8->SetTitle("Frazione di eventi rivelati dallo scintillatore 8");
 gEff8->GetXaxis()->SetTitle("soglia [mV]");
 gEff8->GetYaxis()->SetTitle("G_{3}/G_{2}");
 gEff8->SetMarkerStyle(20);
-gEff8->SetMarkerSize(2);
-gEff8->SetMarkerColor(8);
+gEff8->SetMarkerSize(1.5);
+gEff8->SetMarkerColor(4);
 gEff8->SetLineWidth(2);
 gEff8->SetMinimum(0.15);
 gEff8->SetMaximum(0.4);
 gEff8->Draw("AP");
-//c2->Print("../plots/accettanza/fraz8_vs_thr.pdf");
+c2->Print("../plots/accettanza/fraz8_vs_thr.pdf");
 
 
 
