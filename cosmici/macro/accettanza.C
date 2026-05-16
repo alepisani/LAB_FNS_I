@@ -23,7 +23,8 @@ e valutare la potenza di cos(theta) della direziione di provenienza dei RC
 - valutare n considerando l'efficienza dell'8
 */
 
-double eff7 = 0.96; // da integrare con il valore misurato
+double eff7 = 0.969; // da integrare con il valore misurato
+double e_eff7 = 0.006; 
 
 bool errori_CP = false;  //errore calcolato con Clopper-Pearson, se false calcolato manualmente con la binomiale
 
@@ -155,12 +156,14 @@ if (calcolo_mediato){
     for (auto elem : efficienze) somma_sq_err += (elem-eff_media)*(elem-eff_media);
     e_eff = sqrt(somma_sq_err)/efficienze.size();
 
-    n_inf = MC_fit->GetX((eff_media-e_eff)/eff7);
-    n_sup = MC_fit->GetX((eff_media+e_eff)/eff7);
+    double e_R = sqrt( pow(e_eff/eff7, 2) + pow(eff_media*e_eff7/(eff7*eff7), 2) );
+
+    n_inf = MC_fit->GetX(eff_media/eff7 - e_R);
+    n_sup = MC_fit->GetX(eff_media/eff7 + e_R);
 
 
 
-    cout << "efficienza = " << eff_media/eff7  << " +- " << e_eff << ", n = " << n << " - " << n-n_inf << " + " << n_sup - n << endl;
+    cout << "efficienza = " << eff_media/eff7  << " +- " << e_R << ", n = " << n << " - " << n-n_inf << " + " << n_sup - n << endl;
 }
 
 
