@@ -23,7 +23,7 @@ e valutare la potenza di cos(theta) della direziione di provenienza dei RC
 - valutare n considerando l'efficienza dell'8
 */
 
-double eff7 = 0.96; // da integrare con il valore misurato
+double eff7 = 0.969; // da integrare con il valore misurato
 
 bool errori_CP = false;  //errore calcolato con Clopper-Pearson, se false calcolato manualmente con la binomiale
 
