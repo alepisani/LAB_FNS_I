@@ -342,6 +342,7 @@ for (int i=0; i<data[0].size(); i++) {
 
     std::cout << "xright, xleft9 = " << x_right9 << "   " << x_left9 << std::endl;
     std::cout << "FWHM9 = " << fwhm9 << std::endl;
+    cout << "std dev9 " << Tsciame9->GetRMS() << " +- " << Tsciame9->GetRMSError() << endl;
 
     TCanvas* cTsciame9 = new TCanvas("cTsciame9", "T=t2-t3+t4-t5", 800, 600);
     Tsciame9->GetXaxis()->SetTitle("T [ns]");
@@ -368,6 +369,7 @@ for (int i=0; i<data[0].size(); i++) {
 
     std::cout << "xright, xleft1 = " << x_right1 << "   " << x_left1 << std::endl;
     std::cout << "FWHM1 = " << fwhm1 << std::endl;
+    cout << "std dev " << Tsciame1->GetRMS() << " +- " << Tsciame1->GetRMSError() << endl;
 
     TCanvas* cTsciame1 = new TCanvas("cTsciame1", "T=t2-t3+t4-t5", 800, 600);
     Tsciame1->GetXaxis()->SetTitle("T [ns]");
