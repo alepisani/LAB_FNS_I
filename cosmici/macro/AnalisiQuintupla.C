@@ -349,6 +349,8 @@ for (int i=0; i<data[0].size(); i++) {
     Tsciame9->GetYaxis()->SetTitle("Conteggi");
     Tsciame9->Draw();
     Tsciame9->Fit(gaussiano);
+    cTsciame9->Update();
+    cTsciame9->SaveAs("../plots/spessore_sciame9.pdf");
 
 //------------------------
 
@@ -376,6 +378,8 @@ for (int i=0; i<data[0].size(); i++) {
     Tsciame1->GetYaxis()->SetTitle("Conteggi");
     Tsciame1->Draw();
     Tsciame1->Fit(gaussiano);
+    cTsciame1->Update();
+    cTsciame1->SaveAs("../plots/spessore_sciame1.pdf");
 
 
 
