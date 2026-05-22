@@ -1,4 +1,4 @@
-void ajuste2picos()
+void fit2picchi()
 {
   //=================================================
   //                 Version root: 6.24/02
@@ -28,7 +28,7 @@ void ajuste2picos()
 
   int nlines,nchan,ngroup,ngroup_peak;
   // Contar l�neas de la cabecera del archivo 
-      nlines = 5;
+      nlines = 12;
   // Definir n�mero de canales del archivo de datos
       nchan = 2048;
   // Definir agrupaci�n de canales. Comprobar que "nchan" es divisible por el numero de agrupaci�n de canales.
@@ -37,10 +37,11 @@ void ajuste2picos()
   // ...para el ajuste del pico
       ngroup_peak = 1;
 
-  string filename, filename_fondo("");
+  string fname, filename, filename_fondo("");
 
   // Definir fichero de datos del espectro
-     filename = "Espectro_bismuto_pca.asc";
+    fname = "";
+    filename = fname + ".mca";
 
   // Definir fichero del fondo
   //   filename_fondo = "????.???";  // comentar si no hay fondo
@@ -235,9 +236,9 @@ void ajuste2picos()
 
 
   // dump canvas to pdf
-  c1->Print("../plots/ajuste2picos_espectro.pdf");  
-  // c1->Print("ajuste2picos_espectro.png");  
-  c2->Print("../plots/ajuste2picos.pdf");  
+  c1->Print("../plots/spettro_" + fname + ".pdf");  
+  // c1->Print("ajuste1pico_espectro.png");  
+  c2->Print("../plots/fit_" + fname + ".pdf");  
   // c2->Print("ajuste2picos.png");  
 
 }
