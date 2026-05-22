@@ -26,7 +26,7 @@ void spettro()
  string fname, filename,filename_fondo("");
 
   // Nome file dati
-    fname = "";
+    fname = "Spettro_energia_ravvicinato_delay_ampl_0deg_Cs";
     filename = "../data/" + fname + ".mca";
 
 
@@ -59,7 +59,6 @@ void spettro()
   while (fgets(line,200,f)) 
     {
       //printf("%d: %s",row,line); 
-      if (f1) fgets(line1,200,f1);
       if(row>=nlines) // Saltare intestazione
 	{
           if (amptek)
@@ -87,5 +86,5 @@ void spettro()
   hist->GetYaxis()->SetTitle("# conteggi");
   gStyle->SetOptStat(0);  
   hist->Draw();
-  c1->Print("../plots/spettro_" + fname + ".pdf"); 
+  c1->Print(("../plots/spettro_raw_" + fname + ".pdf").c_str()); 
 }

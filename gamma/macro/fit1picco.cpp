@@ -2,8 +2,7 @@ void fit1picco()
 {
   //=================================================
   // macro per fare un fit gaussiano su fondo lineare/esponenziale
-  
-  //Algunas opciones de ROOT
+
   gROOT->Reset();
   //gROOT->SetStyle("Plain");
   gStyle->SetOptStat(0);
