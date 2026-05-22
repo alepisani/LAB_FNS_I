@@ -1,4 +1,4 @@
-void espectro()
+void spettro()
 {
   //=================================================
   //                 Version root: 6.24/02
@@ -28,15 +28,16 @@ void espectro()
  // Contar líneas de la cabecera del archivo 
       nlines = 12;
   // Definir número de canales del archivo de datos
-      nchan = 4096;
+      nchan = 2048;
   // Definir agrupación de canales. Comprobar que "nchan" es divisible por el numero de agrupación de canales.
   // ...para el espectro
       ngroup = 1;
 
- string filename,filename_fondo("");
+ string fname, filename,filename_fondo("");
 
   // Definir fichero de datos del espectro
-     filename = "bario1.mca";
+    fname = "";
+    filename = fname + ".mca";
 
   // Definir fichero del fondo
   //  filename_fondo = "?????.???";  // comentar si no hay fondo
@@ -113,6 +114,5 @@ void espectro()
   hist->GetYaxis()->SetTitle("# cuentas");
   gStyle->SetOptStat(0);  
   hist->Draw();
-  //c1->Print("espectro.pdf");  
-  //c1->Print("espectro.png");  
+  c1->Print("../plots/spettro_" + fname + ".pdf"); 
 }
