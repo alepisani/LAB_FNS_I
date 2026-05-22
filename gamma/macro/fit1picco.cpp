@@ -1,113 +1,91 @@
 void fit1picco()
 {
   //=================================================
-  //                 Version root: 6.24/02
-  //=================================================
-  //   Laboratorio de Instrumentaci�n Nuclear y de Part�culas
-  //
-  //   Macro para ajustar un pico gaussiano con un fondo lineal o exponencial
-  //   * En espectros PCA cambiar previamente "," por " "
-  //   * Ejecutar previamente espectro.cpp para ver el comportamiento de los datos
-  //   * Contar l�neas de la cabecera del archivo 
-  //   * Comprobar y definir n�mero de canales del MCA
-  //   * Cambiar el nombre de los archivos de datos 
-  //=================================================
+  // macro per fare un fit gaussiano su fondo lineare/esponenziale
   
   //Algunas opciones de ROOT
   gROOT->Reset();
   //gROOT->SetStyle("Plain");
   gStyle->SetOptStat(0);
-  gStyle->SetOptFit(111);
+  gStyle->SetOptFit(1111);
 
-  // Definir sistema
-  bool amptek = true;   // true para amptek, false para PCA y ICSW_Spectech
-     int ichan=0; // S�lo se usa si "amptek = true" para generar los valores de x 
 
-  // Definir entrada
-  //   * En espectros PCA cambiar previamente "," por " "
+  bool amptek = true;   // true: amptek, false: PCA, ICSW_Spectech
+     int ichan=0; // se amptek=true, genera i valori di x
+
+  // Input
 
   int nlines,nchan,ngroup,ngroup_peak;
-  // Contar l�neas de la cabecera del archivo 
+  // Intestazione
       nlines = 12;
-  // Definir n�mero de canales del archivo de datos
+  // Numero di canali
       nchan = 2048;
-  // Definir agrupaci�n de canales. Comprobar que "nchan" es divisible por el numero de agrupaci�n de canales.
-  // ...para el espectro
+  // Binning. nchan deve essere divisibile per ngroup
+  // ...spettro
       ngroup = 1;
-  // ...para el ajuste del pico
+  // ...fit del picco
       ngroup_peak = 1;
 
-  string fname, filename, filename_fondo("");
+  string fname, filename;
 
-  // Definir fichero de datos del espectro
-    fname = "";
-     filename = fname + ".mca";
-
-  // Definir fichero del fondo
-  // filename_fondo = "Espectro_1pico_fondo_amptek.mca";  // comentar si no hay fondo
-
-  // Tiempo del espectro y del fondo (en segundos), solo necesario cuando se realiza substraccion de fondo
-  float tiempo,tiempo_fondo(0);
-  if (filename_fondo!="")  tiempo = 66325.69;        // Tiempo del espectro, solo necesario si hay alguna medida de fondo
-  if (filename_fondo!="")  tiempo_fondo = 88164.39;  // solo necesario si hay medida de fondo
+  // File di input dati
+    fname = "Spettro_energia_ravvicinato_delay_ampl_0deg_Cs"; //cambiare questo, senza .mca
+     filename = "../data/" + fname + ".mca";
           
-  // Definicion de los intervalos
+  // INTERVALLI 
   //
-  // Definir Intervalo del histograma en la zona del pico
+  // Definire intervallo nella zona del picco
   int hist_ini,hist_fin;
-     hist_ini= 1500;
-     hist_fin= 3500;
+     hist_ini= 600;
+     hist_fin= 1200;
 
-  // Definir intervalo para ajustar el fondo (lineal o exponencial)
+  // Def Intervallo per il fit del fondo
   int bkg_ini,bkg_fin;
-     bkg_ini = 3000;
-     bkg_fin = 4000;
+     bkg_ini = 620;
+     bkg_fin = 800;
 
-  // Definir tipo de fondo
-  bool bkg_lineal = true;  // true para lineal, false para exponencial
+  // Definire tipo de fondo
+  bool bkg_lineal = false;  // true per lineare, false per esponenziale
  
-  // Definir intervalo de la gaussiana
+  // Definire intervallo della gaussiana
   int g1_ini, g1_fin;
-     g1_ini= 2200;
-     g1_fin= 2700;
+     g1_ini= 800;
+     g1_fin= 1000;
 
-  // Definir intervalo del ajuste global
+  // Definire intervallo fit totale
   int total_ini,total_fin;
-     total_ini= 1900;
-     total_fin= 3000;
+     total_ini= 750;
+     total_fin= 1050;
 
   // Verifica ngroup  
   if ( (nchan % ngroup) != 0 || (nchan % ngroup) != 0 )
     {
-      cout << "El numero de canales no es divisible por el numero de agrupacion de canales. STOP" << endl;
+      cout << "Numero di canali non divisibile per il numero di raggruppazioni." << endl;
       return;
     }
     
-  // Declarar histograma
-  TH1F* hist=new TH1F("Histo1","Espectro global",nchan/ngroup,0,nchan);
-  TH1F* peak=new TH1F("Histo2","Ajuste del pico",nchan/ngroup_peak,0,nchan);
+  // dichiarare histo
+  TH1F* hist=new TH1F("Histo1","Spettro globale",nchan/ngroup,0,nchan);
+  TH1F* peak=new TH1F("Histo2","Fit del picco",nchan/ngroup_peak,0,nchan);
     
-  // Abrir archivos de datos
+  // Aprire i file dati
   FILE *f= fopen(filename.c_str(),"r");
-  FILE *f1(0);
-  if (filename_fondo!="") f1=fopen(filename_fondo.c_str(),"r");
   
-  // Declarar variables
+  // Dichiarazione delle variabili di lettura
   char line[200], line1[200], line2[200], name[80];
   float x=0, y=0, x1=0, y1=0;
   int row=0;
 
-  // Define Canvas
+  // Definizione Canvas
   TCanvas* c1 = new TCanvas ("c1","c1",640,480);
   c1->cd(1);
   c1->SetTicks();
   
-  // Abrir fichero ascii y extraer valores
+  // Apertura file e estrazione valori
   while (fgets(line,200,f)) 
     {
       //printf("%d: %s",row,line); 
-      if (f1) fgets(line1,200,f1);
-      if(row>=nlines) // Saltar cabecera
+      if(row>=nlines) // Saltare intestazione
 	{
           if (amptek)
            {
@@ -120,96 +98,87 @@ void fit1picco()
  
 	   y1=0;
 
-	  if (f1) 
-           {
-                if (amptek)
-                    sscanf(&line1[0],"%f",&y1); 
-                else 
-                    sscanf(&line1[0],"%f %f ",&x1,&y1);
-	  // Restar fondo 
-                    y = y - (tiempo/tiempo_fondo)*y1;
-           }
-
-	  // Llenar histogramas
+	  // Riempimento istogrammi
 	  hist->AddBinContent(hist->FindBin(x),y);
 	  peak->AddBinContent(peak->FindBin(x),y);
 	}
       row++;
     }
-  fclose(f);  // Cerrar fichero
+  fclose(f);  // Chiusura file
   
-  // Dibujar histograma completo (ampliar para ver picos)
-  hist->GetXaxis()->SetTitle("Canal");
+  // disgeno hist dello spettro
+  hist->GetXaxis()->SetTitle("Canali ADC");
   hist->GetYaxis()->SetTitleOffset(1.5);   
-  hist->GetYaxis()->SetTitle("# cuentas");
+  hist->GetYaxis()->SetTitle("# conteggi");
   hist->Draw();
   
-  // Crear histograma y Canvas para la regi�n de inter�s
+  // Creazione istogramma e canvas della regione di interesse
   Double_t par[5];
-  TCanvas* c2 = new TCanvas ("C2","analisis picos",640,480);
+  TCanvas* c2 = new TCanvas ("C2","analisi picco",640,480);
   c2->cd(1);
   c2->SetTicks();
   
-  //Declarar funciones: una recta o una exponencial y una gaussiana
+  //Dichiarazione funzioni: retta/exp e gaussiana
  TF1 *bkg;
   if (bkg_lineal)
-    bkg = new TF1("bkg","pol1",bkg_ini,bkg_fin);    // fondo lineal
+    bkg = new TF1("bkg","pol1",bkg_ini,bkg_fin);    // fondo lineare
   else
-    bkg = new TF1("bkg","expo",bkg_ini,bkg_fin);    // fondo exponencial    
+    bkg = new TF1("bkg","expo",bkg_ini,bkg_fin);    // fondo esponenziale   
+    bkg->SetParameters(16., 1.); 
   TF1 *g1    = new TF1("g1","gaus",g1_ini,g1_fin);
   
-   // Funcion total como suma de las anteriores
+   // Funzione totale come somma delle anteriori
   TF1 *total = new TF1("total","bkg+gaus(2)",total_ini,total_fin);
-  total->SetParNames("Constante","Pendiente",
-		     "Amplitud","Centroide","Sigma");
+  total->SetParNames("Costante","Pendenza",
+		     "Ampiezza","Centroide","Sigma");
   total->SetLineColor(2);
   
-  // Primera aproximacion: ajustar el pico y el fondo
-  // por separado y extraer los valores de los parametros
+  // Prima approssimazione: fit del fondo e del picco separatamente
+  // ed estrazione dei parametri
   peak->Fit(g1,"R0");
   peak->Fit(bkg,"R0+");
   
   bkg->GetParameters(&par[0]);
   g1->GetParameters(&par[2]);
 
-  // Asignar parametros previos a la funcion total y ajustar
+  // Fit della funzione totale coi parametri trovati prima
   total->SetParameters(par);
   peak->Fit(total,"R");
   total->GetParameters(par);
   
-  // Opciones finales y dibujar histograma
+  // Disegno del canvas
   peak->GetXaxis()->SetRange(hist_ini/ngroup_peak,hist_fin/ngroup_peak);
-  peak->GetXaxis()->SetTitle("Canal");
+  peak->GetXaxis()->SetTitle("Canali ADC");
   peak->GetYaxis()->SetTitleOffset(1.5);   
-  peak->GetYaxis()->SetTitle("# cuentas");
+  peak->GetYaxis()->SetTitle("# conteggi");
   //hist->SetFillColor(4);
   //hist->SetMaximum(125);
   // Make the plot:
   peak->Draw();
   
-  // Dibuja gaussianas de los pico separadamente
-  //g1->SetParameters(&par[2]);
-  //g1->SetLineStyle(2);
-  //g1->Draw("same");
+  // Draw della gaussiana separatamente
+  g1->SetParameters(&par[2]);
+  g1->SetLineStyle(2);
+  g1->Draw("same");
   
-  // Tabla con resultados del ajuste:
-  printf("\nParametros Ajuste:\n");
+  // Risultati del fit:
+  printf("\nParametri fit:\n");
   printf("\nFondo 1\n");  
-  printf("Constante: %4.3f +/- %4.3f\n",total->GetParameter(0),total->GetParError(0));
-  printf("Pendiente:       %4.3f +/- %4.3f\n", total->GetParameter(1),total->GetParError(1));
+  printf("Costante: %4.3f +/- %4.3f\n",total->GetParameter(0),total->GetParError(0));
+  printf("Coeff. angolare:       %4.3f +/- %4.3f\n", total->GetParameter(1),total->GetParError(1));
   printf("\nGaussiana 1\n");
-  printf("Cte. Normalizacion: %4.2f +/- %4.2f\n",total->GetParameter(1+1),total->GetParError(1+1));
+  printf("Cte. Normalizazione: %4.2f +/- %4.2f\n",total->GetParameter(1+1),total->GetParError(1+1));
   printf("Centroide: %4.2f +/- %4.2f\n",total->GetParameter(1+2),total->GetParError(1+2));
   printf("Sigma    : %4.2f +/- %4.2f\n",total->GetParameter(1+3),total->GetParError(1+3));
   
-  //  C�lculos
-  printf("\nParametros Gaussiana 1\n");
+  //  Calcoli
+  printf("\nParametri Gaussiana 1\n");
   
   Double_t Amp_1=0, mu_1=0, sig_1=0, e_Amp_1=0, e_mu_1=0, e_sig_1=0;
   Double_t FWHM_1=0, e_FWHM_1=0, Resol_1=0, e_Resol_1=0, Area_1=0, e_Area_1=0;
   Double_t pi=atan2(0.,-1.);
   
-  // Par�metros y errores de la Gaussiana 1
+  // Parametri ed errori gaussiana 1
   Amp_1 = total->GetParameter(1+1);
   mu_1 = total->GetParameter(1+2);
   sig_1 = total->GetParameter(1+3);
@@ -217,7 +186,7 @@ void fit1picco()
   e_mu_1 = total->GetParError(1+2);
   e_sig_1 = total->GetParError(1+3);
   
-  printf("Amplitud: %4.2f +/- %4.2f\n", Amp_1, e_Amp_1);
+  printf("Ampiezza: %4.2f +/- %4.2f\n", Amp_1, e_Amp_1);
   printf("Centroide: %4.2f +/- %4.2f\n", mu_1, e_mu_1);
   printf("Sigma    : %4.2f +/- %4.2f\n", sig_1, e_sig_1);
   
@@ -227,7 +196,7 @@ void fit1picco()
   e_Resol_1=Resol_1*sqrt(pow((e_FWHM_1/FWHM_1),2)+pow((e_mu_1/mu_1),2));
   
   printf("FWHM: %4.2f +/- %4.2f\n", FWHM_1, e_FWHM_1);
-  printf("Resolucion: %7.5f +/- %7.5f\n", Resol_1, e_Resol_1);
+  printf("Risoluzione: %7.5f +/- %7.5f\n", Resol_1, e_Resol_1);
   
   Area_1= sqrt(2*pi)*Amp_1*sig_1/ngroup_peak;
   e_Area_1= Area_1*sqrt(pow((e_Amp_1/Amp_1),2)+pow((e_sig_1/sig_1),2));
@@ -237,9 +206,7 @@ void fit1picco()
   printf("\nChi-2\n");
   printf("chi2 / ndf: %f / %d\n",peak->GetFunction("total")->GetChisquare(),peak->GetFunction("total")->GetNDF());
 
-  // dump canvas to pdf
-  c1->Print("../plots/spettro_" + fname + ".pdf");  
-  // c1->Print("ajuste1pico_espectro.png");  
-  c2->Print("../plots/fit_" + fname + ".pdf");  
-  // c2->Print("ajuste1pico.png");  
+  // salvare i pdf
+  c1->Print(("../plots/spettro_" + fname + ".pdf").c_str());  
+  c2->Print(("../plots/fit_" + fname + ".pdf").c_str());  
 }
