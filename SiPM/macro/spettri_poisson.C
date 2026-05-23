@@ -82,39 +82,50 @@ void spettri_poisson(){
     h30->GetYaxis()->SetTitle("conteggi / p.e.");
 
     // dichiarazione TF1
+    /*TF1* poisson24 = new TF1("poisson24", [](double *x, double *par){
+        int k = (int)round(x[0]);
+        return par[0] * TMath::Poisson(k, par[1]) * TMath::Gaus(x[0], k, par[2], true);
+    }, 0, Nup, 3);*/
+
+    //TF1* poisson24 = new TF1("poisson24", "[0] * TMath::Poisson(TMath::Nint(x), [1])* TMath::Gaus(x, TMath::Nint(x), [2], true)", 0, Nup);
+    //poisson24->SetParameters(5e5, 1, 0.3);
+
     TF1* poisson24 = new TF1("poisson24", "[0] * TMath::Poisson(TMath::Nint(x), [1])", 0, Nup);
-    poisson24->SetParameters(5e5, 1);
+    poisson24->SetParameters(1.5e5, 1);
 
     TF1* poisson27 = new TF1("poisson27", "[0] * TMath::Poisson(TMath::Nint(x), [1])", 0, Nup);
-    poisson27->SetParameters(3e5, 2);
+    poisson27->SetParameters(1.5e5, 1);
 
     TF1* poisson30 = new TF1("poisson30", "[0] * TMath::Poisson(TMath::Nint(x), [1])", 0, Nup);
-    poisson30->SetParameters(2e5, 3);
+    poisson30->SetParameters(1e6, 4);
 
-    
+
     // creazione canvas
     TCanvas* c24 = new TCanvas("c24", "c24", 640,480);
     c24->cd(1);
     c24->SetTicks();
-    h24->Fit(poisson24, "LR", "", 1, 15);
+    h24->Fit(poisson24, "R", "", 0.5, 5.5);
 
     h24->Draw();
+    c24->Print("../plots/LED/fit_poisson_24.pdf");
 
 
     TCanvas* c27 = new TCanvas("c27", "c27", 640,480);
     c27->cd(1);
     c27->SetTicks();
-    h27->Fit(poisson27, "LR", "", 1, 15);
+    h27->Fit(poisson27, "R", "", 0.5, 6.5);
 
     h27->Draw();
+    c27->Print("../plots/LED/fit_poisson_27.pdf");
 
 
     TCanvas* c30 = new TCanvas("c30", "c30", 640,480);
     c30->cd(1);
     c30->SetTicks();
-    h30->Fit(poisson30, "LR", "", 1, 15);
+    h30->Fit(poisson30, "R", "", 0.5, 7.5);
 
     h30->Draw();
+    c30->Print("../plots/LED/fit_poisson_30.pdf");
 
 
         
