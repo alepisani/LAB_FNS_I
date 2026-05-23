@@ -1,4 +1,4 @@
-void fit1picco()
+void Co57_fit1picco()
 {
   //=================================================
   // macro per fare un fit gaussiano su fondo lineare/esponenziale
@@ -6,7 +6,7 @@ void fit1picco()
   gROOT->Reset();
   //gROOT->SetStyle("Plain");
   gStyle->SetOptStat(0);
-  gStyle->SetOptFit(1111);
+  gStyle->SetOptFit(111);
 
 
   bool amptek = true;   // true: amptek, false: PCA, ICSW_Spectech
@@ -28,33 +28,33 @@ void fit1picco()
   string fname, filename;
 
   // File di input dati
-    fname = "Spettro_energia_ravvicinato_delay_ampl_0deg_Cs"; //cambiare questo, senza .mca
-     filename = "../data/" + fname + ".mca";
+    fname = "Spettro_energia_ravvicinato_delay_ampl_0deg_Co57"; //cambiare questo, senza .mca
+     filename = "../../data/" + fname + ".mca";
           
   // INTERVALLI 
   //
   // Definire intervallo nella zona del picco
   int hist_ini,hist_fin;
-     hist_ini= 600;
-     hist_fin= 1200;
+     hist_ini= 100;
+     hist_fin= 350;
 
   // Def Intervallo per il fit del fondo
   int bkg_ini,bkg_fin;
-     bkg_ini = 620;
-     bkg_fin = 800;
+     bkg_ini = 140;
+     bkg_fin = 500;
 
   // Definire tipo de fondo
   bool bkg_lineal = false;  // true per lineare, false per esponenziale
  
   // Definire intervallo della gaussiana
   int g1_ini, g1_fin;
-     g1_ini= 800;
-     g1_fin= 1000;
+     g1_ini= 150;
+     g1_fin= 210;
 
   // Definire intervallo fit totale
   int total_ini,total_fin;
-     total_ini= 750;
-     total_fin= 1050;
+     total_ini= 140;
+     total_fin= 350;
 
   // Verifica ngroup  
   if ( (nchan % ngroup) != 0 || (nchan % ngroup) != 0 )
@@ -64,8 +64,8 @@ void fit1picco()
     }
     
   // dichiarare histo
-  TH1F* hist=new TH1F("Histo1","Spettro globale",nchan/ngroup,0,nchan);
-  TH1F* peak=new TH1F("Histo2","Fit del picco",nchan/ngroup_peak,0,nchan);
+  TH1F* hist=new TH1F("Histo1","Spettro globale del ^{57}Co",nchan/ngroup,0,nchan);
+  TH1F* peak=new TH1F("Histo2","Fit del fotopicco da 122 keV del ^{57}Co",nchan/ngroup_peak,0,nchan);
     
   // Aprire i file dati
   FILE *f= fopen(filename.c_str(),"r");
@@ -131,9 +131,9 @@ void fit1picco()
   }
   TF1 *g1 = new TF1("g1","gaus",g1_ini,g1_fin);
   
-
+  
   total->SetParNames("Intercetta","Pendenza",
-		     "Ampiezza","Centroide","Sigma");
+		                "Ampiezza","Centroide","Sigma");
   total->SetLineColor(2);
   
   // Prima approssimazione: fit del fondo e del picco separatamente
@@ -151,9 +151,9 @@ void fit1picco()
   
   // Disegno del canvas
   peak->GetXaxis()->SetRange(hist_ini/ngroup_peak,hist_fin/ngroup_peak);
-  peak->GetXaxis()->SetTitle("Canali ADC");
+  peak->GetXaxis()->SetTitle("canali ADC");
   peak->GetYaxis()->SetTitleOffset(1.5);   
-  peak->GetYaxis()->SetTitle("# conteggi");
+  peak->GetYaxis()->SetTitle("conteggi / 1 canale");
   //hist->SetFillColor(4);
   //hist->SetMaximum(125);
   // Make the plot:
@@ -210,6 +210,6 @@ void fit1picco()
   printf("chi2 / ndf: %f / %d\n",peak->GetFunction("total")->GetChisquare(),peak->GetFunction("total")->GetNDF());
 
   // salvare i pdf
-  c1->Print(("../plots/spettro_" + fname + ".pdf").c_str());  
-  c2->Print(("../plots/fit_" + fname + ".pdf").c_str());  
+  c1->Print(("../../plots/calib_energia/spettro_" + fname + ".pdf").c_str());  
+  c2->Print(("../../plots/calib_energia/fit_" + fname + ".pdf").c_str());  
 }
