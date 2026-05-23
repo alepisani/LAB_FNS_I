@@ -9,42 +9,64 @@ void poli_fit()
   gROOT->SetStyle("Plain");
   gStyle->SetOptFit(1111);
 
-// Numero di punti: np
-   const Int_t np = 6;
+  bool useall = true;  //se false esclude il primo punto
 
-  // Puntos a ajustar (x,y)
-  Double_t x[np]  = {};
-  Double_t y[np]  = {};
+  vector<double> x, y, ex, ey;
+  int np;
+
+  if(useall){
+
+// Numero di punti: np
+  np = 6;
+
+  // Punti (x,y)
+  x  = {122, 511, 662, 1173, 1275, 1333}; //energie in keV dei gamma
+  y = {181, 695, 890, 1541, 1667, 1741}; //canali ADC
 
   // Errori
-  Double_t ex[np] = {0.,0.,0.,0.,0.,0.};
-  Double_t ey[np] = {};
+  ex = {0.,0.,0.,0.,0.,0.};
+  ey = {1, 1, 1, 1, 1, 1};
+
+  } else {
+  //Numero di punti: np
+  np = 5;
+
+  // Punti (x,y)
+  x  = {511, 662, 1173, 1275, 1333}; //energie in keV dei gamma
+  y  = {695, 890, 1541, 1667, 1741}; //canali ADC
+
+  // Errori
+  ex = {0.,0.,0.,0.,0.};
+  ey = {1, 1, 1, 1, 1};
+  }
   
 // ===============================
-// Intervallo in x
-  Double_t xmin=-1.2;
-  Double_t xmax= 2.1;
+// Definire intervallo in x
+  Double_t xmin=100;
+  Double_t xmax= 1500;
 // =============================== 
  
-  // Grafici
-  TGraphErrors *graph1 = new TGraphErrors(np, x, y, ex, ey);
-  TGraphErrors *graph2 = new TGraphErrors(np, x, y, ex, ey);
+  //grafici
+  TGraphErrors *graph1 = new TGraphErrors(np, x.data(), y.data(), ex.data(), ey.data());
+  TGraphErrors *graph2 = new TGraphErrors(np, x.data(), y.data(), ex.data(), ey.data());
   
-  // Nuovo canvas per i grafici
-  TCanvas* c1 = new TCanvas ("Canvas","Fit",640,640);
+  // Grafici in un nuovo canvas
+  TCanvas* c1 = new TCanvas ("Canvas","Fit",700,1400);
   c1->Divide(1,2);
   c1->cd(1);
   c1->SetTicks();
 
-  graph1->GetXaxis()->SetTitle("X");
-  graph1->GetYaxis()->SetTitle("Y");
+  graph1->GetXaxis()->SetTitle("Energia [keV]");
+  graph1->GetYaxis()->SetTitle("Canali ADC");
+  graph1->SetTitle("Fit lineare");
   graph1->GetYaxis()->SetTitleOffset(1.2);
   graph1->SetMarkerStyle(20);
   graph1->SetMarkerSize(0.7);
   graph1->SetMarkerColor(1);
  
-  graph2->GetXaxis()->SetTitle("X");
-  graph2->GetYaxis()->SetTitle("Y");
+  graph2->GetXaxis()->SetTitle("Energia [keV]");
+  graph2->GetYaxis()->SetTitle("Canali ADC");
+  graph2->SetTitle("Fit parabolico");
   graph2->GetYaxis()->SetTitleOffset(1.2);
   graph2->SetMarkerStyle(20);
   graph2->SetMarkerSize(0.7);
@@ -89,6 +111,7 @@ void poli_fit()
 
   // dump canvas to pdf
 
-  c1->Print("poli_fit.pdf");   
+  if (useall) c1->Print("../../plots/calib_energia/calib_ene.pdf");
+  else c1->Print("../../plots/calib_energia/calib_ene_senza1.pdf");     
   
 }
