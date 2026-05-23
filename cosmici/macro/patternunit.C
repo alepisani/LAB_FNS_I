@@ -25,6 +25,8 @@ void patternunit(){
 
     // 1. Accesso all'asse X
     TAxis *xaxis = PatternUnit->GetXaxis();
+    PatternUnit->GetXaxis()->SetTitle("Pattern");
+    PatternUnit->GetYaxis()->SetTitle("Conteggi");
 
     // 2. Assegnazione delle label
     // Supponendo che tu voglia rinominare gli 8 bin (da 1 a 8)
