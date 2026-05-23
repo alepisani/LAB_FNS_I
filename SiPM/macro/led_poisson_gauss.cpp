@@ -21,29 +21,52 @@ void led_poisson_gauss(){
 
     vector<double> bin, counts;
     
-    TH1D* led_spectrum = new TH1D("spectrum", "LED spectrum", 3000, -996.5, 22996);
     
-    for (int i = 0; i < data[0].size(); i++){
+    // bin width è 8, dal tuo file (-996.5, -988.5, ...)
+    double xmin = -1000.5;
+    double xmax = 23004.5;  // aggiusta se necessario
+    int nbins = data[0].size();
 
-        bin.push_back(data[0][i]);
-        counts.push_back(data[1][i]);
-        led_spectrum->Fill(data[0][i], data[1][i]);
+    TH1D* led_spectrum = new TH1D("spectrum", "LED spectrum", nbins, xmin, xmax);
 
+    for (int i = 0; i < (int)data[0].size(); i++) {
+        
+        led_spectrum->SetBinContent(i + 1, data[1][i]); // i+1 perché ROOT parte da bin 1
+    
     }
 
-    //landau+gauss fit 
+    //poisson+gauss fit 
     int xmin1 = -100;
     int xmax1 = 1500;
-    TF1* poisson_gauss = new TF1("langauss1", "landau(0) + gaus(3) + gaus(6) + gaus(9) + gaus(12)", xmin1, xmax1);
+    TF1* poisson_gauss = new TF1("poisson_gauss", "[0] * TMath::Poisson(x, [1]) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20)", xmin1, xmax1);
     
-    /*
-    langauss1->SetParameter(0, 200);
-    langauss1->SetParameter(1, 105);
-    langauss1->SetParameter(2, 30);
-    langauss1->SetParameter(3, 250);
-    langauss1->SetParameter(4, 68);
-    langauss1->SetParameter(5, 10);
-    */
+    poisson_gauss->SetParameter(3, 5000);
+    poisson_gauss->SetParameter(4, 0);
+    poisson_gauss->SetParameter(5, 20);
+    
+    poisson_gauss->SetParameter(6, 9000);
+    poisson_gauss->SetParameter(7, 180);
+    poisson_gauss->SetParameter(8, 20);
+
+    poisson_gauss->SetParameter(9, 8000);
+    poisson_gauss->SetParameter(10, 350);
+    poisson_gauss->SetParameter(11, 20);
+
+    poisson_gauss->SetParameter(12, 6000);
+    poisson_gauss->SetParameter(13, 550);
+    poisson_gauss->SetParameter(14, 20);
+
+    poisson_gauss->SetParameter(15, 3000);
+    poisson_gauss->SetParameter(16, 650);
+    poisson_gauss->SetParameter(17, 20);
+
+    poisson_gauss->SetParameter(18, 1500);
+    poisson_gauss->SetParameter(19, 850);
+    poisson_gauss->SetParameter(20, 20);
+
+    poisson_gauss->SetParameter(21, 1000);
+    poisson_gauss->SetParameter(22, 950);
+    poisson_gauss->SetParameter(23, 20);
     
 
     TCanvas *can1_poisson_gauss = new TCanvas("c1_poisson_gauss", "Poisson + Gauss", 800, 600);
@@ -52,7 +75,7 @@ void led_poisson_gauss(){
     led_spectrum->SetTitle("704V_30dB_30ua_histo.txt");
     led_spectrum->GetXaxis()->SetRangeUser(xmin1, xmax1);
     led_spectrum->Draw();
-    led_spectrum->Fit(poisson_gauss, "RQ"); 
+    led_spectrum->Fit(poisson_gauss, "R"); 
     gStyle->SetOptFit(1111);
     
 
