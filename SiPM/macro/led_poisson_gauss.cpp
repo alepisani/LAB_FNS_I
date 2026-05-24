@@ -7,7 +7,6 @@
  * and similar .txt to this one
 */
 
-#include <iostream>
 #include "txt_reader.cpp"
 #include "TH1D.h"
 using namespace std;
@@ -39,9 +38,12 @@ void led_poisson_gauss(){
     int xmin1 = -100;
     int xmax1 = 1500;
     TF1* poisson_gauss = new TF1("poisson_gauss", "[0] * TMath::Poisson(x, [1]) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20)", xmin1, xmax1);
-    
+   
+    poisson_gauss->SetParameter(0, led_spectrum->GetEntries());
+    poisson_gauss->SetParameter(1, 405);
+
     poisson_gauss->SetParameter(3, 5000);
-    poisson_gauss->SetParameter(4, 0);
+    poisson_gauss->SetParameter(1, 400);
     poisson_gauss->SetParameter(5, 20);
     
     poisson_gauss->SetParameter(6, 9000);
