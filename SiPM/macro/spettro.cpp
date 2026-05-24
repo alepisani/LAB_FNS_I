@@ -31,7 +31,7 @@ void spettro()
  string fname, filename;
 
   // Nome file dati
-    fname = "708V_30dB_24ua_histo";
+    fname = "708V_30dB_27ua_histo";
     filename = "../data/txt/" + fname + ".txt";
 
 
