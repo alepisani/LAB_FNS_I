@@ -7,80 +7,123 @@
  * and similar .txt to this one
 */
 
+
 #include "txt_reader.cpp"
 #include "TH1D.h"
 using namespace std;
 
+// ─── Helper function ──────────────────────────────────────────────────────────
+void fit_led_spectrum(
+    const TString& fname,           
+    const TString& canvasName,      
+    double delta,
+    vector<double> centers
+) {
+    int nGauss = centers.size();
 
-void led_poisson_gauss(){
+    // --- Leggi dati ---
+    TString fpath = "../data/txt/" + fname;
+    vector<vector<double>> data = txt_reader(fpath.Data());
 
-    //take the data from the files.txt
-
-    vector<vector<double>> data = txt_reader("../data/txt/704V_30dB_30ua_histo.txt");
-
-    vector<double> bin, counts;
-    
-    
-    // bin width è 8, dal tuo file (-996.5, -988.5, ...)
-    double xmin = -1000.5;
-    double xmax = 23004.5;  // aggiusta se necessario
     int nbins = data[0].size();
+    TH1D* hist = new TH1D(canvasName, "LED spectrum", nbins, -1000.5, 23004.5);
+    for (int i = 0; i < (int)data[0].size(); i++)
+        hist->SetBinContent(i + 1, data[1][i]);
 
-    TH1D* led_spectrum = new TH1D("spectrum", "LED spectrum", nbins, xmin, xmax);
-
-    for (int i = 0; i < (int)data[0].size(); i++) {
-        
-        led_spectrum->SetBinContent(i + 1, data[1][i]); // i+1 perché ROOT parte da bin 1
-    
+    // --- Crea le TF1 ---
+    vector<TF1*> gaussians;
+    for (int i = 0; i < nGauss; i++) {
+        TString gname = Form("g_%s_%d", canvasName.Data(), i);
+        TF1* g = new TF1(gname, "gaus(0)", centers[i] - delta, centers[i] + delta);
+        gaussians.push_back(g);
     }
 
-    //poisson+gauss fit 
-    int xmin1 = -100;
-    int xmax1 = 1500;
-    TF1* poisson_gauss = new TF1("poisson_gauss", "[0] * TMath::Poisson(x, [1]) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20)", xmin1, xmax1);
-   
-    poisson_gauss->SetParameter(0, led_spectrum->GetEntries());
-    poisson_gauss->SetParameter(1, 405);
+    // --- Canvas e draw ---
+    TCanvas* can = new TCanvas(canvasName + "_can", "Poisson + Gauss", 800, 600);
+    hist->GetXaxis()->SetTitle("Canali");
+    hist->GetYaxis()->SetTitle("Conteggi");
+    hist->SetTitle(fname);
+    hist->GetXaxis()->SetRangeUser(-100, 5000);
+    hist->Draw();
 
-    poisson_gauss->SetParameter(3, 5000);
-    poisson_gauss->SetParameter(1, 400);
-    poisson_gauss->SetParameter(5, 20);
-    
-    poisson_gauss->SetParameter(6, 9000);
-    poisson_gauss->SetParameter(7, 180);
-    poisson_gauss->SetParameter(8, 20);
+    // --- Fit ---
+    hist->Fit(gaussians[0], "RQ");
+    for (int i = 1; i < nGauss; i++)
+        hist->Fit(gaussians[i], "RQ+");
 
-    poisson_gauss->SetParameter(9, 8000);
-    poisson_gauss->SetParameter(10, 350);
-    poisson_gauss->SetParameter(11, 20);
+    // --- Estrai parametri e calcola delta picco-picco ---
+    vector<double> means;
+    printf("\n=== %s ===\n", fname.Data());
+    for (int i = 0; i < nGauss; i++) {
+        double norm      = gaussians[i]->GetParameter(0);
+        double mean      = gaussians[i]->GetParameter(1);
+        double sigma     = gaussians[i]->GetParameter(2);
+        double norm_err  = gaussians[i]->GetParError(0);
+        double mean_err  = gaussians[i]->GetParError(1);
+        double sigma_err = gaussians[i]->GetParError(2);
+        double chi2      = gaussians[i]->GetChisquare();
+        int    ndf       = gaussians[i]->GetNDF();
+        double pvalue    = TMath::Prob(chi2, ndf);
 
-    poisson_gauss->SetParameter(12, 6000);
-    poisson_gauss->SetParameter(13, 550);
-    poisson_gauss->SetParameter(14, 20);
+        means.push_back(mean);
+        printf("Gauss%d:  mean = %.2f +/- %.2f   sigma = %.2f +/- %.2f   norm = %.2f +/- %.2f   pvalue = %.8f\n",
+               i+1, mean, mean_err, sigma, sigma_err, norm, norm_err, pvalue);
+    }
 
-    poisson_gauss->SetParameter(15, 3000);
-    poisson_gauss->SetParameter(16, 650);
-    poisson_gauss->SetParameter(17, 20);
+    // --- Delta picco-picco ---
+    vector<double> Dpp;
+    for (int i = 0; i < (int)means.size() - 1; i++) {
+        double dpp = means[i+1] - means[i];
+        Dpp.push_back(dpp);
+        cout << "dpp" << i+1 << " = " << dpp << "  ";
+    }
+    cout << endl;
 
-    poisson_gauss->SetParameter(18, 1500);
-    poisson_gauss->SetParameter(19, 850);
-    poisson_gauss->SetParameter(20, 20);
+    double mean_dpp = 0;
+    for (double d : Dpp) mean_dpp += d;
+    mean_dpp /= Dpp.size();
 
-    poisson_gauss->SetParameter(21, 1000);
-    poisson_gauss->SetParameter(22, 950);
-    poisson_gauss->SetParameter(23, 20);
-    
+    // --- Salva su file ---
+    TString outname = fname;
+    outname.ReplaceAll("_histo.txt", "_deltapp.txt");
+    TString outpath = "../data/outcome_fit/" + outname;
 
-    TCanvas *can1_poisson_gauss = new TCanvas("c1_poisson_gauss", "Poisson + Gauss", 800, 600);
-    led_spectrum->GetXaxis()->SetTitle("Canali");
-    led_spectrum->GetYaxis()->SetTitle("Conteggi");
-    led_spectrum->SetTitle("704V_30dB_30ua_histo.txt");
-    led_spectrum->GetXaxis()->SetRangeUser(xmin1, xmax1);
-    led_spectrum->Draw();
-    led_spectrum->Fit(poisson_gauss, "R"); 
-    gStyle->SetOptFit(1111);
-    
+    FILE* txt = fopen(outpath.Data(), "w");
+    fprintf(txt, "%s\n", fname.Data());
+    for (int i = 0; i < (int)Dpp.size(); i++) {
+        fprintf(txt, "%.4f", Dpp[i]);
+        if (i < (int)Dpp.size() - 1) fprintf(txt, " ");
+    }
+    fprintf(txt, "\n%.4f\n", mean_dpp);
+    fclose(txt);
 
-
+    printf("Media delta: %.4f  →  salvato in %s\n", mean_dpp, outpath.Data());
 }
- 
+
+// ─── Macro principale ─────────────────────────────────────────────────────────
+void led_poisson_gauss() {
+
+    // ── File 1: 708V 30dB 30ua ──────────────────────────────────────────────
+    fit_led_spectrum(
+        "708V_30dB_30ua_histo.txt",
+        "c1",
+        80,                                     // delta
+        {0, 350, 700, 1000, 1350, 1700, 2000}   // centers
+    );
+
+    // ── File 2: 708V 30dB 27ua ──────────────────────────────────────────────
+    fit_led_spectrum(
+        "708V_30dB_27ua_histo.txt",
+        "c2",
+        80,                                     // delta
+        {0, 350, 700, 1000, 1350, 1700, 2000}   // centers
+    );
+
+    // ── File 3: 708V 30dB 24ua ──────────────────────────────────────────────
+    fit_led_spectrum(
+        "708V_30dB_24ua_histo.txt",
+        "c3",
+        80,                                     // delta
+        {0, 350, 700, 1000, 1350, 1700, 2000}   // centers
+    );
+}

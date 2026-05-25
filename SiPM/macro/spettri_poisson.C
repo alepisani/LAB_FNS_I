@@ -85,9 +85,7 @@ void spettri_poisson(){
     /*TF1* poisson24 = new TF1("poisson24", [](double *x, double *par){
         int k = (int)round(x[0]);
         return par[0] * TMath::Poisson(k, par[1]) * TMath::Gaus(x[0], k, par[2], true);
-    }, 0, Nup, 3);*/
-
-    //TF1* poisson24 = new TF1("poisson24", "[0] * TMath::Poisson(TMath::Nint(x), [1])* TMath::Gaus(x, TMath::Nint(x), [2], true)", 0, Nup);
+    }, 0, Nup, 3);*/    //TF1* poisson24 = new TF1("poisson24", "[0] * TMath::Poisson(TMath::Nint(x), [1])* TMath::Gaus(x, TMath::Nint(x), [2], true)", 0, Nup);
     //poisson24->SetParameters(5e5, 1, 0.3);
 
     TF1* poisson24 = new TF1("poisson24", "[0] * TMath::Poisson(TMath::Nint(x), [1])", 0, Nup);
