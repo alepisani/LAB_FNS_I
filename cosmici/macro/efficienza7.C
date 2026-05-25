@@ -20,6 +20,7 @@ TCanvas* c1 = new TCanvas("c1", "Spettro TDC rivelatore 7", 800, 600);
     gStyle->SetOptFit(1111);
     TDC7->GetXaxis()->SetTitle("Canali TDC");
     TDC7->GetYaxis()->SetTitle("Conteggi");
+    TDC7->SetLineWidth(3);
     TDC7->SaveAs("../plots/TDC7.pdf");
 
 // numero misure prese
@@ -31,12 +32,12 @@ TCanvas* c1 = new TCanvas("c1", "Spettro TDC rivelatore 7", 800, 600);
     float efficienza[] = {0.969, 0.975, 0.964, 0.96, 0.93, 0.913};
     // errori
     float s_soglia[] = {1,1,1,1,1,1};
-    float s_efficienza[] = {0.006197, 0.005891,0.008068,0.008912,0.004937,0.005481};
+    float s_efficienza[] = {0.00548, 0.004937,0.005891,0.006196,0.008068,0.008912};
     // ----------------------------------------------------------------- //
 
     //grafico diel guadagno in funzione di f
 
-    TCanvas *eff = new TCanvas("eff","g(f)",200,10,600,400);
+    TCanvas *eff = new TCanvas("eff","g(f)",200,10,800,600);
     // Mi assicuro che la tela sia bianca (0 corrisponde al bianco, per altri colori vedi https://root.cern.ch/doc/master/classTColor.html)
     eff->SetFillColor(0);
     eff->cd();
