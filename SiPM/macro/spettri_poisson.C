@@ -20,18 +20,19 @@ void spettri_poisson(){
 
     //gROOT->SetStyle("Plain");
     gStyle->SetOptStat(0);
-    gStyle->SetOptFit(1111);
+    gStyle->SetOptFit(0);
 
     // selezione bin
     bool use_pe_bins = false;
+    bool use_binomial = true;
 
     // lettura file, tutti della stessa lunghezza
     vector<vector<double>> data_24 = doubleReader("../data/txt/708V_30dB_24ua_histo.txt", 8, false);
     vector<vector<double>> data_27 = doubleReader("../data/txt/708V_30dB_27ua_histo.txt", 8, false);
-    vector<vector<double>> data_30 = doubleReader("../data/txt/708V_30dB_30ua_pp_histo.txt", 8, false);
+    vector<vector<double>> data_30 = doubleReader("../data/txt/708V_30dB_30ua_histo.txt", 8, false);
 
-    int dpp = 340;  //valore delta picco-picco, pari
-    int Npe = 20;   //numero di fotoni equivalenti nell'istogramma
+    int dpp = 335;  //valore delta picco-picco, pari
+    int Npe = 15;   //numero di fotoni equivalenti nell'istogramma
     int x0 = 0;     // posizione picco 0 p.e., ossia il rumore
     int x1 = x0 + dpp; // 1 fotone equivalente
 
@@ -43,16 +44,20 @@ void spettri_poisson(){
     double xlow, xup;
     if(use_pe_bins) nbins = Npe + 1;
     else {
-        nbins = data_24[0].size();
-        xlow = (data_24[0][0]-4.)/x1;
-        xup = (data_24[0].back() + 4.)/x1;
+        //auto limit = upper_bound(data_24[0].begin(), data_24[0].end(), Npe*x1);
+        //int index = distance(data_24[0].begin(), limit);
+        int offset = 90;
+        nbins = 720;
+        xlow = (data_24[0][0]-4. + 8*offset)/x1;
+        xup = (xlow*x1 + 8*nbins + 4.)/x1;
+        
     }
 
 
     // range dei fit
-    double xmin_24 = -0.4, xmax_24 = 8.5;
-    double xmin_27 = 0, xmax_27 = 11.5;
-    double xmin_30 = 0, xmax_30 = 13.5;
+    double xmin_24 = 0, xmax_24 = 8.5;
+    double xmin_27 = 0, xmax_27 = 10.5;
+    double xmin_30 = 0.5, xmax_30 = 14;
 
 
     // dichiarazione istogrammi
@@ -69,10 +74,10 @@ void spettri_poisson(){
         h30 = new TH1D("h30", "", nbins, xlow, xup);
     }
 
-    if( (data_24[1].size()!=data_27[1].size()) || (data_24[1].size()!=data_30[1].size()) || (data_30[1].size()!=data_27[1].size()) ){
-        cout << "File con lunghezza diversa! Errore!\n";
-        return;
-    }
+    //if( (data_24[1].size()!=data_27[1].size()) || (data_24[1].size()!=data_30[1].size()) || (data_30[1].size()!=data_27[1].size()) ){
+      //  cout << "File con lunghezza diversa! Errore!\n";
+      //  return;
+    //}
 
     for(int i=0; i<data_24[1].size(); i++){
         h24->Fill(data_24[0][i]/x1, data_24[1][i]);
@@ -117,11 +122,21 @@ void spettri_poisson(){
         poisson24->SetParameters(1.5e5, 1);
 
         poisson27 = new TF1("poisson27", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", xmin_27, xmax_27);
-        poisson27->SetParameters(1.5e5, 1);
+        poisson27->SetParameters(1.5e5,3);
 
         poisson30 = new TF1("poisson30", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", xmin_30, xmax_30);
-        poisson30->SetParameters(1e6, 4);
+        poisson30->SetParameters(1e3, 5);
     } 
+    else if (use_binomial){
+        poisson24 = new TF1("poisson24", "TMath::Binomial([0], TMath::Nint(x))*TMath::Power([1],x)*TMath::Power(1-[1], [0]-x)", xmin_24, xmax_24);
+        poisson27 = new TF1("poisson27", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", xmin_27, xmax_27);
+        poisson27->SetParameters(1.5e5,3);
+
+        poisson30 = new TF1("poisson30", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", xmin_30, xmax_30);
+        poisson30->SetParameters(1e3, 5);
+    }
+    
+    
     else {
 
         // fit delle gaussiane singole
@@ -146,16 +161,32 @@ void spettri_poisson(){
         double par24[20] = {2400, 3.5,
                         13000, 0, 0.01,
                         12000, 1, 0.01, 
-                        10000, 2, 0.02, 
+                        12000, 2, 0.02, 
                         8000, 3, 0.03, 
-                        4000, 3.9, 0.03,
-                        500, 4.8, 0.1};
+                        4000, 4, 0.03,
+                        1000, 5, 0.1};
         poisson24->SetParameters(par24);
 
-        poisson27 = new TF1("poisson27", "[0] * TMath::Poisson(TMath::Nint(x), [1])+ gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20)", xmin_27, xmax_27);
-        //poisson27->SetParameters(1.5e5, 1, 0.3);
+        poisson27 = new TF1("poisson27", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20)", xmin_27, xmax_27);
+        double par27[23] = {2000, 4,
+                        13000, 0, 0.01,
+                        12000, 1, 0.01, 
+                        11000, 2.2, 0.02, 
+                        10000, 3, 0.03, 
+                        10000, 4, 0.03,
+                        800, 5.1, 0.08,
+                        500, 5.9, 0.2};//,
+                        //500, 7, 0.1};
+        poisson27->SetParameters(par27);
 
-        poisson30 = new TF1("poisson30", "[0] * TMath::Poisson(TMath::Nint(x), [1]) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20)", xmin_30, xmax_30);
+        poisson30 = new TF1("poisson30", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20) + gaus(23)", xmin_30, xmax_30);
+        /*double par30[26] = {7000, 5,
+                            5000, 0, 0.03,
+                            10000, 1, 0.03,
+
+
+
+        }*/
         //poisson30->SetParameters(1e6, 4, 0.3);
     }
 
@@ -167,7 +198,7 @@ void spettri_poisson(){
 
     h24->Fit(poisson24, "R", "", xmin_24, xmax_24);
     poisson24->Draw("same");
-    c24->Print("../plots/LED/fit_poisson_24.pdf");
+    
 
 
     TCanvas* c27 = new TCanvas("c27", "c27", 640,480);
@@ -177,7 +208,7 @@ void spettri_poisson(){
 
     h27->Fit(poisson27, "R", "", xmin_27, xmax_27);
     poisson27->Draw("same");
-    c27->Print("../plots/LED/fit_poisson_27.pdf");
+    
 
 
     TCanvas* c30 = new TCanvas("c30", "c30", 640,480);
@@ -187,8 +218,18 @@ void spettri_poisson(){
 
     h30->Fit(poisson30, "R", "", xmin_30, xmax_30);
     poisson30->Draw("same");
-    c30->Print("../plots/LED/fit_poisson_30.pdf");
+    
 
+
+    if(!use_pe_bins){
+        c24->Print("../plots/LED/fit_poisson_24.pdf");
+        c27->Print("../plots/LED/fit_poisson_27.pdf");
+        c30->Print("../plots/LED/fit_poisson_30.pdf");
+    } else {
+        c24->Print("../plots/LED/rebinned_fit_poisson_24.pdf");
+        c27->Print("../plots/LED/rebinned_fit_poisson_27.pdf");
+        c30->Print("../plots/LED/rebinned_fit_poisson_30.pdf");
+    }
 
         
 
