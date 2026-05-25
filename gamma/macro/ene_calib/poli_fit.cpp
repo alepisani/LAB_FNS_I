@@ -9,7 +9,7 @@ void poli_fit()
   gROOT->SetStyle("Plain");
   gStyle->SetOptFit(1111);
 
-  bool useall = true;  //se false esclude il primo punto
+  bool useall = false;  //se false esclude il primo punto
 
   vector<double> x, y, ex, ey;
   int np;
@@ -21,11 +21,11 @@ void poli_fit()
 
   // Punti (x,y)
   y  = {122, 511, 662, 1173, 1275, 1333}; //energie in keV dei gamma
-  x = {181, 695, 890, 1541, 1667, 1741}; //canali ADC
+  x = {181, 696, 890, 1541, 1668, 1741}; //canali ADC
 
   // Errori
   ey = {0.,0.,0.,0.,0.,0.};
-  ex = {1, 1, 1, 1, 1, 1};
+  ex = {2, 2, 2, 2, 2, 2};
 
   } else {
   //Numero di punti: np
