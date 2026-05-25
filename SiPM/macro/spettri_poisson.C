@@ -22,33 +22,52 @@ void spettri_poisson(){
     gStyle->SetOptStat(0);
     gStyle->SetOptFit(1111);
 
+    // selezione bin
+    bool use_pe_bins = false;
+
     // lettura file, tutti della stessa lunghezza
     vector<vector<double>> data_24 = doubleReader("../data/txt/708V_30dB_24ua_histo.txt", 8, false);
     vector<vector<double>> data_27 = doubleReader("../data/txt/708V_30dB_27ua_histo.txt", 8, false);
     vector<vector<double>> data_30 = doubleReader("../data/txt/708V_30dB_30ua_pp_histo.txt", 8, false);
 
     int dpp = 340;  //valore delta picco-picco, pari
-    int Npe = 20;   //numero di fotoni equivalenti nell'isotgramma
-    int x0 = 5;     // posizione picco 0 p.e., ossia il rumore
+    int Npe = 20;   //numero di fotoni equivalenti nell'istogramma
+    int x0 = 0;     // posizione picco 0 p.e., ossia il rumore
     int x1 = x0 + dpp; // 1 fotone equivalente
 
     //parametri istogrammi (in p.e.)
 
-    double Nlow = -0.5;
+    double Nlow = -0.3;
     double Nup = Npe + 0.5;
-    int nbins = Npe + 1;
+    int nbins = -999;
+    double xlow, xup;
+    if(use_pe_bins) nbins = Npe + 1;
+    else {
+        nbins = data_24[0].size();
+        xlow = (data_24[0][0]-4.)/x1;
+        xup = (data_24[0].back() + 4.)/x1;
+    }
 
-    /*
-    int xlow = x0 - dpp/2;
-    int xup = x0 + Npe*dpp + dpp/2;
-    int nbins = Npe + 1;
-    */
+
+    // range dei fit
+    double xmin_24 = -0.4, xmax_24 = 8.5;
+    double xmin_27 = 0, xmax_27 = 11.5;
+    double xmin_30 = 0, xmax_30 = 13.5;
+
 
     // dichiarazione istogrammi
 
-    TH1D* h24 = new TH1D("h24", "", nbins, Nlow, Nup);
-    TH1D* h27 = new TH1D("h27", "", nbins, Nlow, Nup);
-    TH1D* h30 = new TH1D("h30", "", nbins, Nlow, Nup);
+    TH1D *h24, *h27, *h30;
+
+    if(use_pe_bins){
+        h24 = new TH1D("h24", "", nbins, Nlow, Nup);
+        h27 = new TH1D("h27", "", nbins, Nlow, Nup);
+        h30 = new TH1D("h30", "", nbins, Nlow, Nup);
+    } else {
+        h24 = new TH1D("h24", "", nbins, xlow, xup);
+        h27 = new TH1D("h27", "", nbins, xlow, xup);
+        h30 = new TH1D("h30", "", nbins, xlow, xup);
+    }
 
     if( (data_24[1].size()!=data_27[1].size()) || (data_24[1].size()!=data_30[1].size()) || (data_30[1].size()!=data_27[1].size()) ){
         cout << "File con lunghezza diversa! Errore!\n";
@@ -88,41 +107,86 @@ void spettri_poisson(){
     }, 0, Nup, 3);*/    //TF1* poisson24 = new TF1("poisson24", "[0] * TMath::Poisson(TMath::Nint(x), [1])* TMath::Gaus(x, TMath::Nint(x), [2], true)", 0, Nup);
     //poisson24->SetParameters(5e5, 1, 0.3);
 
-    TF1* poisson24 = new TF1("poisson24", "[0] * TMath::Poisson(TMath::Nint(x), [1])", 0, Nup);
-    poisson24->SetParameters(1.5e5, 1);
+    //[0] * TMath::Poisson(TMath::Nint(x), [1])
 
-    TF1* poisson27 = new TF1("poisson27", "[0] * TMath::Poisson(TMath::Nint(x), [1])", 0, Nup);
-    poisson27->SetParameters(1.5e5, 1);
+    // dichiarazione funzioni
+    TF1 *poisson24, *poisson27, *poisson30;
 
-    TF1* poisson30 = new TF1("poisson30", "[0] * TMath::Poisson(TMath::Nint(x), [1])", 0, Nup);
-    poisson30->SetParameters(1e6, 4);
+    if(use_pe_bins){
+        poisson24 = new TF1("poisson24", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", xmin_24, xmax_24);
+        poisson24->SetParameters(1.5e5, 1);
 
+        poisson27 = new TF1("poisson27", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", xmin_27, xmax_27);
+        poisson27->SetParameters(1.5e5, 1);
+
+        poisson30 = new TF1("poisson30", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", xmin_30, xmax_30);
+        poisson30->SetParameters(1e6, 4);
+    } 
+    else {
+
+        // fit delle gaussiane singole
+
+        // 2.4
+        /*
+        int ngaus24 = 5;         // da cambiare in base a quante gaussiane ci sono nella TF1 finale
+        const int npar24 = 17; //2 + 3*npar24
+        double par24[npar24];
+        //inizializzazione parametri poissoniana
+        par24[0] = 2400;
+        par24[1] = 3.5;  
+        // trova parametri gaussiane
+        for(int i=0; i<ngaus24; i++){
+            TF1 gaus_sing("gaus_sing", "gaus", i-0.15, i+0.15);
+            h24->Fit(&gaus_sing);
+            gaus_sing.GetParameters(&par24[2+3*i]);
+        }
+            */
+
+        poisson24 = new TF1("poisson24", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17)", xmin_24, xmax_24);
+        double par24[20] = {2400, 3.5,
+                        13000, 0, 0.01,
+                        12000, 1, 0.01, 
+                        10000, 2, 0.02, 
+                        8000, 3, 0.03, 
+                        4000, 3.9, 0.03,
+                        500, 4.8, 0.1};
+        poisson24->SetParameters(par24);
+
+        poisson27 = new TF1("poisson27", "[0] * TMath::Poisson(TMath::Nint(x), [1])+ gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20)", xmin_27, xmax_27);
+        //poisson27->SetParameters(1.5e5, 1, 0.3);
+
+        poisson30 = new TF1("poisson30", "[0] * TMath::Poisson(TMath::Nint(x), [1]) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20)", xmin_30, xmax_30);
+        //poisson30->SetParameters(1e6, 4, 0.3);
+    }
 
     // creazione canvas
     TCanvas* c24 = new TCanvas("c24", "c24", 640,480);
     c24->cd(1);
     c24->SetTicks();
-    h24->Fit(poisson24, "R", "", 0.5, 5.5);
+    h24->Draw("hist");
 
-    h24->Draw();
+    h24->Fit(poisson24, "R", "", xmin_24, xmax_24);
+    poisson24->Draw("same");
     c24->Print("../plots/LED/fit_poisson_24.pdf");
 
 
     TCanvas* c27 = new TCanvas("c27", "c27", 640,480);
     c27->cd(1);
     c27->SetTicks();
-    h27->Fit(poisson27, "R", "", 0.5, 6.5);
+    h27->Draw("hist");
 
-    h27->Draw();
+    h27->Fit(poisson27, "R", "", xmin_27, xmax_27);
+    poisson27->Draw("same");
     c27->Print("../plots/LED/fit_poisson_27.pdf");
 
 
     TCanvas* c30 = new TCanvas("c30", "c30", 640,480);
     c30->cd(1);
     c30->SetTicks();
-    h30->Fit(poisson30, "R", "", 0.5, 7.5);
+    h30->Draw("hist");
 
-    h30->Draw();
+    h30->Fit(poisson30, "R", "", xmin_30, xmax_30);
+    poisson30->Draw("same");
     c30->Print("../plots/LED/fit_poisson_30.pdf");
 
 
