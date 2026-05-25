@@ -3,6 +3,12 @@
  * and save the histograms of the spectra in .pdf files in the plots directory
 */
 
+#include "./ene_calib/poli_fit.cpp"
+
+double p0 = -12.9527;
+double p1 = 0.741858;
+double p2 = 1.81343e-05;
+
 void spettro2()
 {
   //=================================================
@@ -78,7 +84,8 @@ void spettro2()
         } else {
           sscanf(&line[0], "%f %f", &x, &y);
         }
-        hist->AddBinContent(hist->FindBin(x), y);
+        double x_after_calib = x*x*p2 + x*p1 + p0;
+        hist->AddBinContent(hist->FindBin(x_after_calib), y);
       }
       row++;
     }
@@ -88,7 +95,7 @@ void spettro2()
     TCanvas* c1 = new TCanvas("c1", "c1", 800, 600);
     c1->SetTicks();
 
-    hist->GetXaxis()->SetTitle("Canali ADC");
+    hist->GetXaxis()->SetTitle("Enegia [keV]");
     hist->GetYaxis()->SetTitleOffset(1.5);
     hist->GetYaxis()->SetTitle("# conteggi");
     gStyle->SetOptStat(0);
