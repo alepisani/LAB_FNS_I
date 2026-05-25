@@ -51,7 +51,7 @@ void spettro()
   int row=0;
 
   // Dichiarazione Canvas
-  TCanvas* c1 = new TCanvas ("c1","c1",640,480);
+  TCanvas* c1 = new TCanvas ("c1","c1",800,600);
   c1->cd(1);
   c1->SetTicks();
   
