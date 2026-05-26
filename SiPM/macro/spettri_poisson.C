@@ -19,11 +19,16 @@
 void spettri_poisson(){
 
     //gROOT->SetStyle("Plain");
-    gStyle->SetOptStat(0);
+    gStyle->SetOptStat("mr");
+    gStyle->SetMarkerStyle(20);
+    gStyle->SetMarkerSize(1);
+    gStyle->SetMarkerColor(4);
 
 
     // selezione bin
     bool use_pe_bins = true;
+    //selezione fit
+    bool fit_binomiale = false;
 
     // lettura file, tutti della stessa lunghezza
     vector<vector<double>> data_24 = doubleReader("../data/txt/708V_30dB_24ua_histo.txt", 8, false);
@@ -69,17 +74,17 @@ void spettri_poisson(){
     }
 
 
-    // range dei fit
+    // range dei fit, in p.e.
     double xmin_24, xmax_24;
     double xmin_27, xmax_27;
     double xmin_30, xmax_30;
     if(use_pe_bins){
         gStyle->SetOptFit(1111);
-        xmin_24 = 0.5, xmax_24 = 10.5;
-        xmin_27 = 0.5, xmax_27 = 10.5;
-        xmin_30 = 0.5, xmax_30 = 10.5;
+        xmin_24 = 0.5, xmax_24 = 3;
+        xmin_27 = 0.5, xmax_27 = 5;
+        xmin_30 = 0.5, xmax_30 = 6;
     } else {
-        gStyle->SetOptFit(0);
+        gStyle->SetOptFit(1111);
         xmin_24 = -0.4, xmax_24 = 8.5;
         xmin_27 = -0.4, xmax_27 = 10.5;
         xmin_30 = -0.4, xmax_30 = 14;
@@ -99,6 +104,11 @@ void spettri_poisson(){
         h24->Fill( (data_24[0][i]-x0_24)/dpp_24 , data_24[1][i]);
         h27->Fill( (data_27[0][i]-x0_27)/dpp_27 , data_27[1][i]);
         h30->Fill( (data_30[0][i]-x0_30)/dpp_30 , data_30[1][i]);
+
+        // range
+        h24->GetYaxis()->SetRange(50e3);
+        h27->GetYaxis()->SetRange(45e3);
+        h30->GetYaxis()->SetRange(90e3);
     }
 
     } else {
@@ -110,12 +120,17 @@ void spettri_poisson(){
         for(int i=0; i<data_24[1].size(); i++){
             h24->Fill( (data_24[0][i]) , data_24[1][i]);
             h27->Fill( (data_27[0][i]) , data_27[1][i]);
-            h30->Fill( (data_30[0][i]), data_30[1][i]);
+            h30->Fill( (data_30[0][i]) , data_30[1][i]);
         }
         //conversione asse x in p.e., con offset dell'x0
         h24->GetXaxis()->Set(nbins, (xlow24-x0_24)/dpp_24, (xup24-x0_24)/dpp_24);
         h27->GetXaxis()->Set(nbins, (xlow27-x0_27)/dpp_27, (xup27-x0_27)/dpp_27);
         h30->GetXaxis()->Set(nbins, (xlow30-x0_30)/dpp_30, (xup30-x0_30)/dpp_30);
+
+        //reset statistiche per averle in p.e.
+        h24->ResetStats();
+        h27->ResetStats();
+        h30->ResetStats();
         
     }
 
@@ -187,39 +202,72 @@ void spettri_poisson(){
         }
             */
 
-        poisson24 = new TF1("poisson24", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17)", xmin_24, xmax_24);
-        double par24[20] = {2400, 3.5,
+        poisson24 = new TF1("poisson24", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20)", xmin_24, xmax_24);
+        double par24[23] = {1000, 3.5,
                         13000, 0, 0.01,
                         12000, 1, 0.01, 
                         12000, 2, 0.02, 
-                        8000, 3, 0.03, 
-                        4000, 4, 0.03,
-                        1000, 5, 0.1};
+                        1500, 3, 0.03, 
+                        800, 4, 0.03,
+                        500, 5, 0.1,
+                        100, 6, 0.1};
         poisson24->SetParameters(par24);
+        const char* parNames24[] = {"B_{0}", "#lambda",
+                            "A_{0}", "#mu_{0}", "#sigma_{0}",
+                            "A_{1}", "#mu_{1}", "#sigma_{1}",
+                            "A_{2}", "#mu_{2}", "#sigma_{2}",
+                            "A_{3}", "#mu_{3}", "#sigma_{3}",
+                            "A_{4}", "#mu_{4}", "#sigma_{4}",
+                            "A_{5}", "#mu_{5}", "#sigma_{5}",
+                            "A_{6}", "#mu_{6}", "#sigma_{6}"
+                        };
+        for(int i=0; i<23; i++) poisson24->SetParName(i, parNames24[i]);   // CAMBIARE IL NUMERO IN BASE AL N. PARAMETRI
+        
 
         poisson27 = new TF1("poisson27", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20)", xmin_27, xmax_27);
-        double par27[23] = {2000, 4,
+        double par27[23] = {1500, 4,
                         13000, 0, 0.01,
-                        12000, 1, 0.01, 
-                        11000, 2.2, 0.02, 
+                        13000, 1.05, 0.03, 
+                        11000, 2, 0.02, 
                         10000, 3, 0.03, 
                         10000, 4, 0.03,
-                        800, 5.1, 0.08,
-                        500, 5.9, 0.2};//,
+                        5000, 5, 0.05,
+                        3000, 6, 0.1};//,
                         //500, 7, 0.1};
         poisson27->SetParameters(par27);
+        const char* parNames27[] = {"B_{0}", "#lambda",
+                            "A_{0}", "#mu_{0}", "#sigma_{0}",
+                            "A_{1}", "#mu_{1}", "#sigma_{1}",
+                            "A_{2}", "#mu_{2}", "#sigma_{2}",
+                            "A_{3}", "#mu_{3}", "#sigma_{3}",
+                            "A_{4}", "#mu_{4}", "#sigma_{4}",
+                            "A_{5}", "#mu_{5}", "#sigma_{5}",
+                            "A_{6}", "#mu_{6}", "#sigma_{6}"
+                        };
+        for(int i=0; i<23; i++) poisson27->SetParName(i, parNames27[i]);
 
         poisson30 = new TF1("poisson30", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20) + gaus(23)", xmin_30, xmax_30);
-        double par30[26] = {7000, 5,
+        double par30[26] = {1500, 5,
                             5000, 0, 0.03,
                             12000, 1, 0.03,
                             15000, 2, 0.03,
                             17000, 3, 0.03,
                             15000, 4, 0.03,
                             12000, 5, 0.03,
-                            10000, 6, 0.03,
-                            7000, 7, 0.03};
+                            6000, 6, 0.05,
+                            2000, 7, 0.12};
         poisson30->SetParameters(par30);
+        const char* parNames30[] = {"B_{0}", "#lambda",
+                            "A_{0}", "#mu_{0}", "#sigma_{0}",
+                            "A_{1}", "#mu_{1}", "#sigma_{1}",
+                            "A_{2}", "#mu_{2}", "#sigma_{2}",
+                            "A_{3}", "#mu_{3}", "#sigma_{3}",
+                            "A_{4}", "#mu_{4}", "#sigma_{4}",
+                            "A_{5}", "#mu_{5}", "#sigma_{5}",
+                            "A_{6}", "#mu_{6}", "#sigma_{6}",
+                            "A_{7}", "#mu_{7}", "#sigma_{7}"
+                        };
+        for(int i=0; i<26; i++) poisson30->SetParName(i, parNames30[i]);
     }
 
     // creazione canvas
@@ -228,8 +276,8 @@ void spettri_poisson(){
     c24->SetTicks();
     h24->Draw("hist");
 
-    h24->Fit(poisson24, "WLR", "", xmin_24, xmax_24);
-    poisson24->Draw("same");
+    //h24->Fit(poisson24, "WLR", "", xmin_24, xmax_24);
+    //poisson24->Draw("same");
     
 
 
@@ -238,8 +286,8 @@ void spettri_poisson(){
     c27->SetTicks();
     h27->Draw("hist");
 
-    h27->Fit(poisson27, "WLR", "", xmin_27, xmax_27);
-    poisson27->Draw("same");
+    //h27->Fit(poisson27, "WLR", "", xmin_27, xmax_27);
+    //poisson27->Draw("same");
     
 
 
@@ -248,8 +296,8 @@ void spettri_poisson(){
     c30->SetTicks();
     h30->Draw("hist");
 
-    h30->Fit(poisson30, "WLR", "", xmin_30, xmax_30);
-    poisson30->Draw("same");
+    //h30->Fit(poisson30, "WLR", "", xmin_30, xmax_30);
+    //poisson30->Draw("same");
     
 
 
@@ -263,10 +311,81 @@ void spettri_poisson(){
         c30->Print("../plots/LED/rebinned_fit_poisson_30.pdf");
     }
 
+
+/*
+    //_______FIT CON PUNTI PER POISSONIANA_____
+    //dati dai fit gaussiani singoli
+
+    vector<vector<double>> results24 = doubleReader("../data/outcome_fit/708V_30dB_24ua_deltapp.txt", 4, false);
+    vector<vector<double>> results27 = doubleReader("../data/outcome_fit/708V_30dB_27ua_deltapp.txt", 4, false);
+    vector<vector<double>> results30 = doubleReader("../data/outcome_fit/708V_30dB_30ua_deltapp.txt", 4, false);
         
+    double ampiezze24[7], ampiezze27[7], ampiezze30[7];
+    double e_amp_24[7], e_amp_27[7], e_amp_30[7];
+    double pe[] = {0, 1, 2, 3, 4, 5, 6};
+    
+    for(int i=0; i<7; i++){
+        ampiezze24[i] = results24[5][i]; //colonna 5 = norm
+        ampiezze27[i] = results27[5][i];
+        ampiezze30[i] = results30[5][i];
 
+        e_amp_24[i] = results24[6][i];
+        e_amp_27[i] = results27[6][i];
+        e_amp_30[i] = results30[6][i];
+    }
 
+    // grafico con le ampiezze delle gaussiane singole
+    TGraphErrors* g24 = new TGraphErrors(7, pe, ampiezze24, 0, e_amp_24);
+    TGraphErrors* g27 = new TGraphErrors(7, pe, ampiezze27, 0, e_amp_27);
+    TGraphErrors* g30 = new TGraphErrors(7, pe, ampiezze30, 0, e_amp_30);
 
+    // definizione altre funzioni poissoniane
+    TF1* poisson_g24 = new TF1("poisson_g24", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", -0.5, 6.5);
+    poisson_g24->SetParameters(5000, 1);
+    poisson_g24->SetParNames("A", "#lambda");
 
+    TF1* poisson_g27 = new TF1("poisson_g27", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", -0.5, 6.5);
+    poisson_g27->SetParameters(10000,2);
+    poisson_g27->SetParNames("A", "#lambda");
+
+    TF1* poisson_g30 = new TF1("poisson_g30", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", -0.5, 6.5);
+    poisson_g30->SetParameters(20000, 4);
+    poisson_g30->SetParNames("A", "#lambda");
+
+    // definizione funzioni binomiali
+    TF1* binom24 = new TF1("binom24", "[2] * TMath::Binomial([0], TMath::Nint(x))*TMath::Power([1],TMath::Nint(x))*TMath::Power(1-[1], [0]-TMath::Nint(x))", -0.5, 6.5);
+    binom24->SetParameters(10, 0.1, 10000);
+
+    TF1* binom27= new TF1("binom27", "[2] * TMath::Binomial([0], TMath::Nint(x))*TMath::Power([1],TMath::Nint(x))*TMath::Power(1-[1], [0]-TMath::Nint(x))", -0.5, 6.5);
+    binom27->SetParameters(10, 0.5, 10000);
+
+    TF1* binom30 = new TF1("binom30", "[2] * TMath::Binomial([0], TMath::Nint(x))*TMath::Power([1],TMath::Nint(x))*TMath::Power(1-[1], [0]-TMath::Nint(x))", -0.5, 6.5);
+    binom30->SetParameters(10, 0.5, 10000);
+
+    // fit e draw delle funzioni
+    TCanvas* cg24 = new TCanvas("cg24", "cg24", 640, 480);
+    cg24->cd(1);
+    cg24->SetTicks();
+    if(fit_binomiale) g24->Fit(binom24, "R", "", -0.5, 6.5);
+    else g24->Fit(poisson_g24, "R", "", -0.5, 6.5);
+    g24->Draw("AP");
+    cg24->Print("../plots/LED/scatterplot_24.pdf");
+
+    TCanvas* cg27 = new TCanvas("cg27", "cg27", 640, 480);
+    cg27->cd(1);
+    cg27->SetTicks();
+    if(fit_binomiale) g27->Fit(binom27, "R", "", -0.5, 6.5);
+    else g27->Fit(poisson_g27, "R", "", -0.5, 6.5);
+    g27->Draw("AP");
+    cg27->Print("../plots/LED/scatterplot_27.pdf");
+
+    TCanvas* cg30 = new TCanvas("cg30", "cg30", 640, 480);
+    cg30->cd(1);
+    cg30->SetTicks();
+    if(fit_binomiale) g30->Fit(binom30, "R", "", -0.5, 6.5);
+    else g30->Fit(poisson_g30, "R", "", -0.5, 6.5);
+    g30->Draw("AP");
+    cg30->Print("../plots/LED/scatterplot_30.pdf");
+*/
 
 }
