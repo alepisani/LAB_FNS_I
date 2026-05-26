@@ -92,8 +92,14 @@ void fit_led_spectrum(
 
     FILE* txt = fopen(outpath.Data(), "w");
     fprintf(txt, "%s\n", fname.Data());
+    
+    
+    for (int i = 0; i < (int)Dpp.size(); i++) {
+        fprintf(txt, "%.4f", Dpp[i]);
+        if (i < (int)Dpp.size() - 1) fprintf(txt, " ");
+    }
+    fprintf(txt, "\n%.4f\n", mean_dpp);
     fprintf(txt, "idx  mean mean_err  sigma sigma_err  norm norm_err  pvalue\n");
-
     // ← aggiunto: una riga per gaussiana con indice da 0
     for (int i = 0; i < nGauss; i++) {
         double norm      = gaussians[i]->GetParameter(0);
@@ -108,12 +114,6 @@ void fit_led_spectrum(
         fprintf(txt, "%d  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.8f\n",
                 i, mean, mean_err, sigma, sigma_err, norm, norm_err, pvalue);
     }
-
-    for (int i = 0; i < (int)Dpp.size(); i++) {
-        fprintf(txt, "%.4f", Dpp[i]);
-        if (i < (int)Dpp.size() - 1) fprintf(txt, " ");
-    }
-    fprintf(txt, "\n%.4f\n", mean_dpp);
     fclose(txt);
 
     printf("Media delta: %.4f  →  salvato in %s\n", mean_dpp, outpath.Data());
