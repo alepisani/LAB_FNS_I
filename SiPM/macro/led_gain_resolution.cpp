@@ -305,6 +305,7 @@ void led_gain_resolution(){
     graph_gain_v->SetMarkerColor(kBlue);
     graph_gain_v->Draw("AP");
     c_gain_v->Update();
+    c_gain_v->SaveAs("../plots/LED/gain.pdf");
 
 
 
@@ -323,8 +324,8 @@ void led_gain_resolution(){
 
     TGraphErrors *graph_resolution = new TGraphErrors((int)variance_708.size(), Npe.data(), variance_708.data(), err_Npe.data(), err_variance_708.data());
     graph_resolution->GetXaxis()->SetTitle("N_{p.e.}");
-    graph_resolution->GetYaxis()->SetTitle("variance");
-    graph_resolution->SetTitle("variance Vs N_{p.e.}");
+    graph_resolution->GetYaxis()->SetTitle("#sigma^{2}");
+    graph_resolution->SetTitle("#sigma^{2} Vs N_{p.e.}");
     
     TCanvas* c_res = new TCanvas ("resolution","res", 800, 600);
     TF1 *l2 = new TF1("l2","pol1", -1, 8);
@@ -337,6 +338,7 @@ void led_gain_resolution(){
     graph_resolution->SetMarkerColor(kBlue);
     graph_resolution->Draw("AP");
     c_res->Update();
+    c_res->SaveAs("../plots/LED/resolution.pdf");
 
     cout << endl;
     double resolution = (mean_dpp_708) / (sqrt(variance_708[1] - variance_708[0]));
