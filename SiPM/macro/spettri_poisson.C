@@ -20,10 +20,10 @@ void spettri_poisson(){
 
     //gROOT->SetStyle("Plain");
     gStyle->SetOptStat(0);
-    gStyle->SetOptFit(0);
+
 
     // selezione bin
-    bool use_pe_bins = false;
+    bool use_pe_bins = true;
 
     // lettura file, tutti della stessa lunghezza
     vector<vector<double>> data_24 = doubleReader("../data/txt/708V_30dB_24ua_histo.txt", 8, false);
@@ -34,30 +34,37 @@ void spettri_poisson(){
     // parametri delle distribuzioni, per convertire
     // LED a 2.4
     int dpp_24 = 331;
-    int x0_24 = ; //offset del picco a 0
+    int x0_24 = 4; //offset del picco a 0
 
     // LED a 2.7
     int dpp_27 = 334;
-    int x0_27 = ;   //offset del picco a 0
+    int x0_27 = 5;   //offset del picco a 0
 
     // LED a 3.0
     int dpp_30 = 336;
-    int x0_30 = ; //offset del picco a 0
+    int x0_30 = 5; //offset del picco a 0
 
-    //parametri istogrammi (in p.e.)
+    //parametri istogrammi (N in p.e., x in ch)
     int Npe = 15;       // numero di p.e. nell'istogramma
-    double Nlow = -0.3;
+    double Nlow = -0.5;
     double Nup = Npe + 0.5;
     int nbins = -999;
-    double xlow, xup;
+    double xlow24, xup24;
+    double xlow27, xup27;
+    double xlow30, xup30;
     if(use_pe_bins) nbins = Npe + 1;
     else {
-        //auto limit = upper_bound(data_24[0].begin(), data_24[0].end(), Npe*x1);
-        //int index = distance(data_24[0].begin(), limit);
-        int offset = 90;
+        int offset = 90;   // taglio sulla parte sinistra dell'istogramma
         nbins = 720;
-        xlow = (data_24[0][0]-4. + 8*offset)/x1;
-        xup = (xlow*x1 + 8*nbins + 4.)/x1;
+        //Led 2.4
+        xlow24 = (data_24[0][0]-4. + 8*offset);
+        xup24 = xlow24 + (8*nbins);
+        //Led 2.7
+        xlow27 = (data_27[0][0]-4. + 8*offset);
+        xup27 = xlow27 + (8*nbins);
+        //Led 3.0
+        xlow30 = (data_30[0][0]-4. + 8*offset);
+        xup30 = xlow30 + (8*nbins);
         
     }
 
@@ -67,10 +74,12 @@ void spettri_poisson(){
     double xmin_27, xmax_27;
     double xmin_30, xmax_30;
     if(use_pe_bins){
-        xmin_24 = 0, xmax_24 = 8.5;
-        xmin_27 = 0, xmax_27 = 10.5;
-        xmin_30 = 0.5, xmax_30 = 14;
+        gStyle->SetOptFit(1111);
+        xmin_24 = 0.5, xmax_24 = 10.5;
+        xmin_27 = 0.5, xmax_27 = 10.5;
+        xmin_30 = 0.5, xmax_30 = 10.5;
     } else {
+        gStyle->SetOptFit(0);
         xmin_24 = -0.4, xmax_24 = 8.5;
         xmin_27 = -0.4, xmax_27 = 10.5;
         xmin_30 = -0.4, xmax_30 = 14;
@@ -84,22 +93,36 @@ void spettri_poisson(){
         h24 = new TH1D("h24", "", nbins, Nlow, Nup);
         h27 = new TH1D("h27", "", nbins, Nlow, Nup);
         h30 = new TH1D("h30", "", nbins, Nlow, Nup);
+
+        // fill in pe
+        for(int i=0; i<data_24[1].size(); i++){
+        h24->Fill( (data_24[0][i]-x0_24)/dpp_24 , data_24[1][i]);
+        h27->Fill( (data_27[0][i]-x0_27)/dpp_27 , data_27[1][i]);
+        h30->Fill( (data_30[0][i]-x0_30)/dpp_30 , data_30[1][i]);
+    }
+
     } else {
-        h24 = new TH1D("h24", "", nbins, xlow, xup);
-        h27 = new TH1D("h27", "", nbins, xlow, xup);
-        h30 = new TH1D("h30", "", nbins, xlow, xup);
+        h24 = new TH1D("h24", "", nbins, xlow24, xup24);
+        h27 = new TH1D("h27", "", nbins, xlow27, xup27);
+        h30 = new TH1D("h30", "", nbins, xlow30, xup30);
+        
+        // fill i ch, poi conversione in p.e.
+        for(int i=0; i<data_24[1].size(); i++){
+            h24->Fill( (data_24[0][i]) , data_24[1][i]);
+            h27->Fill( (data_27[0][i]) , data_27[1][i]);
+            h30->Fill( (data_30[0][i]), data_30[1][i]);
+        }
+        //conversione asse x in p.e., con offset dell'x0
+        h24->GetXaxis()->Set(nbins, (xlow24-x0_24)/dpp_24, (xup24-x0_24)/dpp_24);
+        h27->GetXaxis()->Set(nbins, (xlow27-x0_27)/dpp_27, (xup27-x0_27)/dpp_27);
+        h30->GetXaxis()->Set(nbins, (xlow30-x0_30)/dpp_30, (xup30-x0_30)/dpp_30);
+        
     }
 
     //if( (data_24[1].size()!=data_27[1].size()) || (data_24[1].size()!=data_30[1].size()) || (data_30[1].size()!=data_27[1].size()) ){
       //  cout << "File con lunghezza diversa! Errore!\n";
       //  return;
     //}
-
-    for(int i=0; i<data_24[1].size(); i++){
-        h24->Fill( (data_24[0][i]-x0_24)/dpp_24 , data_24[1][i]);
-        h27->Fill( (data_27[0][i]-x0_27)/dpp_27 , data_27[1][i]);
-        h30->Fill( (data_30[0][i]-x0_30)/dpp_30, data_30[1][i]);
-    }
 
 /*
     h24->FillN(data_24[0].size(), data_24[0].data()/x1, data_24[1].data());
@@ -135,13 +158,13 @@ void spettri_poisson(){
 
     if(use_pe_bins){
         poisson24 = new TF1("poisson24", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", xmin_24, xmax_24);
-        poisson24->SetParameters(1.5e5, 1);
+        poisson24->SetParameters(1e5, 1);
 
         poisson27 = new TF1("poisson27", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", xmin_27, xmax_27);
-        poisson27->SetParameters(1.5e5,3);
+        poisson27->SetParameters(1e5,3);
 
         poisson30 = new TF1("poisson30", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", xmin_30, xmax_30);
-        poisson30->SetParameters(1e3, 5);
+        poisson30->SetParameters(1e5, 5);
     } 
     
     else {
@@ -205,7 +228,7 @@ void spettri_poisson(){
     c24->SetTicks();
     h24->Draw("hist");
 
-    h24->Fit(poisson24, "R", "", xmin_24, xmax_24);
+    h24->Fit(poisson24, "WLR", "", xmin_24, xmax_24);
     poisson24->Draw("same");
     
 
@@ -215,7 +238,7 @@ void spettri_poisson(){
     c27->SetTicks();
     h27->Draw("hist");
 
-    h27->Fit(poisson27, "R", "", xmin_27, xmax_27);
+    h27->Fit(poisson27, "WLR", "", xmin_27, xmax_27);
     poisson27->Draw("same");
     
 
@@ -225,7 +248,7 @@ void spettri_poisson(){
     c30->SetTicks();
     h30->Draw("hist");
 
-    h30->Fit(poisson30, "R", "", xmin_30, xmax_30);
+    h30->Fit(poisson30, "WLR", "", xmin_30, xmax_30);
     poisson30->Draw("same");
     
 
