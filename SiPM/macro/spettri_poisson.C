@@ -24,20 +24,28 @@ void spettri_poisson(){
 
     // selezione bin
     bool use_pe_bins = false;
-    bool use_binomial = true;
 
     // lettura file, tutti della stessa lunghezza
     vector<vector<double>> data_24 = doubleReader("../data/txt/708V_30dB_24ua_histo.txt", 8, false);
     vector<vector<double>> data_27 = doubleReader("../data/txt/708V_30dB_27ua_histo.txt", 8, false);
     vector<vector<double>> data_30 = doubleReader("../data/txt/708V_30dB_30ua_histo.txt", 8, false);
 
-    int dpp = 335;  //valore delta picco-picco, pari
-    int Npe = 15;   //numero di fotoni equivalenti nell'istogramma
-    int x0 = 0;     // posizione picco 0 p.e., ossia il rumore
-    int x1 = x0 + dpp; // 1 fotone equivalente
+
+    // parametri delle distribuzioni, per convertire
+    // LED a 2.4
+    int dpp_24 = 331;
+    int x0_24 = ; //offset del picco a 0
+
+    // LED a 2.7
+    int dpp_27 = 334;
+    int x0_27 = ;   //offset del picco a 0
+
+    // LED a 3.0
+    int dpp_30 = 336;
+    int x0_30 = ; //offset del picco a 0
 
     //parametri istogrammi (in p.e.)
-
+    int Npe = 15;       // numero di p.e. nell'istogramma
     double Nlow = -0.3;
     double Nup = Npe + 0.5;
     int nbins = -999;
@@ -55,10 +63,18 @@ void spettri_poisson(){
 
 
     // range dei fit
-    double xmin_24 = 0, xmax_24 = 8.5;
-    double xmin_27 = 0, xmax_27 = 10.5;
-    double xmin_30 = 0.5, xmax_30 = 14;
-
+    double xmin_24, xmax_24;
+    double xmin_27, xmax_27;
+    double xmin_30, xmax_30;
+    if(use_pe_bins){
+        xmin_24 = 0, xmax_24 = 8.5;
+        xmin_27 = 0, xmax_27 = 10.5;
+        xmin_30 = 0.5, xmax_30 = 14;
+    } else {
+        xmin_24 = -0.4, xmax_24 = 8.5;
+        xmin_27 = -0.4, xmax_27 = 10.5;
+        xmin_30 = -0.4, xmax_30 = 14;
+    }
 
     // dichiarazione istogrammi
 
@@ -80,9 +96,9 @@ void spettri_poisson(){
     //}
 
     for(int i=0; i<data_24[1].size(); i++){
-        h24->Fill(data_24[0][i]/x1, data_24[1][i]);
-        h27->Fill(data_27[0][i]/x1, data_27[1][i]);
-        h30->Fill(data_30[0][i]/x1, data_30[1][i]);
+        h24->Fill( (data_24[0][i]-x0_24)/dpp_24 , data_24[1][i]);
+        h27->Fill( (data_27[0][i]-x0_27)/dpp_27 , data_27[1][i]);
+        h30->Fill( (data_30[0][i]-x0_30)/dpp_30, data_30[1][i]);
     }
 
 /*
@@ -127,15 +143,6 @@ void spettri_poisson(){
         poisson30 = new TF1("poisson30", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", xmin_30, xmax_30);
         poisson30->SetParameters(1e3, 5);
     } 
-    else if (use_binomial){
-        poisson24 = new TF1("poisson24", "TMath::Binomial([0], TMath::Nint(x))*TMath::Power([1],x)*TMath::Power(1-[1], [0]-x)", xmin_24, xmax_24);
-        poisson27 = new TF1("poisson27", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", xmin_27, xmax_27);
-        poisson27->SetParameters(1.5e5,3);
-
-        poisson30 = new TF1("poisson30", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1)", xmin_30, xmax_30);
-        poisson30->SetParameters(1e3, 5);
-    }
-    
     
     else {
 
@@ -180,14 +187,16 @@ void spettri_poisson(){
         poisson27->SetParameters(par27);
 
         poisson30 = new TF1("poisson30", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20) + gaus(23)", xmin_30, xmax_30);
-        /*double par30[26] = {7000, 5,
+        double par30[26] = {7000, 5,
                             5000, 0, 0.03,
-                            10000, 1, 0.03,
-
-
-
-        }*/
-        //poisson30->SetParameters(1e6, 4, 0.3);
+                            12000, 1, 0.03,
+                            15000, 2, 0.03,
+                            17000, 3, 0.03,
+                            15000, 4, 0.03,
+                            12000, 5, 0.03,
+                            10000, 6, 0.03,
+                            7000, 7, 0.03};
+        poisson30->SetParameters(par30);
     }
 
     // creazione canvas
