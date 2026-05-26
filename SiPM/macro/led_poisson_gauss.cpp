@@ -12,6 +12,8 @@
 #include "TH1D.h"
 using namespace std;
 
+vector<double> MEAN_DPP;
+
 // ─── Helper function ──────────────────────────────────────────────────────────
 void fit_led_spectrum(
     const TString& fname,           
@@ -83,13 +85,30 @@ void fit_led_spectrum(
     for (double d : Dpp) mean_dpp += d;
     mean_dpp /= Dpp.size();
 
-    // --- Salva su file ---
+// --- Salva su file ---
     TString outname = fname;
     outname.ReplaceAll("_histo.txt", "_deltapp.txt");
     TString outpath = "../data/outcome_fit/" + outname;
 
     FILE* txt = fopen(outpath.Data(), "w");
     fprintf(txt, "%s\n", fname.Data());
+    fprintf(txt, "idx  mean mean_err  sigma sigma_err  norm norm_err  pvalue\n");
+
+    // ← aggiunto: una riga per gaussiana con indice da 0
+    for (int i = 0; i < nGauss; i++) {
+        double norm      = gaussians[i]->GetParameter(0);
+        double mean      = gaussians[i]->GetParameter(1);
+        double sigma     = gaussians[i]->GetParameter(2);
+        double norm_err  = gaussians[i]->GetParError(0);
+        double mean_err  = gaussians[i]->GetParError(1);
+        double sigma_err = gaussians[i]->GetParError(2);
+        double chi2      = gaussians[i]->GetChisquare();
+        int    ndf       = gaussians[i]->GetNDF();
+        double pvalue    = TMath::Prob(chi2, ndf);
+        fprintf(txt, "%d  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.8f\n",
+                i, mean, mean_err, sigma, sigma_err, norm, norm_err, pvalue);
+    }
+
     for (int i = 0; i < (int)Dpp.size(); i++) {
         fprintf(txt, "%.4f", Dpp[i]);
         if (i < (int)Dpp.size() - 1) fprintf(txt, " ");
@@ -98,6 +117,7 @@ void fit_led_spectrum(
     fclose(txt);
 
     printf("Media delta: %.4f  →  salvato in %s\n", mean_dpp, outpath.Data());
+    MEAN_DPP.push_back(mean_dpp);
 }
 
 // ─── Macro principale ─────────────────────────────────────────────────────────
@@ -126,4 +146,5 @@ void led_poisson_gauss() {
         80,                                     // delta
         {0, 350, 700, 1000, 1350, 1700, 2000}   // centers
     );
+
 }
