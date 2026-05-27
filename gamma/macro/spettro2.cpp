@@ -101,7 +101,7 @@ void spettro2()
     gStyle->SetOptStat(0);
     hist->Draw();
 
-    TString outPdf = TString("../plots/spettri_energia/spettro_raw_") + fname + ".pdf";
+    TString outPdf = TString("../plots/spettri_energia/") + fname + ".pdf";
     c1->Print(outPdf.Data());
 
     cout << "    Salvato: " << outPdf << endl;
