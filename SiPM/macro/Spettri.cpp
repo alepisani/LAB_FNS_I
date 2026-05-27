@@ -49,41 +49,66 @@ void Spettri(){
         bgo_15->Fill(-BGO_15[0][i], BGO_15[1][i]);
     }
     
+    
+    TF1* gaussiano = new TF1("gaussiano", "gaus", 13000, 15000);
+    gaussiano->SetLineColor(kRed);
+    gaussiano->SetParameter(0,800);
+    gaussiano->SetParameter(1,13900);
+    gaussiano->SetParameter(2,603);
 
+    TF1* gaussiano1 = new TF1("gaussiano1", "gaus", 1200, 1700);
+    gaussiano->SetLineColor(kRed);
+    gaussiano->SetParameter(0,0);
+    gaussiano->SetParameter(1,1390);
+    gaussiano->SetParameter(2,135);
+
+
+/*
     TCanvas* c1 = new TCanvas("c1", "spettro CsI -thr20", 800, 600);
     csi_20->Draw("HIST");
     csi_20->SetLineColor(kBlue);
     csi_20->SetLineWidth(3);
     csi_20->SetXTitle("ADC [Ch]");
     csi_20->SetYTitle("Conteggi");
-
+*/
     TCanvas* c2 = new TCanvas("c2", "spettro CsI -thr50", 800, 600);
-    csi_50->Draw("HIST");
+    
     csi_50->SetLineColor(kBlue);
     csi_50->SetLineWidth(3);
     csi_50->SetXTitle("ADC [Ch]");
     csi_50->SetYTitle("Conteggi");
-
+    gStyle->SetOptFit(1111);
+    csi_50->Fit(gaussiano, "R");
+    csi_50->Draw("HIST");
+    gaussiano->Draw("SAME");
+    gaussiano->SetLineWidth(3);
+/*
     TCanvas* c3 = new TCanvas("c3", "spettro CsI -thr60", 800, 600);
     csi_60->Draw("HIST");
     csi_60->SetLineColor(kBlue);
     csi_60->SetLineWidth(3);
     csi_60->SetXTitle("ADC [Ch]");
     csi_60->SetYTitle("Conteggi");
-
+*/
     TCanvas* c4 = new TCanvas("c4", "spettro BGO -thr15", 800, 600);
-    bgo_15->Draw("HIST");
+    
     bgo_15->SetLineColor(kBlue);
     bgo_15->SetLineWidth(3);
     bgo_15->SetXTitle("ADC [Ch]");
     bgo_15->SetYTitle("Conteggi");
-
+    gStyle->SetOptFit(1111);
+    bgo_15->Fit(gaussiano1, "R 0");
+    bgo_15->Draw("HIST");          
+    gaussiano1->Draw("SAME");
+    gaussiano1->SetLineWidth(3);
+/*
     TCanvas* c5 = new TCanvas("c5", "spettro LYSO -thr25", 800, 600);
     lyso_25->Draw("HIST");
     lyso_25->SetLineColor(kBlue);
     lyso_25->SetLineWidth(3);
     lyso_25->SetXTitle("ADC [Ch]");
     lyso_25->SetYTitle("Conteggi");
+*/
 
     /*
     TCanvas* c6 = new TCanvas("c5", "Spettri con ^{137}Cs", 800, 600);
