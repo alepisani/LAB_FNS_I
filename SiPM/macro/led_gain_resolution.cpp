@@ -64,28 +64,60 @@ void led_gain_resolution(){
     TCanvas* can_704 = new TCanvas("can704", "can704", 800, 600);
     hist_704->GetXaxis()->SetTitle("Canali");
     hist_704->GetYaxis()->SetTitle("Conteggi");
-    hist_704->SetTitle("704");
+    hist_704->SetTitle("Spettro Digitaiser - 70.4V");
     hist_704->GetXaxis()->SetRangeUser(-150, 1700);
     hist_704->Draw();
-
+    
     TCanvas* can_708 = new TCanvas("can708", "can708", 800, 600);
     hist_708->GetXaxis()->SetTitle("Canali");
     hist_708->GetYaxis()->SetTitle("Conteggi");
-    hist_708->SetTitle("708");
+    hist_708->SetTitle("Spettro Digitaiser - 70.8V");
     hist_708->GetXaxis()->SetRangeUser(-150, 3000);
     hist_708->Draw();
-
+    
     TCanvas* can_710 = new TCanvas("can710", "can710", 800, 600);
     hist_710->GetXaxis()->SetTitle("Canali");
     hist_710->GetYaxis()->SetTitle("Conteggi");
-    hist_710->SetTitle("710");
+    hist_710->SetTitle("Spettro Digitaiser - 71.0V");
     hist_710->GetXaxis()->SetRangeUser(-150, 3500);
     hist_710->Draw();
-
+    
     TCanvas* can_712 = new TCanvas("can712", "can712", 800, 600);
     hist_712->GetXaxis()->SetTitle("Canali");
     hist_712->GetYaxis()->SetTitle("Conteggi");
-    hist_712->SetTitle("712");
+    hist_712->SetTitle("Spettro Digitaiser - 71.2V");
+    hist_712->GetXaxis()->SetRangeUser(-150, 4000);
+    hist_712->Draw();
+    
+    
+    TCanvas* can_all = new TCanvas("can_all", "Spettri LED", 1400, 1200);
+    can_all->Divide(2, 2); 
+
+    can_all->cd(1);
+    hist_704->GetXaxis()->SetTitle("Canali");
+    hist_704->GetYaxis()->SetTitle("Conteggi");
+    hist_704->SetTitle("Spettro Digitaiser - 70.4V");
+    hist_704->GetXaxis()->SetRangeUser(-150, 1700);
+    hist_704->Draw();
+
+    can_all->cd(2);
+    hist_708->GetXaxis()->SetTitle("Canali");
+    hist_708->GetYaxis()->SetTitle("Conteggi");
+    hist_708->SetTitle("Spettro Digitaiser - 70.8V");
+    hist_708->GetXaxis()->SetRangeUser(-150, 3000);
+    hist_708->Draw();
+
+    can_all->cd(3);
+    hist_710->GetXaxis()->SetTitle("Canali");
+    hist_710->GetYaxis()->SetTitle("Conteggi");
+    hist_710->SetTitle("Spettro Digitaiser - 71.0V");
+    hist_710->GetXaxis()->SetRangeUser(-150, 3500);
+    hist_710->Draw();
+
+    can_all->cd(4);
+    hist_712->GetXaxis()->SetTitle("Canali");
+    hist_712->GetYaxis()->SetTitle("Conteggi");
+    hist_712->SetTitle("Spettro Digitaiser - 71.2V");
     hist_712->GetXaxis()->SetRangeUser(-150, 4000);
     hist_712->Draw();
 
@@ -115,7 +147,10 @@ void led_gain_resolution(){
         }
         
     }
-
+    //saving the plot
+    can_704->Update();
+    can_704->SaveAs("../plots/LED/spettri_704_gain.pdf");
+    
     //fit gaussiani Vbias = 70.8V
     int nGauss_708 = 8;
     vector<TF1*> gaussians_708;
@@ -157,6 +192,9 @@ void led_gain_resolution(){
         }
         
     }
+    //saving the plot
+    can_708->Update();
+    can_708->SaveAs("../plots/LED/spettri_708_gain.pdf");
         
     //fit gaussiani Vbias = 71.0V
     int nGauss_710 = 8;
@@ -183,6 +221,9 @@ void led_gain_resolution(){
         }
         
     }
+    //saving the plot
+    can_710->Update();
+    can_710->SaveAs("../plots/LED/spettri_710_gain.pdf");
 
     //fit gaussiani Vbias = 71.2V
     int nGauss_712 = 9;
@@ -209,6 +250,9 @@ void led_gain_resolution(){
         }
         
     }
+    //saving the plot
+    can_712->Update();
+    can_712->SaveAs("../plots/LED/spettri_712_gain.pdf");
 
     //compute delta peak-peak value
     vector<double> mean_ddp;
@@ -228,6 +272,12 @@ void led_gain_resolution(){
     for(double d : Dpp_704) sum_sq_704 += (d - mean_dpp_704) * (d - mean_dpp_704);
     err_mean_ddp.push_back(sqrt(sum_sq_704 / (Dpp_704.size() - 1)));
 
+    can_all->cd(1); 
+    can_all->cd(2);
+    can_all->cd(3);
+    can_all->cd(4);
+    can_all->Update();
+    can_all->SaveAs("../plots/LED/spettri_all_gain.pdf");
 
     //70.8V
     vector<double> Dpp_708;
@@ -306,6 +356,46 @@ void led_gain_resolution(){
     graph_gain_v->Draw("AP");
     c_gain_v->Update();
     c_gain_v->SaveAs("../plots/LED/gain.pdf");
+
+    //printing the result from the gaussian fit 704
+    printf("\nspettro 70.4V\n pe, mean, sigma\n");
+    for(int i = 0; i < nGauss_704; i++){
+
+        if(i == nGauss_704) printf("pe: %d;     mean: %f\n", i, mean_704[i]);
+        else printf("pe: %d;     mean: %f,     dpp: %f\n", i, mean_704[i], Dpp_704[i]);
+
+    }
+    printf("mean value of dpp for 70.4V: %f\n", mean_dpp_704);
+
+    //printing the result from the gaussian fit 708
+    printf("\nspettro 70.8V\n pe, mean, sigma\n");
+    for(int i = 0; i < nGauss_708; i++){
+
+        if(i == nGauss_708) printf("pe: %d;     mean: %f\n", i, mean_708[i]);
+        else printf("pe: %d;     mean: %f,     dpp: %f\n", i, mean_708[i], Dpp_708[i]);
+
+    }
+    printf("mean value of dpp for 70.8V: %f\n", mean_dpp_708);
+
+    //printing the result from the gaussian fit 710
+    printf("\nspettro 71.0V\n pe, mean, sigma\n");
+    for(int i = 0; i < nGauss_710; i++){
+
+        if(i == nGauss_710) printf("pe: %d;     mean: %f\n", i, mean_710[i]);
+        else printf("pe: %d;     mean: %f,     dpp: %f\n", i, mean_710[i], Dpp_710[i]);
+
+    }
+    printf("mean value of dpp for 71.0V: %f\n", mean_dpp_710);
+
+    //printing the result from the gaussian fit 712
+    printf("\nspettro 71.2V\n pe, mean, sigma\n");
+    for(int i = 0; i < nGauss_712; i++){
+
+        if(i == nGauss_712) printf("pe: %d;     mean: %f\n", i, mean_712[i]);
+        else printf("pe: %d;     mean: %f,     dpp: %f\n", i, mean_712[i], Dpp_712[i]);
+
+    }
+    printf("mean value of dpp for 71.2V: %f\n", mean_dpp_712);
 
 
 
