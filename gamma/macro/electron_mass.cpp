@@ -23,6 +23,8 @@ double p2 = 1.81343e-05;
 
 void electron_mass() {
 
+    gStyle->SetOptFit(1111);
+
     const char* file_Na = "../data/Spettro_energia_trigger_mobile_0deg_Na.mca";
     const char* file_Cs = "../data/Spettro_energia_ravvicinato_delay_ampl_0deg_Cs.mca";
     const char* file_Co = "../data/Spettro_energia_ravvicinato_delay_ampl_0deg_Co60.mca";
@@ -100,18 +102,95 @@ void electron_mass() {
     TCanvas* cCs = new TCanvas("c2", "SpettroCs", 800, 600);
     TCanvas* cCo = new TCanvas("c3", "SpettroCo", 800, 600);
 
+
+    //----------------------------Na22---------------------------------
+
     cNa->cd();
-    hist_Na->GetYaxis()->SetTitle("Spettro in coincidenza Na22");
+    double xmin_Na = 280.;
+    double xmax_Na = 400.;
+    TF1* sigmoid_Na = new TF1("sigmoid_Na", "([0] / (1.0 + exp((x - [1]) / [2]))) + [3]", xmin_Na, xmax_Na);
+    sigmoid_Na->SetParameters(100., 328., 10., 10.);
+    sigmoid_Na->SetParName(0, "N_{1}");
+    sigmoid_Na->SetParName(1, "E_{edge} [keV]");
+    sigmoid_Na->SetParName(2, "#sigma [keV]");
+    sigmoid_Na->SetParName(3, "N_{2}");
+
+    hist_Na->GetXaxis()->SetRangeUser(200., 450.);
+    hist_Na->SetTitle("Spettro in coincidenza Na22");
+    hist_Na->GetYaxis()->SetTitle("Conteggi");
+    hist_Na->GetXaxis()->SetTitle("Energia [keV]");
     hist_Na->SetLineColor(kBlue+1);
+    hist_Na->Fit(sigmoid_Na, "R");
     hist_Na->Draw("HIST");
+    
+    sigmoid_Na->SetLineWidth(3);
+    sigmoid_Na->Draw("SAME");
+
+    // evaluation of electron mass from compton in Na
+    double E0_Na = 511.0; // keV
+    double Eedge_Na = sigmoid_Na->GetParameter(1);
+    double error_Eedge_Na = sigmoid_Na->GetParError(1); 
+
+    // Calcolo della massa dell'elettrone
+    double me_Na = ((2.0 * E0_Na * E0_Na) / (Eedge_Na)) - 2.0 * E0_Na;
+
+    // --- PROPAGAZIONE DELL'ERRORE ---
+    double derivata_Na = (2.0 * E0_Na * E0_Na) / (Eedge_Na * Eedge_Na);
+    double error_me_Na = derivata_Na * error_Eedge_Na;
+    // ---------------------------------
+
+    printf("\n=========================================================\n");
+    printf("Stima massa elettrone da Na: %lf +/- %lf [keV]\n", me_Na, error_me_Na);
+    printf("=========================================================\n");
+
+    //----------------------------Cs137--------------------------------
 
     cCs->cd();
-    hist_Cs->GetYaxis()->SetTitle("Spettro in coincidenza Cs137");
+    double xmin_Cs = 400.;
+    double xmax_Cs = 550.;
+    TF1* sigmoid_Cs = new TF1("sigmoid_Cs", "([0] / (1.0 + exp((x - [1]) / [2]))) + [3]", xmin_Cs, xmax_Cs);
+    sigmoid_Cs->SetParameters(100., 450., 10., 10.);
+    sigmoid_Cs->SetParName(0, "N_{1}");
+    sigmoid_Cs->SetParName(1, "E_{edge} [keV]");
+    sigmoid_Cs->SetParName(2, "#sigma [keV]");
+    sigmoid_Cs->SetParName(3, "N_{2}");
+
+    hist_Cs->GetXaxis()->SetRangeUser(300., 600.);
+    hist_Cs->SetTitle("Spettro in coincidenza Cs137");
+    hist_Cs->GetYaxis()->SetTitle("Conteggi");
+    hist_Cs->GetXaxis()->SetTitle("Energia [keV]");
     hist_Cs->SetLineColor(kBlue+1);
+    hist_Cs->Fit(sigmoid_Cs, "R");
     hist_Cs->Draw("HIST");
 
+    sigmoid_Cs->SetLineWidth(3);
+    sigmoid_Cs->Draw("SAME");
+
+    // evaluation of electron mass from compton in Na
+    double E0_Cs = 662.0; // keV
+    double Eedge_Cs = sigmoid_Cs->GetParameter(1);
+    double error_Eedge_Cs = sigmoid_Cs->GetParError(1); 
+
+    // Calcolo della massa dell'elettrone
+    double me_Cs = ((2.0 * E0_Cs * E0_Cs) / (Eedge_Cs)) - 2.0 * E0_Cs;
+
+    // --- PROPAGAZIONE DELL'ERRORE ---
+    double derivata_Cs = (2.0 * E0_Cs * E0_Cs) / (Eedge_Cs * Eedge_Cs);
+    double error_me_Cs = derivata_Cs * error_Eedge_Cs;
+    // ---------------------------------
+
+    printf("\n=========================================================\n");
+    printf("Stima massa elettrone da Cs: %lf +/- %lf [keV]\n", me_Cs, error_me_Cs);
+    printf("=========================================================\n");
+
+    
+    //----------------------------Co60---------------------------------
+
+
     cCo->cd();
-    hist_Co->GetYaxis()->SetTitle("Spettro in coincidenza Co60");
+    hist_Co->SetTitle("Spettro in coincidenza Co60");
+    hist_Co->GetYaxis()->SetTitle("Conteggi");
+    hist_Co->GetXaxis()->SetTitle("Energia [keV]");
     hist_Co->SetLineColor(kBlue+1);
     hist_Co->Draw("HIST");
 
