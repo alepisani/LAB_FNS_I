@@ -126,6 +126,9 @@ void electron_mass() {
     sigmoid_Na->SetLineWidth(3);
     sigmoid_Na->Draw("SAME");
 
+    cNa->Update();
+    cNa->SaveAs("../plots/COIN/compton_Na.pdf");
+
     // evaluation of electron mass from compton in Na
     double E0_Na = 511.0; // keV
     double Eedge_Na = sigmoid_Na->GetParameter(1);
@@ -166,6 +169,9 @@ void electron_mass() {
     sigmoid_Cs->SetLineWidth(3);
     sigmoid_Cs->Draw("SAME");
 
+    cCs->Update();
+    cCs->SaveAs("../plots/COIN/compton_Cs.pdf");
+
     // evaluation of electron mass from compton in Na
     double E0_Cs = 662.0; // keV
     double Eedge_Cs = sigmoid_Cs->GetParameter(1);
@@ -188,11 +194,45 @@ void electron_mass() {
 
 
     cCo->cd();
+    double xmin_Co = 870.;
+    double xmax_Co = 1050.;
+    TF1* sigmoid_Co = new TF1("sigmoid_Co", "([0] / (1.0 + exp((x - [1]) / [2]))) + [3]", xmin_Co, xmax_Co);
+    sigmoid_Co->SetParameters(100., 450., 10., 10.);
+    sigmoid_Co->SetParName(0, "N_{1}");
+    sigmoid_Co->SetParName(1, "E_{edge} [keV]");
+    sigmoid_Co->SetParName(2, "#sigma [keV]");
+    sigmoid_Co->SetParName(3, "N_{2}");
+
+    hist_Co->GetXaxis()->SetRangeUser(800., 1120.);
     hist_Co->SetTitle("Spettro in coincidenza Co60");
     hist_Co->GetYaxis()->SetTitle("Conteggi");
     hist_Co->GetXaxis()->SetTitle("Energia [keV]");
     hist_Co->SetLineColor(kBlue+1);
+    hist_Co->Fit(sigmoid_Co, "R");
     hist_Co->Draw("HIST");
+
+    sigmoid_Co->SetLineWidth(3);
+    sigmoid_Co->Draw("SAME");
+
+    cCo->Update();
+    cCo->SaveAs("../plots/COIN/compton_Co.pdf");
+
+    // evaluation of electron mass from compton in Na
+    double E0_Co = 1173.0; // keV
+    double Eedge_Co = sigmoid_Co->GetParameter(1);
+    double error_Eedge_Co = sigmoid_Co->GetParError(1); 
+
+    // Calcolo della massa dell'elettrone
+    double me_Co = ((2.0 * E0_Co * E0_Co) / (Eedge_Co)) - 2.0 * E0_Co;
+
+    // --- PROPAGAZIONE DELL'ERRORE ---
+    double derivata_Co = (2.0 * E0_Co * E0_Co) / (Eedge_Co * Eedge_Co);
+    double error_me_Co = derivata_Co * error_Eedge_Co;
+    // ---------------------------------
+
+    printf("\n=========================================================\n");
+    printf("Stima massa elettrone da Co: %lf +/- %lf [keV]\n", me_Co, error_me_Co);
+    printf("=========================================================\n");
 
 
 
