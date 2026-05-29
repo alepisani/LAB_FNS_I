@@ -20,11 +20,11 @@ void istogrammi(){
     vector<vector<double>> dataSr1 = txt_reader("../data/txt/Gruppo6_Ch1_7033_39dB_Sr90_staircase.txt");
 
     
-    TGraph* g1 = new TGraph(dataDC0[0].size(), dataDC0[0].data(), dataDC0[1].data());
+    TGraph* g1 = new TGraph(dataDC1[0].size(), dataDC1[0].data(), dataDC1[1].data());
 
-    TGraph* g2 = new TGraph(dataCosm0[0].size(), dataCosm0[0].data(), dataCosm0[1].data());
+    TGraph* g2 = new TGraph(dataCosm1[0].size(), dataCosm1[0].data(), dataCosm1[1].data());
 
-    TGraph* g3 = new TGraph(dataSr0[0].size(), dataSr0[0].data(), dataSr0[1].data());
+    TGraph* g3 = new TGraph(dataSr1[0].size(), dataSr1[0].data(), dataSr1[1].data());
 
     g1->SetLineColor(kRed);
     g1->SetLineWidth(2);
@@ -34,7 +34,7 @@ void istogrammi(){
     g3->SetLineWidth(2);
 
     TMultiGraph* mg = new TMultiGraph();
-    mg->SetTitle("Staircase Plots");
+    mg->SetTitle("Staircase Plots canale 1");
     mg->Add(g1, "LP");
     mg->Add(g2, "LP");
     mg->Add(g3, "LP");
@@ -54,5 +54,5 @@ void istogrammi(){
     mg->GetYaxis()->SetTitle("Rate [kHz]");
     mg->Draw("A");
     leg->Draw();
-    c1->SaveAs("../plots/staircases_CH0.png");
+    c1->SaveAs("../plots/staircases_CH1.png");
 }
