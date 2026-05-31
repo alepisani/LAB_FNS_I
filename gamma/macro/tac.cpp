@@ -52,11 +52,13 @@ void tac(){
 
     }
 
-    /*
+    
     //--------------------------------- SPETTRI TAC SOVRAPPOSTI ------------------------------
+    /*
     TCanvas* c1 = new TCanvas("c1", "TAC con ritardo 0.1 #mu s", 800, 600);
     TAC_01->Draw("HIST");
     TAC_01->SetLineColor(kBlue);
+    TAC_01->SetFillColorAlpha(kBlue, 0.35);
     TAC_01->SetLineWidth(3);
     TAC_01->SetXTitle("MCA [Ch]");
     TAC_01->SetYTitle("Conteggi");
@@ -65,26 +67,31 @@ void tac(){
 
     TAC_03->Draw("HIST SAME");
     TAC_03->SetLineColor(kRed);
+    TAC_03->SetFillColorAlpha(kRed, 0.35);
     TAC_03->SetLineWidth(3);
 
     TAC_05->Draw("HIST SAME");
     TAC_05->SetLineColor(kGreen+2);
+    TAC_05->SetFillColorAlpha(kGreen+2, 0.35);
     TAC_05->SetLineWidth(3);
 
     TAC_07->Draw("HIST SAME");
     TAC_07->SetLineColor(kMagenta);
+    TAC_07->SetFillColorAlpha(kMagenta, 0.35);
     TAC_07->SetLineWidth(3);
 
     TAC_09->Draw("HIST SAME");
     TAC_09->SetLineColor(kOrange+1);
+    TAC_09->SetFillColorAlpha(kOrange+1, 0.35);
     TAC_09->SetLineWidth(3);
 
     TAC_11->Draw("HIST SAME");
     TAC_11->SetLineColor(kCyan+2);
+    TAC_11->SetFillColorAlpha(kCyan+2, 0.35);
     TAC_11->SetLineWidth(3);
 
 
-    TLegend *ritardi = new TLegend(0.7,0.65,0.9,0.9,"Ritardi");
+    TLegend *ritardi = new TLegend(0.7,0.6,0.9,0.9,"Ritardi");
     ritardi->AddEntry(TAC_01, "0.1 #mu s ", "l");
     ritardi->AddEntry(TAC_03, "0.3 #mu s", "l");
     ritardi->AddEntry(TAC_05, "0.5 #mu s", "l");
@@ -226,19 +233,19 @@ void tac(){
     gauss11->SetLineWidth(3);
     double t11 = gauss11->GetParameter(1);
     
-/*
+
     int n=6;
     double ritardi[] = {0.1, 0.3, 0.5, 0.7, 0.9, 1.1}; //\mus
     double MCA[] = {t1,t3,t5,t7,t9,t11};
     double s_ritardi[] = {0, 0, 0, 0, 0, 0};
-    double s_MCA[] = {17.6, 17.41, 17.61, 17.19, 17.36, 16.85};
+    double s_MCA[] = {17.6, 17.41, 17.61, 17.19, 17.36, 16.85}; //FWHM presa dagli istogrammi (non hai salvato questi grafici)
 
 
     gStyle->SetOptFit(1111);
     TCanvas* tac = new TCanvas("tac", "Calibrazione TAC", 800, 600);
     TGraphErrors *cal_tac = new TGraphErrors(n, ritardi, MCA, s_ritardi, s_MCA);
     cal_tac->SetTitle("Calibrazione TAC");
-    cal_tac->GetXaxis()->SetTitle("Ritardi [ua]");
+    cal_tac->GetXaxis()->SetTitle("Ritardi [#mu s]");
     cal_tac->GetYaxis()->SetTitle("MCA [Ch]");
 
     cal_tac->SetMarkerStyle(20);
@@ -251,7 +258,7 @@ void tac(){
     cal_tac->Draw("AP");
     
 
-*/
+
 
 
 
