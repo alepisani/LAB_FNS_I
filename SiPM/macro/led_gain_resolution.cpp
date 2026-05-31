@@ -62,30 +62,30 @@ void led_gain_resolution(){
 
     //create plot on canvas
     TCanvas* can_704 = new TCanvas("can704", "can704", 800, 600);
-    hist_704->GetXaxis()->SetTitle("Canali");
+    hist_704->GetXaxis()->SetTitle("Canali ADC");
     hist_704->GetYaxis()->SetTitle("Conteggi");
-    hist_704->SetTitle("Spettro Digitaiser - 70.4V");
+    hist_704->SetTitle("Spettro Digitizer - 70.4V");
     hist_704->GetXaxis()->SetRangeUser(-150, 1700);
     hist_704->Draw();
     
     TCanvas* can_708 = new TCanvas("can708", "can708", 800, 600);
-    hist_708->GetXaxis()->SetTitle("Canali");
+    hist_708->GetXaxis()->SetTitle("Canali ADC");
     hist_708->GetYaxis()->SetTitle("Conteggi");
-    hist_708->SetTitle("Spettro Digitaiser - 70.8V");
+    hist_708->SetTitle("Spettro Digitizer - 70.8V");
     hist_708->GetXaxis()->SetRangeUser(-150, 3000);
     hist_708->Draw();
     
     TCanvas* can_710 = new TCanvas("can710", "can710", 800, 600);
-    hist_710->GetXaxis()->SetTitle("Canali");
+    hist_710->GetXaxis()->SetTitle("Canali ADC");
     hist_710->GetYaxis()->SetTitle("Conteggi");
-    hist_710->SetTitle("Spettro Digitaiser - 71.0V");
+    hist_710->SetTitle("Spettro Digitizer - 71.0V");
     hist_710->GetXaxis()->SetRangeUser(-150, 3500);
     hist_710->Draw();
     
     TCanvas* can_712 = new TCanvas("can712", "can712", 800, 600);
-    hist_712->GetXaxis()->SetTitle("Canali");
+    hist_712->GetXaxis()->SetTitle("Canali ADC");
     hist_712->GetYaxis()->SetTitle("Conteggi");
-    hist_712->SetTitle("Spettro Digitaiser - 71.2V");
+    hist_712->SetTitle("Spettro Digitizer - 71.2V");
     hist_712->GetXaxis()->SetRangeUser(-150, 4000);
     hist_712->Draw();
     
@@ -94,30 +94,30 @@ void led_gain_resolution(){
     can_all->Divide(2, 2); 
 
     can_all->cd(1);
-    hist_704->GetXaxis()->SetTitle("Canali");
+    hist_704->GetXaxis()->SetTitle("Canali ADC");
     hist_704->GetYaxis()->SetTitle("Conteggi");
-    hist_704->SetTitle("Spettro Digitaiser - 70.4V");
+    hist_704->SetTitle("Spettro Digitizer - 70.4V");
     hist_704->GetXaxis()->SetRangeUser(-150, 1700);
     hist_704->Draw();
 
     can_all->cd(2);
-    hist_708->GetXaxis()->SetTitle("Canali");
+    hist_708->GetXaxis()->SetTitle("Canali ADC");
     hist_708->GetYaxis()->SetTitle("Conteggi");
-    hist_708->SetTitle("Spettro Digitaiser - 70.8V");
+    hist_708->SetTitle("Spettro Digitizer - 70.8V");
     hist_708->GetXaxis()->SetRangeUser(-150, 3000);
     hist_708->Draw();
 
     can_all->cd(3);
-    hist_710->GetXaxis()->SetTitle("Canali");
+    hist_710->GetXaxis()->SetTitle("Canali ADC");
     hist_710->GetYaxis()->SetTitle("Conteggi");
-    hist_710->SetTitle("Spettro Digitaiser - 71.0V");
+    hist_710->SetTitle("Spettro Digitizer - 71.0V");
     hist_710->GetXaxis()->SetRangeUser(-150, 3500);
     hist_710->Draw();
 
     can_all->cd(4);
-    hist_712->GetXaxis()->SetTitle("Canali");
+    hist_712->GetXaxis()->SetTitle("Canali ADC");
     hist_712->GetYaxis()->SetTitle("Conteggi");
-    hist_712->SetTitle("Spettro Digitaiser - 71.2V");
+    hist_712->SetTitle("Spettro Digitizer - 71.2V");
     hist_712->GetXaxis()->SetRangeUser(-150, 4000);
     hist_712->Draw();
 
@@ -129,6 +129,9 @@ void led_gain_resolution(){
     vector<double> centers_704 = {0, 180, 350, 520, 680, 860};
     vector<double> mean_704;
     vector<double> err_mean_704;
+    vector<double> sigma_704_v;
+    vector<double> variance_704;
+    vector<double> err_variance_704;
 
     for (int i = 0; i < nGauss_704; i++) {
         
@@ -139,11 +142,23 @@ void led_gain_resolution(){
             hist_704->Fit(gaussians_704[0], "RQ");
             mean_704.push_back(gaussians_704[i]->GetParameter(1));   
             err_mean_704.push_back(gaussians_704[i]->GetParError(1));
+            double sigma    = gaussians_704[i]->GetParameter(2);
+            sigma_704_v.push_back(sigma);
+            double err_sigma = gaussians_704[i]->GetParError(2);
+            double variance = sigma * sigma;
+            variance_704.push_back(variance);
+            err_variance_704.push_back(2 * sigma * err_sigma);
         }
         else{
             hist_704->Fit(gaussians_704[i], "RQ+");
             mean_704.push_back(gaussians_704[i]->GetParameter(1));   
             err_mean_704.push_back(gaussians_704[i]->GetParError(1));
+            double sigma    = gaussians_704[i]->GetParameter(2);
+            sigma_704_v.push_back(sigma);
+            double err_sigma = gaussians_704[i]->GetParError(2);
+            double variance = sigma * sigma;
+            variance_704.push_back(variance);
+            err_variance_704.push_back(2 * sigma * err_sigma);
         }
         
     }
@@ -203,6 +218,9 @@ void led_gain_resolution(){
     vector<double> centers_710 = {0, 350, 700, 1050, 1390, 1720, 2070, 2410};
     vector<double> mean_710;
     vector<double> err_mean_710;
+    vector<double> sigma_710_v;
+    vector<double> variance_710;
+    vector<double> err_variance_710;
 
     for (int i = 0; i < nGauss_710; i++) {
         
@@ -213,11 +231,23 @@ void led_gain_resolution(){
             hist_710->Fit(gaussians_710[0], "RQ");
             mean_710.push_back(gaussians_710[i]->GetParameter(1));   
             err_mean_710.push_back(gaussians_710[i]->GetParError(1));
+            double sigma    = gaussians_710[i]->GetParameter(2);
+            sigma_710_v.push_back(sigma);
+            double err_sigma = gaussians_710[i]->GetParError(2);
+            double variance = sigma * sigma;
+            variance_710.push_back(variance);
+            err_variance_710.push_back(2 * sigma * err_sigma);
         }
         else{
             hist_710->Fit(gaussians_710[i], "RQ+");
             mean_710.push_back(gaussians_710[i]->GetParameter(1));   
             err_mean_710.push_back(gaussians_710[i]->GetParError(1));
+            double sigma    = gaussians_710[i]->GetParameter(2);
+            sigma_710_v.push_back(sigma);
+            double err_sigma = gaussians_710[i]->GetParError(2);
+            double variance = sigma * sigma;
+            variance_710.push_back(variance);
+            err_variance_710.push_back(2 * sigma * err_sigma);
         }
         
     }
@@ -232,6 +262,9 @@ void led_gain_resolution(){
     vector<double> centers_712 = {0, 420, 820, 1220, 1620, 2020, 2400, 2820, 3200};
     vector<double> mean_712;
     vector<double> err_mean_712;
+    vector<double> sigma_712_v;
+    vector<double> variance_712;
+    vector<double> err_variance_712;
 
     for (int i = 0; i < nGauss_712; i++) {
         
@@ -242,11 +275,23 @@ void led_gain_resolution(){
             hist_712->Fit(gaussians_712[0], "RQ");
             mean_712.push_back(gaussians_712[i]->GetParameter(1));   
             err_mean_712.push_back(gaussians_712[i]->GetParError(1));
+            double sigma    = gaussians_712[i]->GetParameter(2);
+            sigma_712_v.push_back(sigma);
+            double err_sigma = gaussians_712[i]->GetParError(2);
+            double variance = sigma * sigma;
+            variance_712.push_back(variance);
+            err_variance_712.push_back(2 * sigma * err_sigma);
         }
         else{
             hist_712->Fit(gaussians_712[i], "RQ+");
             mean_712.push_back(gaussians_712[i]->GetParameter(1));   
             err_mean_712.push_back(gaussians_712[i]->GetParError(1));
+            double sigma    = gaussians_712[i]->GetParameter(2);
+            sigma_712_v.push_back(sigma);
+            double err_sigma = gaussians_712[i]->GetParError(2);
+            double variance = sigma * sigma;
+            variance_712.push_back(variance);
+            err_variance_712.push_back(2 * sigma * err_sigma);
         }
         
     }
@@ -408,7 +453,6 @@ void led_gain_resolution(){
      * eventually ompute resolution
     */
 
-    //for(int i = 0; i < sigma_708_v.size(); i++) cout << sigma_708_v[i] << " ";
     vector<double> Npe = {0, 1, 2, 3, 4, 5, 6, 7};
     vector<double> err_Npe = {0, 0, 0, 0, 0, 0, 0};
 
@@ -430,9 +474,71 @@ void led_gain_resolution(){
     c_res->Update();
     c_res->SaveAs("../plots/LED/resolution.pdf");
 
-    cout << endl;
-    double resolution = (mean_dpp_708) / (sqrt(variance_708[1] - variance_708[0]));
-    cout << "resolution = " << resolution << endl;
+    //---------------------Resolution Vs Vbias---------------------
 
+
+    /**
+     * further analysis to understand how it goes the resolution
+     * against the Vbias.
+    */
+
+    cout << endl;
+    double resolution_704 = (mean_dpp_704) / (sqrt(variance_704[1] - variance_704[0]));
+    double delta_var_704 = variance_704[1] - variance_704[0];
+    double err_delta_var_704 = sqrt(err_variance_704[1]*err_variance_704[1] + err_variance_704[0]*err_variance_704[0]);
+    double err_resolution_704 = sqrt(
+        (err_mean_ddp[0]*err_mean_ddp[0]) / delta_var_704 + 
+        (mean_dpp_704*mean_dpp_704 * err_delta_var_704*err_delta_var_704) / (4*delta_var_704*delta_var_704*delta_var_704)
+    );
+    cout << "resolution_704 = " << resolution_704 << " +/- " << err_resolution_704 << endl;
     
+    cout << endl;
+    double resolution_708 = (mean_dpp_708) / (sqrt(variance_708[1] - variance_708[0]));
+    double delta_var_708 = variance_708[1] - variance_708[0];
+    double err_delta_var_708 = sqrt(err_variance_708[1]*err_variance_708[1] + err_variance_708[0]*err_variance_708[0]);
+    double err_resolution_708 = sqrt(
+        (err_mean_ddp[1]*err_mean_ddp[1]) / delta_var_708 + 
+        (mean_dpp_708*mean_dpp_708 * err_delta_var_708*err_delta_var_708) / (4*delta_var_708*delta_var_708*delta_var_708)
+    );
+    cout << "resolution_708 = " << resolution_708 << " +/- " << err_resolution_708 << endl;
+
+    cout << endl;
+    double resolution_710 = (mean_dpp_710) / (sqrt(variance_710[1] - variance_710[0]));
+    double delta_var_710 = variance_710[1] - variance_710[0];
+    double err_delta_var_710 = sqrt(err_variance_710[1]*err_variance_710[1] + err_variance_710[0]*err_variance_710[0]);
+    double err_resolution_710 = sqrt(
+        (err_mean_ddp[2]*err_mean_ddp[2]) / delta_var_710 + 
+        (mean_dpp_710*mean_dpp_710 * err_delta_var_710*err_delta_var_710) / (4*delta_var_710*delta_var_710*delta_var_710)
+    );
+    cout << "resolution_710 = " << resolution_710 << " +/- " << err_resolution_710 << endl;
+
+    cout << endl;
+    double resolution_712 = (mean_dpp_712) / (sqrt(variance_712[1] - variance_712[0]));
+    double delta_var_712 = variance_712[1] - variance_712[0];
+    double err_delta_var_712 = sqrt(err_variance_712[1]*err_variance_712[1] + err_variance_712[0]*err_variance_712[0]);
+    double err_resolution_712 = sqrt(
+        (err_mean_ddp[3]*err_mean_ddp[3]) / delta_var_712 + 
+        (mean_dpp_712*mean_dpp_712 * err_delta_var_712*err_delta_var_712) / (4*delta_var_712*delta_var_712*delta_var_712)
+    );
+    cout << "resolution_712 = " << resolution_712 << " +/- " << err_resolution_712 << endl;
+
+
+    vector<double> res = {resolution_704, resolution_708, resolution_710, resolution_712};
+    vector<double> err_res = {err_resolution_704, err_resolution_708, err_resolution_710, err_resolution_712};
+
+    TGraphErrors *res_vbias = new TGraphErrors(4, Vbias.data(), res.data(), 0, err_res.data());
+    res_vbias->GetXaxis()->SetTitle("V_{bias} [V]");
+    res_vbias->GetYaxis()->SetTitle("Resolution");
+    res_vbias->SetTitle("Resolution Vs V_{bias}");
+    
+    TCanvas* c_resvbias = new TCanvas ("resolutionbias","resbias", 800, 600);
+  
+    res_vbias->SetMarkerStyle(20);
+    res_vbias->SetMarkerSize(1.2);
+    res_vbias->SetMarkerColor(kBlue);
+    res_vbias->Draw("APC");
+    c_resvbias->Update();
+    c_resvbias->SaveAs("../plots/LED/resolution_Vbias.pdf");
+
+
 }
