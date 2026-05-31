@@ -23,10 +23,11 @@ void spettri_poisson(){
     gStyle->SetMarkerStyle(20);
     gStyle->SetMarkerSize(1);
     gStyle->SetMarkerColor(4);
+    
 
 
     // selezione bin
-    bool use_pe_bins = true;
+    bool use_pe_bins = false;
     //selezione fit
     bool fit_binomiale = false;
 
@@ -39,18 +40,21 @@ void spettri_poisson(){
     // parametri delle distribuzioni, per convertire
     // LED a 2.4
     int dpp_24 = 331;
-    int x0_24 = 4; //offset del picco a 0
+    double x0_24 = 4.2; //offset del picco a 0
 
     // LED a 2.7
     int dpp_27 = 334;
-    int x0_27 = 5;   //offset del picco a 0
+    double x0_27 = 5;   //offset del picco a 0
 
     // LED a 3.0
     int dpp_30 = 336;
-    int x0_30 = 5; //offset del picco a 0
+    double x0_30 = 4.6; //offset del picco a 0
+
+    // le sigma del picco a zero
+    double sigma0[] = {29./dpp_24, 28.7/dpp_27, 28.6/dpp_30};
 
     //parametri istogrammi (N in p.e., x in ch)
-    int Npe = 15;       // numero di p.e. nell'istogramma
+    int Npe = 18;       // numero di p.e. nell'istogramma
     double Nlow = -0.5;
     double Nup = Npe + 0.5;
     int nbins = -999;
@@ -60,7 +64,7 @@ void spettri_poisson(){
     if(use_pe_bins) nbins = Npe + 1;
     else {
         int offset = 90;   // taglio sulla parte sinistra dell'istogramma
-        nbins = 720;
+        nbins = 800;
         //Led 2.4
         xlow24 = (data_24[0][0]-4. + 8*offset);
         xup24 = xlow24 + (8*nbins);
@@ -90,26 +94,62 @@ void spettri_poisson(){
         xmin_30 = -0.4, xmax_30 = 14;
     }
 
-    // dichiarazione istogrammi
+    // dichiarazione istogrammi e parametri
 
     TH1D *h24, *h27, *h30;
+    double mean[3], e_mean[3], mean_ZP[3], e_mean_ZP[3];
+    double A0[3], Atot[3], e_A0[3], e_Atot[3];
+    double y0[3], e_y0[3];
+    double intensities[] = {2.4, 2.7, 3.0};
+
+
 
     if(use_pe_bins){
         h24 = new TH1D("h24", "", nbins, Nlow, Nup);
         h27 = new TH1D("h27", "", nbins, Nlow, Nup);
         h30 = new TH1D("h30", "", nbins, Nlow, Nup);
 
+        h24->SetLineWidth(3);
+        h27->SetLineWidth(3);
+        h30->SetLineWidth(3);
+
         // fill in pe
         for(int i=0; i<data_24[1].size(); i++){
-        h24->Fill( (data_24[0][i]-x0_24)/dpp_24 , data_24[1][i]);
-        h27->Fill( (data_27[0][i]-x0_27)/dpp_27 , data_27[1][i]);
-        h30->Fill( (data_30[0][i]-x0_30)/dpp_30 , data_30[1][i]);
-
+            h24->Fill( (data_24[0][i]-x0_24)/dpp_24 , data_24[1][i]);
+            h27->Fill( (data_27[0][i]-x0_27)/dpp_27 , data_27[1][i]);
+            h30->Fill( (data_30[0][i]-x0_30)/dpp_30 , data_30[1][i]);
+        }
         // range
         h24->GetYaxis()->SetRange(50e3);
         h27->GetYaxis()->SetRange(45e3);
         h30->GetYaxis()->SetRange(90e3);
-    }
+
+        // parametri della distribuzione
+        // 2.4
+        mean[0] = h24->GetMean();
+        e_mean[0] = h24->GetMeanError();
+        A0[0] = h24->IntegralAndError(1, 1, e_A0[0]);
+        Atot[0] = h24->IntegralAndError(1, Npe+1, e_Atot[0]);
+        //2.8
+        mean[1] = h27->GetMean();
+        e_mean[1] = h27->GetMeanError();
+        A0[1] = h27->IntegralAndError(1, 1, e_A0[1]);
+        Atot[1] = h27->IntegralAndError(1, Npe+1, e_Atot[1]);
+        //3.0
+        mean[2] = h30->GetMean();
+        e_mean[2] = h30->GetMeanError();
+        A0[2] = h30->IntegralAndError(1, 1, e_A0[2]);
+        Atot[2] = h30->IntegralAndError(1, Npe+1, e_Atot[2]);
+
+        for(int i=0; i<3; i++){
+            mean_ZP[i] = -TMath::Log(A0[i]/Atot[i]);
+            e_mean_ZP[i] = TMath::Sqrt( pow(e_A0[i]/A0[i], 2) + pow(e_Atot[i]/Atot[i], 2) );
+
+            cout << intensities[i] << endl;
+            cout << "mean = " << mean[i] << " +- " << e_mean[i] << endl;
+            cout << "A0 = " << A0[i] << " +- " << e_A0[i] << ", Atot = " << Atot[i] << " +- " << e_Atot[i]<< endl;
+            cout << "mean ZP = " << mean_ZP[i] << " +- " << e_mean_ZP[i] << endl << endl;
+        }
 
     } else {
         h24 = new TH1D("h24", "", nbins, xlow24, xup24);
@@ -131,6 +171,41 @@ void spettri_poisson(){
         h24->ResetStats();
         h27->ResetStats();
         h30->ResetStats();
+
+ 
+        // parametri della distribuzione
+        // 2.4
+        mean[0] = h24->GetMean();
+        e_mean[0] = h24->GetMeanError();
+        y0[0] = h24->IntegralAndError(h24->FindBin(0), h24->FindBin(0), e_y0[0]);
+        Atot[0] = h24->IntegralAndError(1, nbins, e_Atot[0]);
+        //2.8
+        mean[1] = h27->GetMean();
+        e_mean[1] = h27->GetMeanError();
+        y0[1] = h27->IntegralAndError(h27->FindBin(0), h27->FindBin(0), e_y0[1]);
+        Atot[1] = h27->IntegralAndError(1, nbins, e_Atot[1]);
+        //3.0
+        mean[2] = h30->GetMean();
+        e_mean[2] = h30->GetMeanError();
+        y0[2] = h30->IntegralAndError(h30->FindBin(0), h30->FindBin(0), e_y0[2]);
+        Atot[2] = h30->IntegralAndError(1, nbins, e_Atot[2]);
+
+        double width[] = {8./dpp_24, 8./dpp_27, 8./dpp_30}; // larghezza del bin, per normalizzare A0
+
+        for(int i=0; i<3; i++){
+            double factor = TMath::Sqrt(2*TMath::Pi())*sigma0[i]/width[i];  //fattore di conversione y->A
+            A0[i] = factor*y0[i];
+            e_A0[i] = factor*e_y0[i];
+ 
+            mean_ZP[i] = -TMath::Log(A0[i]/Atot[i]);
+            e_mean_ZP[i] = TMath::Sqrt( pow(e_A0[i]/A0[i], 2) + pow(e_Atot[i]/Atot[i], 2) );
+
+            cout << intensities[i] << endl;
+            cout << "mean = " << mean[i] << " +- " << e_mean[i] << endl;
+            cout << "ymax = " << y0[i] << endl;
+            cout << "A0 = " << A0[i] << ", Atot = " << Atot[i] << endl;
+            cout << "mean ZP = " << mean_ZP[i] << " +- " << e_mean_ZP[i] << endl << endl;
+        }
         
     }
 
@@ -201,6 +276,8 @@ void spettri_poisson(){
             gaus_sing.GetParameters(&par24[2+3*i]);
         }
             */
+        
+        /*    // fit poisson + gaussiane
 
         poisson24 = new TF1("poisson24", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20)", xmin_24, xmax_24);
         double par24[23] = {1000, 3.5,
@@ -268,7 +345,80 @@ void spettri_poisson(){
                             "A_{7}", "#mu_{7}", "#sigma_{7}"
                         };
         for(int i=0; i<26; i++) poisson30->SetParName(i, parNames30[i]);
+        */
+
+        // fit multipicco
+                poisson24 = new TF1("poisson24", "gaus(0) + gaus(3) + gaus(6) + gaus(9) + gaus(12) + gaus(15) + gaus(18)", xmin_24, xmax_24);
+        double par24[21] = {
+                        5000, 0, 0.0005,
+                        4500, 1, 0.0005, 
+                        3000, 2, 0.001, 
+                        1800, 3, 0.001, 
+                        1000, 4, 0.001,
+                        500, 5, 0.001,
+                        400, 6, 0.001};
+        poisson24->SetParameters(par24);
+        const char* parNames24[] = {
+                            "A_{0}", "#mu_{0}", "#sigma_{0}",
+                            "A_{1}", "#mu_{1}", "#sigma_{1}",
+                            "A_{2}", "#mu_{2}", "#sigma_{2}",
+                            "A_{3}", "#mu_{3}", "#sigma_{3}",
+                            "A_{4}", "#mu_{4}", "#sigma_{4}",
+                            "A_{5}", "#mu_{5}", "#sigma_{5}",
+                            "A_{6}", "#mu_{6}", "#sigma_{6}"
+                        };
+        for(int i=0; i<21; i++) poisson24->SetParName(i, parNames24[i]);   // CAMBIARE IL NUMERO IN BASE AL N. PARAMETRI
+        
+
+        poisson27 = new TF1("poisson27", "gaus(0) + gaus(3) + gaus(6) + gaus(9) + gaus(12) + gaus(15) + gaus(18)", xmin_27, xmax_27);
+        double par27[21] = {
+                        13000, 0, 0.01,
+                        13000, 1.05, 0.03, 
+                        11000, 2, 0.02, 
+                        10000, 3, 0.03, 
+                        10000, 4, 0.03,
+                        5000, 5, 0.05,
+                        3000, 6, 0.1};//,
+                        //500, 7, 0.1};
+        poisson27->SetParameters(par27);
+        const char* parNames27[] = {
+                            "A_{0}", "#mu_{0}", "#sigma_{0}",
+                            "A_{1}", "#mu_{1}", "#sigma_{1}",
+                            "A_{2}", "#mu_{2}", "#sigma_{2}",
+                            "A_{3}", "#mu_{3}", "#sigma_{3}",
+                            "A_{4}", "#mu_{4}", "#sigma_{4}",
+                            "A_{5}", "#mu_{5}", "#sigma_{5}",
+                            "A_{6}", "#mu_{6}", "#sigma_{6}"
+                        };
+        for(int i=0; i<21; i++) poisson27->SetParName(i, parNames27[i]);
+
+        poisson30 = new TF1("poisson30", "[0] * TMath::Exp(-[1]) * TMath::Power([1], x) / TMath::Gamma(x+1) + gaus(2) + gaus(5) + gaus(8) + gaus(11) + gaus(14) + gaus(17) + gaus(20) + gaus(23)", xmin_30, xmax_30);
+        double par30[26] = {1500, 5,
+                            5000, 0, 0.03,
+                            12000, 1, 0.03,
+                            15000, 2, 0.03,
+                            17000, 3, 0.03,
+                            15000, 4, 0.03,
+                            12000, 5, 0.03,
+                            6000, 6, 0.05,
+                            2000, 7, 0.12};
+        poisson30->SetParameters(par30);
+        const char* parNames30[] = {"B_{0}", "#lambda",
+                            "A_{0}", "#mu_{0}", "#sigma_{0}",
+                            "A_{1}", "#mu_{1}", "#sigma_{1}",
+                            "A_{2}", "#mu_{2}", "#sigma_{2}",
+                            "A_{3}", "#mu_{3}", "#sigma_{3}",
+                            "A_{4}", "#mu_{4}", "#sigma_{4}",
+                            "A_{5}", "#mu_{5}", "#sigma_{5}",
+                            "A_{6}", "#mu_{6}", "#sigma_{6}",
+                            "A_{7}", "#mu_{7}", "#sigma_{7}"
+                        };
+        for(int i=0; i<26; i++) poisson30->SetParName(i, parNames30[i]);
     }
+    
+    h24->SetLineColor(2);
+    h27->SetLineColor(2);
+    h30->SetLineColor(2);
 
     // creazione canvas
     TCanvas* c24 = new TCanvas("c24", "c24", 640,480);
