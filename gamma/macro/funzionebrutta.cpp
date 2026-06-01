@@ -12,7 +12,8 @@ Double_t funzionebrutta(Double_t *x, Double_t *par) {
     // par[2] è r (fissato a 5.547/2)
     // par[3] è il discostamento da zero
     Double_t x_0 = par [3];
-    Double_t x_ass = TMath::Abs(x[0]-x_0);
+
+    //Double_t x_ass = TMath::Abs(x[0]-x_0);
     Double_t ang_rad = (x_ass / 2.0) * (M_PI / 180.0); // Conversione x/2 in radianti
     Double_t R = par[1];
     Double_t r = par[2];
