@@ -19,10 +19,11 @@ using namespace std;
 void coinc(){
     gStyle->SetOptStat(0);
     gStyle->SetOptFit(1111);
-    vector<int> angoli = {-32, -30, -28, -26, -24, -22, -20, -18, -14, -10, -5, 0, +5, +10, +14, +18, +20, +22, +24, +26, +28, +30, +32};
-    vector<vector<double>> fondo = doubleReader("/Users/sissy/Desktop/LAB_FNS_I/gamma/data/coinc (non usatela)/TAC_Na_fondo_lungo4h_-35deg.mca", 12, false);
+    vector<int> angoli = {-32, -30, -28, -26, -24, -22, -20, -18, -14, -10, -5, 0, +5, +10, +14, +18, +20, +22, +24, +26, +28, +30, +32}; //angoli acquisiti
+    vector<vector<double>> fondo = doubleReader("/Users/sissy/Desktop/LAB_FNS_I/gamma/data/coinc (non usatela)/TAC_Na_fondo_lungo4h_-35deg.mca", 12, false); //fondo
     double tempo_fondo = 14409.261000;
 
+    //file in cui salviamo i rate trovati
     ofstream file_output("/Users/sissy/Desktop/LAB_FNS_I/gamma/data/coinc (non usatela)/risultati_rate.txt");
     if (!file_output.is_open()) {
         cout << "Errore: impossibile creare il file risultati_rate.txt!" << endl;
@@ -37,16 +38,17 @@ void coinc(){
     vector<double> ex_angoli;   // Errore sulla X
     vector<double> ey_rate;     // Errore sulla Y
 
+    // ciclo for per aprire i file di ogni angolo, sottrarre il fondo e calcolare il rate
 for (int i = 0; i < angoli.size(); i++) {
         int ang = angoli[i];
         
-        // 1. Costruisci correttamente il percorso del file unendo le stringhe con il +
+        // Dove trova i file
         string percorso_file = "/Users/sissy/Desktop/LAB_FNS_I/gamma/data/coinc (non usatela)/TAC_" + to_string(ang) + "deg_Na_coin.mca";
         
-        // 2. Leggi lo spettro con la tua funzione
-        vector<vector<double>> coinc = doubleReader(percorso_file, 12, false);
+        // Leggi i file
+        vector<vector<double>> coinc = doubleReader(percorso_file, 12, false); //perchè l'ho chiamato coinc? boh ormai rimane così
         
-        // 3. Ora apriamo lo stesso file per cercare il LIVE_TIME nella testata
+        // apriamo il file
         ifstream file_mca(percorso_file);
         if (!file_mca.is_open()) {
             cout << "Errore: impossibile aprire il file per l'angolo " << ang << endl;
@@ -69,28 +71,28 @@ for (int i = 0; i < angoli.size(); i++) {
         // 4. Stampa di controllo per vedere se tutto funziona
         cout << "Angolo: " << ang << "° | Live Time trovato: " << live_time << " secondi" << endl;
         
-        // Da qui in poi, per questo angolo, hai sia la matrice 'coinc' con i conteggi 
-        // sia la variabile 'live_time' con il tempo reale della misura!
-
+      
+        //Calcoliamo il fattore di scala
         double fattore_scala= live_time/tempo_fondo;
+        //Creiamo gli istogrammi
         TH1D* dati = new TH1D(Form("dati_%d", ang), "Spettro originale", coinc[0].size(), 0, coinc[0].size());
         TH1D* dati_fondo = new TH1D(Form("dati_fondo_%d", ang), "fondo", fondo[0].size(), 0, fondo[0].size());
         TH1D* dati_puliti = new TH1D(Form("dati_puliti_%d", ang), "Spettro pulito", coinc[0].size(), 0, coinc[0].size());
 
-        double count_spettro=0.;
-        double count_fondo=0.;
+        double count_spettro=0.; //conteggi 
+        double count_fondo=0.; //conteggi fondo
         for (int k = 0; k < coinc[0].size(); k++){
-        count_spettro+=coinc[0][k];
-        count_fondo+=fondo[0][k];
-        dati->SetBinContent(k+1, coinc[0][k]);
-        dati_fondo->SetBinContent(k+1, fondo[0][k]*fattore_scala);
+            count_spettro+=coinc[0][k];
+            count_fondo+=fondo[0][k];
+            dati->SetBinContent(k+1, coinc[0][k]); //riempiamo istogramma dati
+            dati_fondo->SetBinContent(k+1, fondo[0][k]*fattore_scala); //riempiamo istogramma fondo
         double puliti_canale = coinc[0][k] - fondo[0][k] * fattore_scala;
             if (puliti_canale < 0) puliti_canale = 0;
-            dati_puliti->SetBinContent(k+1, puliti_canale);
+            dati_puliti->SetBinContent(k+1, puliti_canale); // riempiamo istogramma con i dati puliti
         
         }
 
-             
+        //calcoliamo i rate
     double rate_spettro=count_spettro/live_time;
     double rate_fondo=count_fondo/tempo_fondo;
     double rate_spettropulito=(count_spettro-count_fondo*fattore_scala)/live_time;
@@ -101,10 +103,10 @@ for (int i = 0; i < angoli.size(); i++) {
 
     file_output << ang << "\t" << rate_spettro << "\t" <<rate_spettropulito << endl;
 
-    //cout << "Angolo: " << ang << "° | Live Time: " << live_time << " s | Rate Pulito: " << rate_spettropulito << " Hz" << endl;
+   
 
 
-    // Calcolo dell'errore statistico (propagazione delle fluttuazioni di Poisson)
+    // Errori
     double errore_netti = sqrt(count_spettro - count_fondo * fattore_scala);
     double errore_rate = errore_netti / live_time;
 
@@ -156,10 +158,11 @@ for (int i = 0; i < angoli.size(); i++) {
     mia_funzione->SetParameter(1, R);
     mia_funzione->SetParameter(2, r); 
     mia_funzione->SetParameter(3, x_0);
-    mia_funzione->SetParName(0, "Costante"); // Cambia il nome di par[0]
+    mia_funzione->SetParName(0, "N"); // Cambia il nome di par[0]
     mia_funzione->SetParName(1, "R");        // Cambia il nome di par[1]
     mia_funzione->SetParName(2, "r");        // Cambia il nome di par[2]
     mia_funzione->SetParName(3, "#theta_0");
+    //mia_funzione->FixParameter(3, 0);
     //mia_funzione->FixParameter(1, R);
     //mia_funzione->FixParameter(2, r);
 
@@ -168,7 +171,7 @@ for (int i = 0; i < angoli.size(); i++) {
     TGraphErrors* ge = new TGraphErrors(x_angoli.size(), &x_angoli[0], &y_rate[0], &ex_angoli[0], &ey_rate[0]);
 
     // Abbelliamo il grafico con i titoli degli assi
-    ge->SetTitle("Rate di Coincidenza in funzione dell'Angolo");
+    ge->SetTitle("Rate di Coincidenza in funzione dell'Angolo con #theta_0"); //togli theta 0 se lo fissi a 0
     ge->GetXaxis()->SetTitle("Angolo #theta (gradi)");
     ge->GetYaxis()->SetTitle("Rate (Hz)");
 
@@ -192,8 +195,24 @@ for (int i = 0; i < angoli.size(); i++) {
     // Salviamo il grafico finale come immagine sul PC
     c_grafico->SaveAs("grafico_rate_vs_angolo.png");
 
+/*
+    // ------------------------------Istogramma fondo---------------------
+    TH1D* dati_fondo = new TH1D("dati_fondo", "fondo", fondo[0].size(), 0, fondo[0].size());
+    for (int j = 0; j <fondo[0].size() ; j++)
+    {
+        dati_fondo->SetBinContent(j+1, fondo[0][j]);
+    }
+    
 
-    
-    
+    TCanvas* c_fondo = new TCanvas("c_fondo", "Distribuzione TAC a 35 #circ", 800, 600);
+    dati_fondo->SetTitle("Distribuzione TAC a 35#circ");
+    dati_fondo->SetLineColor(kBlue);
+    dati_fondo->SetFillColorAlpha(kBlue, 0.35);
+    dati_fondo->Rebin(2);
+    dati_fondo->SetXTitle("MCA");
+    dati_fondo->SetYTitle("Conteggi");
+    dati_fondo->Draw("HIST");
+
+    */
 
 }
