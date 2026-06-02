@@ -98,6 +98,8 @@ void spettro2()
     hist->GetXaxis()->SetTitle("Enegia [keV]");
     hist->GetYaxis()->SetTitleOffset(1.5);
     hist->GetYaxis()->SetTitle("# conteggi");
+    hist->SetLineColor(kBlue + 1);
+    hist->GetXaxis()->SetRangeUser(0, 1650);
     gStyle->SetOptStat(0);
     hist->Draw();
 

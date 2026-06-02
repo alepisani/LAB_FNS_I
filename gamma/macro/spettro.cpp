@@ -6,8 +6,8 @@ void spettro()
   //=================================================
   
   
-  gROOT->Reset();
-  gROOT->SetStyle("Plain");
+  //gROOT->Reset();
+  //gROOT->SetStyle("Plain");
 
   // Definir sistema
   bool amptek = true;   // true: amptek, false: PCA, ICSW_Spectech
@@ -26,8 +26,8 @@ void spettro()
  string fname, filename,filename_fondo("");
 
   // Nome file dati
-    fname = "Spettro_energia_ravvicinato_delay_ampl_0deg_Cs";
-    filename = "../data/" + fname + ".mca";
+  fname = "Spettro_energia_ravvicinato_delay_ampl_0deg_Cs";
+  filename = "../data/" + fname + ".mca";
 
 
 
@@ -39,7 +39,7 @@ void spettro()
     }
 
   // Dichiarare istogramma
-  TH1F* hist=new TH1F("Histo1","Spettro globale",nchan/ngroup,0,nchan-1);
+  TH1F* hist=new TH1F("Histo1","Spettro ^{137}Cs",nchan/ngroup,0,nchan-1);
 
  // Apertura file dati
   FILE *f= fopen(filename.c_str(),"r");
@@ -52,8 +52,7 @@ void spettro()
 
   // Dichiarazione Canvas
   TCanvas* c1 = new TCanvas ("c1","c1",800,600);
-  c1->cd(1);
-  c1->SetTicks();
+
   
   // Estrarre valori
   while (fgets(line,200,f)) 
@@ -82,9 +81,10 @@ void spettro()
   
   // Dibujar histograma completo
   hist->GetXaxis()->SetTitle("Canali ADC");
-  hist->GetYaxis()->SetTitleOffset(1.5); 
-  hist->GetYaxis()->SetTitle("# conteggi");
+  hist->GetYaxis()->SetTitle("Conteggi");
   gStyle->SetOptStat(0);  
+  hist->SetLineColor(kBlue + 1);
+  hist->GetXaxis()->SetRangeUser(0, 1000);
   hist->Draw();
-  c1->Print(("../plots/spettro_raw_" + fname + ".pdf").c_str()); 
+  //c1->Print(("../plots/spettro_raw_" + fname + ".pdf").c_str()); 
 }
