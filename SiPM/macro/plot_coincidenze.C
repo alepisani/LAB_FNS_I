@@ -56,7 +56,7 @@ void plot_coincidenze() {
 
     // Imposta il titolo globale del multigraph (TitoloGenerale;AsseX;AsseY)
     //mg->SetTitle("Scaler ch2; soglie [mV]; Rate[kHz]"); //singole
-    mg->SetTitle("SCaler ch3 - coincidenze; Soglia [mV]; Rate[Hz]"); //coincidenze
+    mg->SetTitle("Scaler ch3 - coincidenze; Soglia [mV]; Rate[Hz]"); //coincidenze
 
     TLegend *leg = new TLegend(0.6, 0.7, 0.9, 0.9);
     leg->SetTextSize(0.03);
@@ -72,6 +72,21 @@ void plot_coincidenze() {
     // Disegni il TMultiGraph con l'opzione "A" per fargli generare gli assi automatici
     // che contengano TUTTI i punti di ENTRAMBI i grafici.
     mg->Draw("A");
+
+    // 2. ABILITA LA GRIGLIA (chiamata su gPad dopo il Draw)
+    gPad->SetGrid(); // Attiva sia griglia X che Y (oppure usa SetGridx() solo per le X)
+
+    // 3. AGGIUNGI LA LINEA VERTICALE
+    // Sostituisci '32.0' con il valore di soglia in mV che ti interessa
+    double x_valore = 100.0; 
+    TLine *line = new TLine(x_valore, 0, x_valore, 100000);
+    
+    // Personalizzazione estetica della linea
+    line->SetLineColor(kBlack);      // Colore rosso
+    line->SetLineStyle(2);         // Tratteggiata
+    line->SetLineWidth(2);         // Spessore maggiorato
+    line->Draw();
+
     leg->Draw();
     c1->SaveAs("../plots/scalerch3.png");
 
