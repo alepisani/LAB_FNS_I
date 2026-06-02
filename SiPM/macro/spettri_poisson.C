@@ -27,7 +27,7 @@ void spettri_poisson(){
 
 
     // selezione bin
-    bool use_pe_bins = false;
+    bool use_pe_bins = true;
     //selezione fit
     bool fit_binomiale = false;
 
@@ -52,6 +52,10 @@ void spettri_poisson(){
 
     // le sigma del picco a zero
     double sigma0[] = {29./dpp_24, 28.7/dpp_27, 28.6/dpp_30};
+
+    // ampiezze picchi a zero, prese dal fit
+    double amp0[] = {5635, 2121, 1461};
+    double e_amp0[] = {32, 20, 26};
 
     //parametri istogrammi (N in p.e., x in ch)
     int Npe = 18;       // numero di p.e. nell'istogramma
@@ -128,20 +132,23 @@ void spettri_poisson(){
         // 2.4
         mean[0] = h24->GetMean();
         e_mean[0] = h24->GetMeanError();
-        A0[0] = h24->IntegralAndError(1, 1, e_A0[0]);
-        Atot[0] = h24->IntegralAndError(1, Npe+1, e_Atot[0]);
+        A0[0] = h24->Integral(1, 1);
+        Atot[0] = h24->Integral(1, Npe+1);
         //2.8
         mean[1] = h27->GetMean();
         e_mean[1] = h27->GetMeanError();
-        A0[1] = h27->IntegralAndError(1, 1, e_A0[1]);
-        Atot[1] = h27->IntegralAndError(1, Npe+1, e_Atot[1]);
+        A0[1] = h27->Integral(1, 1);
+        Atot[1] = h27->Integral(1, Npe+1);
         //3.0
         mean[2] = h30->GetMean();
         e_mean[2] = h30->GetMeanError();
-        A0[2] = h30->IntegralAndError(1, 1, e_A0[2]);
-        Atot[2] = h30->IntegralAndError(1, Npe+1, e_Atot[2]);
+        A0[2] = h30->Integral(1, 1);
+        Atot[2] = h30->Integral(1, Npe+1);
 
         for(int i=0; i<3; i++){
+            e_A0[i] = TMath::Sqrt(A0[i]);
+            e_Atot[i] = TMath::Sqrt(Atot[i]);
+
             mean_ZP[i] = -TMath::Log(A0[i]/Atot[i]);
             e_mean_ZP[i] = TMath::Sqrt( pow(e_A0[i]/A0[i], 2) + pow(e_Atot[i]/Atot[i], 2) );
 
@@ -150,6 +157,20 @@ void spettri_poisson(){
             cout << "A0 = " << A0[i] << " +- " << e_A0[i] << ", Atot = " << Atot[i] << " +- " << e_Atot[i]<< endl;
             cout << "mean ZP = " << mean_ZP[i] << " +- " << e_mean_ZP[i] << endl << endl;
         }
+
+        // gestione histo
+
+        h24->SetTitle("Spettro poissoniano a 2.4 ua");
+        h24->GetXaxis()->SetTitle("Numero di fotoni equivalenti");
+        h24->GetYaxis()->SetTitle("conteggi / p.e.");
+
+        h27->SetTitle("Spettro poissoniano a 2.7 ua");
+        h27->GetXaxis()->SetTitle("Numero di fotoni equivalenti");
+        h27->GetYaxis()->SetTitle("conteggi / p.e.");
+
+        h30->SetTitle("Spettro poissoniano a 3.0 ua");
+        h30->GetXaxis()->SetTitle("Numero di fotoni equivalenti");
+        h30->GetYaxis()->SetTitle("conteggi / p.e.");
 
     } else {
         h24 = new TH1D("h24", "", nbins, xlow24, xup24);
@@ -177,35 +198,51 @@ void spettri_poisson(){
         // 2.4
         mean[0] = h24->GetMean();
         e_mean[0] = h24->GetMeanError();
-        y0[0] = h24->IntegralAndError(h24->FindBin(0), h24->FindBin(0), e_y0[0]);
-        Atot[0] = h24->IntegralAndError(1, nbins, e_Atot[0]);
+        y0[0] = h24->Integral(h24->FindBin(0), h24->FindBin(0));
+        Atot[0] = h24->Integral(1, nbins);
         //2.8
         mean[1] = h27->GetMean();
         e_mean[1] = h27->GetMeanError();
-        y0[1] = h27->IntegralAndError(h27->FindBin(0), h27->FindBin(0), e_y0[1]);
-        Atot[1] = h27->IntegralAndError(1, nbins, e_Atot[1]);
+        y0[1] = h27->Integral(h27->FindBin(0), h27->FindBin(0));
+        Atot[1] = h27->Integral(1, nbins);
         //3.0
         mean[2] = h30->GetMean();
         e_mean[2] = h30->GetMeanError();
-        y0[2] = h30->IntegralAndError(h30->FindBin(0), h30->FindBin(0), e_y0[2]);
-        Atot[2] = h30->IntegralAndError(1, nbins, e_Atot[2]);
+        y0[2] = h30->Integral(h30->FindBin(0), h30->FindBin(0));
+        Atot[2] = h30->Integral(1, nbins);
 
-        double width[] = {8./dpp_24, 8./dpp_27, 8./dpp_30}; // larghezza del bin, per normalizzare A0
+        double width[] = {8./dpp_24, 8./dpp_27, 8./dpp_30}; // larghezza del bin in pe, per normalizzare A0
 
         for(int i=0; i<3; i++){
             double factor = TMath::Sqrt(2*TMath::Pi())*sigma0[i]/width[i];  //fattore di conversione y->A
+            e_y0[i] = TMath::Sqrt(y0[i]);
             A0[i] = factor*y0[i];
             e_A0[i] = factor*e_y0[i];
+            e_Atot[i] = TMath::Sqrt(A0[i]);
  
             mean_ZP[i] = -TMath::Log(A0[i]/Atot[i]);
             e_mean_ZP[i] = TMath::Sqrt( pow(e_A0[i]/A0[i], 2) + pow(e_Atot[i]/Atot[i], 2) );
 
             cout << intensities[i] << endl;
             cout << "mean = " << mean[i] << " +- " << e_mean[i] << endl;
-            cout << "ymax = " << y0[i] << endl;
+            cout << "ymax = " << y0[i] << " +- " << e_y0[i] << endl;
             cout << "A0 = " << A0[i] << ", Atot = " << Atot[i] << endl;
             cout << "mean ZP = " << mean_ZP[i] << " +- " << e_mean_ZP[i] << endl << endl;
         }
+
+        // gestione histo
+
+        h24->SetTitle("Spettro multipicco a 2.4 ua");
+        h24->GetXaxis()->SetTitle("Numero di fotoni equivalenti");
+        h24->GetYaxis()->SetTitle("conteggi");
+
+        h27->SetTitle("Spettro multipicco a 2.7 ua");
+        h27->GetXaxis()->SetTitle("Numero di fotoni equivalenti");
+        h27->GetYaxis()->SetTitle("conteggi");
+
+        h30->SetTitle("Spettro multipicco a 3.0 ua");
+        h30->GetXaxis()->SetTitle("Numero di fotoni equivalenti");
+        h30->GetYaxis()->SetTitle("conteggi");
         
     }
 
@@ -220,19 +257,7 @@ void spettri_poisson(){
     h30->FillN(data_30[0].size(), data_30[0].data()/x1, data_30[1].data());
     */
 
-    // gestione histo
 
-    h24->SetTitle("Spettro poissoniano a 2.4 ua");
-    h24->GetXaxis()->SetTitle("Numero di fotoni equivalenti");
-    h24->GetYaxis()->SetTitle("conteggi / p.e.");
-
-    h27->SetTitle("Spettro poissoniano a 2.7 ua");
-    h27->GetXaxis()->SetTitle("Numero di fotoni equivalenti");
-    h27->GetYaxis()->SetTitle("conteggi / p.e.");
-
-    h30->SetTitle("Spettro poissoniano a 3.0 ua");
-    h30->GetXaxis()->SetTitle("Numero di fotoni equivalenti");
-    h30->GetYaxis()->SetTitle("conteggi / p.e.");
 
     // dichiarazione TF1
     /*TF1* poisson24 = new TF1("poisson24", [](double *x, double *par){
