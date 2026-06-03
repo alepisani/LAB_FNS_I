@@ -25,12 +25,12 @@ void tac(){
     vector<vector<double>> tac_09 = doubleReader("/Users/sissy/Desktop/LAB_FNS_I/gamma/data/TAC/TAC_+0deg_Na_300s_coin_0.9us.mca", 12, false);
     vector<vector<double>> tac_11 = doubleReader("/Users/sissy/Desktop/LAB_FNS_I/gamma/data/TAC/TAC_+0deg_Na_300s_coin_1.1us.mca", 12, false);
 
-    TH1D* TAC_01 = new TH1D("TAC_01", "TAC con ritardo 0.1 #mu s", tac_01[0].size(), 0, tac_01[0].size()+1);
-    TH1D* TAC_03 = new TH1D("TAC_01", "TAC con ritardo 0.3 #mu s", tac_01[0].size(), 0, tac_01[0].size()+1);
-    TH1D* TAC_05 = new TH1D("TAC_01", "TAC con ritardo 0.5 #mu s", tac_01[0].size(), 0, tac_01[0].size()+1);
-    TH1D* TAC_07 = new TH1D("TAC_01", "TAC con ritardo 0.7 #mu s", tac_01[0].size(), 0, tac_01[0].size()+1);
-    TH1D* TAC_09 = new TH1D("TAC_01", "TAC con ritardo 0.9 #mu s", tac_01[0].size(), 0, tac_01[0].size()+1);
-    TH1D* TAC_11 = new TH1D("TAC_01", "TAC con ritardo 1.1 #mu s", tac_01[0].size(), 0, tac_01[0].size()+1);
+    TH1D* TAC_01 = new TH1D("TAC_01", "TAC con ritardo 0.1 #mus", tac_01[0].size(), 0, tac_01[0].size()+1);
+    TH1D* TAC_03 = new TH1D("TAC_03", "TAC con ritardo 0.3 #mus", tac_01[0].size(), 0, tac_01[0].size()+1);
+    TH1D* TAC_05 = new TH1D("TAC_05", "TAC con ritardo 0.5 #mus", tac_01[0].size(), 0, tac_01[0].size()+1);
+    TH1D* TAC_07 = new TH1D("TAC_07", "TAC con ritardo 0.7 #mus", tac_01[0].size(), 0, tac_01[0].size()+1);
+    TH1D* TAC_09 = new TH1D("TAC_09", "TAC con ritardo 0.9 #mus", tac_01[0].size(), 0, tac_01[0].size()+1);
+    TH1D* TAC_11 = new TH1D("TAC_11", "TAC con ritardo 1.1 #mus", tac_01[0].size(), 0, tac_01[0].size()+1);
 
     /*
     cout<< "01: " << tac_01[0].size() << endl;
@@ -51,6 +51,8 @@ void tac(){
        TAC_11->SetBinContent(i+1, tac_11[0][i]);
 
     }
+
+    double sigma[6];
 
     /*
     //--------------------------------- SPETTRI TAC SOVRAPPOSTI ------------------------------
@@ -100,11 +102,16 @@ void tac(){
 */
     //---------------------------------------------------------------FIT GAUSSIANI ------------------------
 
-    TF1* gauss01 = new TF1("gauss01", "gaus(0) + pol2(3)", 280, 365);
+    TF1* gauss01 = new TF1("gauss01", "gaus(0) + pol2(3)", 250, 450);
+    //TF1* gauss01 = new TF1("gauss01", "gaus(0)", 200, 400);
     gauss01->SetLineColor(kRed);
     gauss01->SetParameter(0,74);
     gauss01->SetParameter(1,312);
     gauss01->SetParameter(2,13);
+    gauss01->SetParLimits(2,0,20);
+    
+    
+
 
     TCanvas* c2 = new TCanvas("c2", "TAC con ritardo 0.1 ua -fit", 800, 600);
     gStyle->SetOptFit(1111);
@@ -114,29 +121,40 @@ void tac(){
     TAC_01->SetLineWidth(3);
     TAC_01->SetXTitle("MCA [Ch]");
     TAC_01->SetYTitle("Conteggi");
-    gStyle->SetOptFit(1111);
-    //TAC_01->Fit(gauss01, "R 0");
-    //TAC_01->GetXaxis()->SetRangeUser(200, 500);
-    //gauss01->Draw("SAME");
-    //gauss01->SetLineWidth(3);
-    //double t1 = gauss01->GetParameter(1);
-    //FWHM = 30.0146
-    double max = TAC_01->GetMaximum();
+    TAC_01->Fit(gauss01, "R 0");
+    TAC_01->GetXaxis()->SetRangeUser(200, 500);
+    gauss01->Draw("SAME");
+    gauss01->SetLineWidth(3);
+    //double p3 = gauss01->GetParameter(3);
+    //double p4 = gauss01->GetParameter(4);
+    //double p5 = gauss01->GetParameter(5);
+    //double p6 = gauss01->GetParameter(6);
+    //double p7 = gauss01->GetParameter(7);
+    //double p8 = gauss01->GetParameter(8);
+    //double p9 = gauss01->GetParameter(9);
+    double t1 = gauss01->GetParameter(1);
+    sigma[0] = gauss01->GetParameter(2);
+//
+    //TF1* pol01 = new TF1("pol01", "pol6(3)", 250, 450);
+    //pol01->SetLineColor(kGreen+2);
+    //pol01->FixParameter(3,p3);
+    //pol01->FixParameter(4,p4);
+    //pol01->FixParameter(5,p5);
+    //pol01->FixParameter(6,p6);
+    //pol01->FixParameter(7,p7);
+    //pol01->FixParameter(8,p8);
+    //pol01->FixParameter(9,p9);
+    //pol01->Draw("SAME");
 
-    int bin1 = TAC_01->FindFirstBinAbove(max/2.);
-    int bin2 = TAC_01->FindLastBinAbove(max/2.);
 
-    double FWHM = TAC_01->GetBinCenter(bin2)
-                - TAC_01->GetBinCenter(bin1);
-
-    cout << "FWHM = " << FWHM << endl; 
     
 
-    TF1* gauss03 = new TF1("gauss03", "gaus(0) + pol2(3)", 480, 560);
+    TF1* gauss03 = new TF1("gauss03", "gaus(0) + pol2(3)", 440, 600);
     gauss03->SetLineColor(kRed);
     gauss03->SetParameter(0,70);
     gauss03->SetParameter(1,520);
     gauss03->SetParameter(2,13);
+    gauss03->SetParLimits(2,0,20);
 
     TCanvas* c3 = new TCanvas("c3", "TAC con ritardo 0.3 ua -fit", 800, 600);
     gStyle->SetOptFit(1111);
@@ -146,19 +164,20 @@ void tac(){
     TAC_03->SetLineWidth(3);
     TAC_03->SetXTitle("MCA [Ch]");
     TAC_03->SetYTitle("Conteggi");
-    gStyle->SetOptFit(1111);
-    //TAC_03->Fit(gauss03, "R 0");
-    //TAC_03->GetXaxis()->SetRangeUser(400, 700);
-    //gauss03->Draw("SAME");
-    //gauss03->SetLineWidth(3);
-    //double t3 = gauss03->GetParameter(1);
+    TAC_03->Fit(gauss03, "R 0");
+    TAC_03->GetXaxis()->SetRangeUser(400, 700);
+    gauss03->Draw("SAME");
+    gauss03->SetLineWidth(3);
+    double t3 = gauss03->GetParameter(1);
+    sigma[1] = gauss03->GetParameter(2);
     
 
-    TF1* gauss05 = new TF1("gauss05", "gaus(0) + pol2(3)", 660, 760);
+    TF1* gauss05 = new TF1("gauss05", "gaus(0) + pol2(3)", 640, 800);
     gauss05->SetLineColor(kRed);
     gauss05->SetParameter(0,70);
     gauss05->SetParameter(1,700);
     gauss05->SetParameter(2,13);
+    gauss05->SetParLimits(2,0,20);
 
     TCanvas* c4 = new TCanvas("c4", "TAC con ritardo 0.5 ua -fit", 800, 600);
     gStyle->SetOptFit(1111);
@@ -168,19 +187,19 @@ void tac(){
     TAC_05->SetLineWidth(3);
     TAC_05->SetXTitle("MCA [Ch]");
     TAC_05->SetYTitle("Conteggi");
-    gStyle->SetOptFit(1111);
-    //TAC_05->Fit(gauss05, "R 0");
-    //TAC_05->GetXaxis()->SetRangeUser(600, 900);
-    //gauss05->Draw("SAME");
-    //gauss05->SetLineWidth(3);
-    //double t5 = gauss05->GetParameter(1);
-    
+    TAC_05->Fit(gauss05, "R 0");
+    TAC_05->GetXaxis()->SetRangeUser(600, 900);
+    gauss05->Draw("SAME");
+    gauss05->SetLineWidth(3);
+    double t5 = gauss05->GetParameter(1);
+    sigma[2] = gauss05->GetParameter(2);
 
-    TF1* gauss07 = new TF1("gauss07", "gaus(0) + pol2(3)", 850, 950);
+    TF1* gauss07 = new TF1("gauss07", "gaus(0) + pol2(3)", 840, 970);
     gauss07->SetLineColor(kRed);
     gauss07->SetParameter(0,0);
     gauss07->SetParameter(1,900);
     gauss07->SetParameter(2,13);
+    gauss07->SetParLimits(2,0,20);
 
     TCanvas* c5 = new TCanvas("c5", "TAC con ritardo 0.7 ua -fit", 800, 600);
     gStyle->SetOptFit(1111);
@@ -190,19 +209,20 @@ void tac(){
     TAC_07->SetLineWidth(3);
     TAC_07->SetXTitle("MCA [Ch]");
     TAC_07->SetYTitle("Conteggi");
-    gStyle->SetOptFit(1111);
-    //TAC_07->Fit(gauss07, "R 0");
-    //TAC_07->GetXaxis()->SetRangeUser(800, 1050);
-    //gauss07->Draw("SAME");
-    //gauss07->SetLineWidth(3);
-    //double t7 = gauss07->GetParameter(1);
+    TAC_07->Fit(gauss07, "R 0");
+    TAC_07->GetXaxis()->SetRangeUser(800, 1050);
+    gauss07->Draw("SAME");
+    gauss07->SetLineWidth(3);
+    double t7 = gauss07->GetParameter(1);
+    sigma[3] = gauss07->GetParameter(2);
     
 
-    TF1* gauss09 = new TF1("gauss09", "gaus(0) + pol2(3)", 1060, 1130);
+    TF1* gauss09 = new TF1("gauss09", "gaus(0) + pol2(3)", 1030, 1160);
     gauss09->SetLineColor(kRed);
     gauss09->SetParameter(0,71);
     gauss09->SetParameter(1,1086);
     gauss09->SetParameter(2,13);
+    gauss09->SetParLimits(2,0,20);
     
 
     TCanvas* c6 = new TCanvas("c6", "TAC con ritardo 0.9 ua -fit", 800, 600);
@@ -213,19 +233,20 @@ void tac(){
     TAC_09->SetLineWidth(3);
     TAC_09->SetXTitle("MCA [Ch]");
     TAC_09->SetYTitle("Conteggi");
-    gStyle->SetOptFit(1111);
-    //TAC_09->Fit(gauss09, "R 0");
-    //TAC_09->GetXaxis()->SetRangeUser(1000, 1300);
-    //gauss09->Draw("SAME");
-    //gauss09->SetLineWidth(3);
-    //double t9 = gauss09->GetParameter(1);
+    TAC_09->Fit(gauss09, "R 0");
+    TAC_09->GetXaxis()->SetRangeUser(1000, 1300);
+    gauss09->Draw("SAME");
+    gauss09->SetLineWidth(3);
+    double t9 = gauss09->GetParameter(1);
+    sigma[4] = gauss09->GetParameter(2);
     
 
-    TF1* gauss11 = new TF1("gauss11", "gaus(0) + pol2(3)", 1255, 1320);
+    TF1* gauss11 = new TF1("gauss11", "gaus(0) + pol2(3)", 1240, 1400);
     gauss11->SetLineColor(kRed);
     gauss11->SetParameter(0,260);
     gauss11->SetParameter(1,1270);
     gauss11->SetParameter(2,20);
+    gauss11->SetParLimits(2,0,20);
 
     TCanvas* c7 = new TCanvas("c7", "TAC con ritardo 1.1 ua -fit", 800, 600);
     gStyle->SetOptFit(1111);
@@ -236,39 +257,68 @@ void tac(){
     TAC_11->SetXTitle("MCA [Ch]");
     TAC_11->SetYTitle("Conteggi");
     
-    //TAC_11->Fit(gauss11, "R 0");
-    //TAC_11->GetXaxis()->SetRangeUser(1200, 1500);
-    //gauss11->Draw("SAME");
-    //gauss11->SetLineWidth(3);
-    //double t11 = gauss11->GetParameter(1);
+    TAC_11->Fit(gauss11, "R 0");
+    TAC_11->GetXaxis()->SetRangeUser(1200, 1500);
+    gauss11->Draw("SAME");
+    gauss11->SetLineWidth(3);
+    double t11 = gauss11->GetParameter(1);
+    sigma[5] = gauss11->GetParameter(2);
     
-/*
+
 //--------------Retta Calibrazione-----------------------------
     int n=6;
     double ritardi[] = {0.1, 0.3, 0.5, 0.7, 0.9, 1.1}; //\mus
     double MCA[] = {t1,t3,t5,t7,t9,t11};
     double s_ritardi[] = {0, 0, 0, 0, 0, 0};
-    double s_MCA[] = {17.6, 17.41, 17.61, 17.19, 17.36, 16.85};
+    double s_MCA[] = {1,1, 1, 1, 1, 1};
 
 
     gStyle->SetOptFit(1111);
     TCanvas* tac = new TCanvas("tac", "Calibrazione TAC", 800, 600);
     TGraphErrors *cal_tac = new TGraphErrors(n, ritardi, MCA, s_ritardi, s_MCA);
     cal_tac->SetTitle("Calibrazione TAC");
-    cal_tac->GetXaxis()->SetTitle("Ritardi [ua]");
+    cal_tac->GetXaxis()->SetTitle("Ritardi [#mus]");
     cal_tac->GetYaxis()->SetTitle("MCA [Ch]");
 
     cal_tac->SetMarkerStyle(20);
     cal_tac->SetMarkerColor(kBlue);
     cal_tac->SetLineColor(kBlue);   
     
+    
     TF1 *fit_lineare = new TF1("fit_lineare", "pol1", 0, 1000);
     cal_tac->Fit(fit_lineare, "R");
     tac->SetGrid();
     cal_tac->Draw("AP");
+    double m = fit_lineare->GetParameter(1);
+
+
+// --- 3. Calcolo della media delle sigma ---
+double somma_sigma = 0.0;
+for(int i = 0; i < 6; i++) {
+    somma_sigma += sigma[i];
+}
+double sigma_media_canali = somma_sigma / 6.0;
+
+
+
+
+double somma_quadrati = 0.0;
+for(int i = 0; i < 6; i++) {
+    somma_quadrati += pow(sigma[i] - sigma_media_canali, 2);
+}
+// Formula: sqrt( varianza_campionaria / N )
+double errore_media_canali = sqrt(somma_quadrati / (6.0 * (6.0 - 1.0)));
+
+// 3. Calibrazione (Moltiplichiamo sia la media che l'errore per m)
+double sigma_media_calibrata = sigma_media_canali / m;
+double errore_media_calibrato = errore_media_canali / m;
+
+// Stampa dei risultati
+std::cout << "Sigma Media Calibrata: " << sigma_media_calibrata 
+          << " +/- " << errore_media_calibrato << std::endl;
     
 
-*/
+
 /*
 //-----------------sigma --- se lo mandi insieme a quello di prima cambia i nomi
 int n=6; //cambia con 6 se usi tutti i valori

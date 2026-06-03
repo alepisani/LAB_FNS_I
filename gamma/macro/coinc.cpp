@@ -162,7 +162,7 @@ for (int i = 0; i < angoli.size(); i++) {
     mia_funzione->SetParName(1, "R");        // Cambia il nome di par[1]
     mia_funzione->SetParName(2, "r");        // Cambia il nome di par[2]
     mia_funzione->SetParName(3, "#theta_0");
-    //mia_funzione->FixParameter(3, 0);
+    mia_funzione->FixParameter(3, 0);
     //mia_funzione->FixParameter(1, R);
     //mia_funzione->FixParameter(2, r);
 
@@ -171,8 +171,9 @@ for (int i = 0; i < angoli.size(); i++) {
     TGraphErrors* ge = new TGraphErrors(x_angoli.size(), &x_angoli[0], &y_rate[0], &ex_angoli[0], &ey_rate[0]);
 
     // Abbelliamo il grafico con i titoli degli assi
-    ge->SetTitle("Rate di Coincidenza in funzione dell'Angolo con #theta_0"); //togli theta 0 se lo fissi a 0
-    ge->GetXaxis()->SetTitle("Angolo #theta (gradi)");
+    //ge->SetTitle("Rate di Coincidenza in funzione dell'Angolo con #theta_0"); //togli theta 0 se lo fissi a 0
+    ge->SetTitle("Rate di Coincidenza in funzione dell'Angolo");
+    ge->GetXaxis()->SetTitle("Angolo #varphi (gradi)");
     ge->GetYaxis()->SetTitle("Rate (Hz)");
 
     // Scegliamo lo stile dei punti (20 è il cerchietto pieno) e il colore
