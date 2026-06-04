@@ -160,15 +160,15 @@ void spettri_poisson(){
 
         // gestione histo
 
-        h24->SetTitle("Spettro poissoniano a 2.4 ua");
+        h24->SetTitle("Spettro raggruppato a 2.4 ua");
         h24->GetXaxis()->SetTitle("Numero di fotoni equivalenti");
         h24->GetYaxis()->SetTitle("conteggi / p.e.");
 
-        h27->SetTitle("Spettro poissoniano a 2.7 ua");
+        h27->SetTitle("Spettro raggruppato a 2.7 ua");
         h27->GetXaxis()->SetTitle("Numero di fotoni equivalenti");
         h27->GetYaxis()->SetTitle("conteggi / p.e.");
 
-        h30->SetTitle("Spettro poissoniano a 3.0 ua");
+        h30->SetTitle("Spettro raggruppato a 3.0 ua");
         h30->GetXaxis()->SetTitle("Numero di fotoni equivalenti");
         h30->GetYaxis()->SetTitle("conteggi / p.e.");
 
