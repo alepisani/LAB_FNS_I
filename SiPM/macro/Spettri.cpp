@@ -25,10 +25,10 @@ void Spettri(){
     vector<vector<double>> BGO_15 = doubleReader("/Users/sissy/Desktop/LAB_FNS_I/SiPM/data/txt/Gruppo6_5472V_137Cs_cryBGO_32dB_histo.txt", 8, false);
 
     TH1D* csi_20 = new TH1D("csi_20", "spettro CsI -thr20", 400, -2000, 20000);
-    TH1D* csi_50 = new TH1D("csi_50", "spettro CsI -thr50", 250, -1500, 17000);
+    TH1D* csi_50 = new TH1D("csi_50", "spettro CsI -thr50", 150, -1500, 17000);
     TH1D* csi_60 = new TH1D("csi_60", "spettro CsI -thr60", 250, -2000, 20000);
     TH1D* lyso_25 = new TH1D("lyso_25", "spettro LYSO -thr25", 200, -1000, 7000);
-    TH1D* bgo_15 = new TH1D("bgo_15", "spettro BGO -thr15", 100, -500, 2100);
+    TH1D* bgo_15 = new TH1D("bgo_15", "spettro BGO -thr15", 65, -500, 2100);
 
     //Riempiamo gli istogrammi
 
@@ -96,7 +96,7 @@ void Spettri(){
     bgo_15->SetTitle("Spettro del ^{137}Cs con BGO, soglia a 15 mV e fit sul picco fotoelettrico");
     bgo_15->SetLineColor(kBlue);
     bgo_15->SetLineWidth(3);
-    bgo_15->SetMaximum(12500);
+    bgo_15->SetMaximum(14500);
     bgo_15->SetXTitle("ADC [Ch]");
     bgo_15->SetYTitle("Conteggi");
     gStyle->SetOptFit(1111);
