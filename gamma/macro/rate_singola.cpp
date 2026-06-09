@@ -50,7 +50,7 @@ void rate_singola(){
     TCanvas* c1 = new TCanvas("c1", "Rate scintillatore fisso", 800, 600); 
 
     fisso->SetTitle("Rate scintillatore fisso");
-    fisso->GetXaxis()->SetTitle("Angolo [#varphi]");
+    fisso->GetXaxis()->SetTitle("Angolo #varphi [gradi]");
     fisso->GetYaxis()->SetTitle("Rate [Hz]");
     fisso->SetMarkerStyle(20);
     fisso->SetMarkerColor(kBlue);
@@ -73,7 +73,7 @@ void rate_singola(){
 
     TCanvas* c2 = new TCanvas("c2", "Rate scintillatore mobile", 800, 600); 
     mobile->SetTitle("Rate scintillatore mobile");
-    mobile->GetXaxis()->SetTitle("Angolo [#varphi]");
+    mobile->GetXaxis()->SetTitle("Angolo #varphi [gradi]");
     mobile->GetYaxis()->SetTitle("Rate [Hz]");
     mobile->SetMarkerStyle(20);
     mobile->SetMarkerColor(kBlue);
