@@ -10,10 +10,10 @@ void NuovaAnalisi(){
 
     //------ offset delle misure con il 9 senza il 9--------------
 
-    TH1D* TDC21 = new TH1D("delta21", "offset_21", 100, -100., 200);
-    TH1D* TDC31 = new TH1D("delta31", "offset_31", 100, -100., 200);
-    TH1D* TDC41 = new TH1D("delta41", "offset_41", 100, -100., 200);
-    TH1D* TDC51 = new TH1D("delta51", "offset_51", 100, -100., 200);
+    TH1D* TDC21 = new TH1D("delta21", "offset_21", 60, -100., 200);
+    TH1D* TDC31 = new TH1D("delta31", "offset_31", 60, -100., 200);
+    TH1D* TDC41 = new TH1D("delta41", "offset_41", 60, -100., 200);
+    TH1D* TDC51 = new TH1D("delta51", "offset_51", 60, -100., 200);
     
 
 
@@ -100,10 +100,10 @@ void NuovaAnalisi(){
     vector<double> phi_1;
     
 
-    TH1D* htheta_1 = new TH1D("theta1", "distribuzione zenitale",80, -10, 91);
+    TH1D* htheta_1 = new TH1D("theta", "distribuzione zenitale", 95, -10, 91);
     //htheta->GetYaxis()->SetRangeUser(0, 250);
-    TH1D* hphi_1 = new TH1D("phi1", "distribuzione azimutale", 50, 0, 6.3);
-    hphi_1->GetYaxis()->SetRangeUser(55,180);
+    TH1D* hphi_1 = new TH1D("phi", "distribuzione azimutale", 70, 0, 6.3);
+    hphi_1->GetYaxis()->SetRangeUser(35,170);
 
     for(int i=0; i<5000; i++){
         theta_1.push_back((asin(sqrt(A_1[i]*A_1[i]+B_1[i]*B_1[i])))*180/M_PI);
@@ -150,7 +150,7 @@ void NuovaAnalisi(){
     gStyle->SetOptFit(1111);
 
     //------------------------ spessore dello sciame ---------------------------------------
-    TH1D* Tsciame1 = new TH1D("Tsciame1", "T=t2-t3+t4-t5", 120, -60, 60);
+    TH1D* Tsciame1 = new TH1D("Tsciame1", "T=t2-t3+t4-t5", 90, -60, 60);
 
     for (int i=0; i<5000; i++){
         double T_i1 = (data[2][i]-data[3][i]+data[4][i]-data[5][i]-T2_T1+T3_T1-T4_T1+T5_T1)/4.15;
@@ -183,8 +183,7 @@ void NuovaAnalisi(){
     Tsciame1->Draw();
     Tsciame1->Fit(gaussiano);
     cTsciame1->Update();
-    cTsciame1->SaveAs("../plots/spessore_sciame1.pdf");
-
+    
 
 
 }
